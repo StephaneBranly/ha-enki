@@ -1,16 +1,22 @@
-# hass-enki-component
+# Enki integration for Home Assistant (Unofficial)
 
-Enki custom component for Home Assistant
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-41BDF5.svg?style=for-the-badge)](https://github.com/hacs/integration)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/StephaneBranly/ha-enki?color=41BDF5&style=for-the-badge)](https://github.com/StephaneBranly/ha-enki/releases/latest)
 
-Tested devices:
+The unofficial Enki intregration for Home Assistant.
+<img src="https://raw.githubusercontent.com/StephaneBranly/ha-enki/main/brand/icon.png">
+
+> [!NOTE]
+> This repository is based on the excellent [CyrilP/hass-enki-component](https://github.com/CyrilP/hass-enki-component) repository, which I felt
+
+> [!NOTE]
+> This custom component is relatively new. It does not include all Enki components and may contain bugs.
+
+## Tested devices:
+
 - Eglo V-link tunable white
 - Inspire Cadix ceiling fan with light
-
-Howto :
-
-- install HACS
-- add this repo
-- add Enki integration
+- Lexman RGBW Light
 
 ## Live API test
 

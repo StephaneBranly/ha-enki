@@ -1,18 +1,12 @@
 {
   "domain": "enki",
   "name": "Enki",
-  "codeowners": [
-    "@CyrilP"
-  ],
+  "codeowners": ["@StephaneBranly", "@CyrilP"],
   "config_flow": true,
-    "documentation": "https://github.com/CyrilP/hass-enki-component",
+  "documentation": "https://github.com/StephaneBranly/ha-enki",
   "iot_class": "cloud_polling",
-  "issue_tracker": "https://github.com/CyrilP/hass-enki-component/issues",
-  "loggers": [
-    "enki"
-  ],
-  "requirements": [
-
-  ],
+  "issue_tracker": "https://github.com/StephaneBranly/ha-enki/issues",
+  "loggers": ["enki"],
+  "requirements": [],
   "version": "v0.1"
 }
