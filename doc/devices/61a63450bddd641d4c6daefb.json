@@ -1,0 +1,26 @@
+{
+  "manufacturer": "Lexman",
+  "capabilities": [
+    "check_camera_events",
+    "check_camera_last_event",
+    "remove_camera_events",
+    "change_camera_orientation"
+  ],
+  "deviceId": "61a63450bddd641d4c6daefb",
+  "possibleValues": {
+    "check_camera_last_event": {
+      "format": "VALUES",
+      "values": [
+        "CAMERA_MOVEMENT",
+        "SD_REMOVED",
+        "SD_WORKING",
+        "SOUND_DETECTED"
+      ]
+    }
+  },
+  "hasProgrammer": null,
+  "hasTimer": null,
+  "protocols": [
+    "lexman_camera"
+  ]
+}

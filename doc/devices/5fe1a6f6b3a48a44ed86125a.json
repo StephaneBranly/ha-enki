@@ -1,0 +1,42 @@
+{
+  "manufacturer": "Enki",
+  "capabilities": [
+    "check_gateway_state",
+    "reboot_device",
+    "gateway_inventory",
+    "gateway_inventory_updated",
+    "device_ota_updated",
+    "send_gateway_inventory",
+    "ack_gateway_inventory_update",
+    "ack_device_ota_update",
+    "event_device_update_type_node_ota",
+    "command_device_update_type_node_ota",
+    "execute_generic_ota_command",
+    "gateway_reboot",
+    "node_connected",
+    "node_disconnected",
+    "node_reset",
+    "check_update_status",
+    "gateway_logs",
+    "update_firmware",
+    "check_current_firmware_version",
+    "update_firmware_on_connect",
+    "gateway_start_diagnostic",
+    "gateway_update_diagnostic",
+    "ask_synchro_service_node",
+    "send_synchro_service_node",
+    "check_connection_status",
+    "update_device_event",
+    "send_update_device_event",
+    "check_gateway_certificate_renewal",
+    "change_gateway_certificate",
+    "check_certificate_renewal_confirmation"
+  ],
+  "deviceId": "5fe1a6f6b3a48a44ed86125a",
+  "possibleValues": {},
+  "hasProgrammer": null,
+  "hasTimer": null,
+  "protocols": [
+    "alljoyn"
+  ]
+}

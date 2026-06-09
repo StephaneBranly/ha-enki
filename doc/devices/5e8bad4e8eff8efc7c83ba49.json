@@ -1,0 +1,18 @@
+{
+  "manufacturer": "Lexman",
+  "capabilities": [
+    "check_lighting_remote_state",
+    "check_battery_level",
+    "check_first_button_from_left_state",
+    "check_second_button_from_left_state",
+    "check_third_button_from_left_state",
+    "check_fourth_button_from_left_state"
+  ],
+  "deviceId": "5e8bad4e8eff8efc7c83ba49",
+  "possibleValues": {},
+  "hasProgrammer": null,
+  "hasTimer": null,
+  "protocols": [
+    "zigbee"
+  ]
+}

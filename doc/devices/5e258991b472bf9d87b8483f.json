@@ -1,0 +1,34 @@
+{
+  "manufacturer": "Lexman",
+  "capabilities": [
+    "check_electrical_power",
+    "switch_electrical_power",
+    "next_electrical_power_switch_in",
+    "switch_electrical_power_in",
+    "cancel_electrical_power_switch_in",
+    "check_electrical_consumption",
+    "total_supply_charge_consumption"
+  ],
+  "deviceId": "5e258991b472bf9d87b8483f",
+  "possibleValues": {
+    "switch_electrical_power": {
+      "format": "VALUES",
+      "values": [
+        "ON",
+        "OFF"
+      ]
+    },
+    "check_electrical_power": {
+      "format": "VALUES",
+      "values": [
+        "ON",
+        "OFF"
+      ]
+    }
+  },
+  "hasProgrammer": true,
+  "hasTimer": true,
+  "protocols": [
+    "zigbee"
+  ]
+}

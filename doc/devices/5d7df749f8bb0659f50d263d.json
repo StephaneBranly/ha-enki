@@ -1,0 +1,73 @@
+{
+  "name": "RGB E27 Light",
+  "manufacturer": "Lexman",
+  "capabilities": [
+    "check_bulb_state",
+    "switch_electrical_power",
+    "change_brightness",
+    "change_hue",
+    "change_saturation",
+    "change_color_temperature",
+    "check_electrical_power",
+    "change_light_state",
+    "check_light_state"
+  ],
+  "deviceId": "5d7df749f8bb0659f50d263d",
+  "possibleValues": {
+    "switch_electrical_power": {
+      "format": "VALUES",
+      "values": ["ON", "OFF"]
+    },
+    "change_brightness": {
+      "format": "RANGE",
+      "range": {
+        "min": 0.0,
+        "max": 1.0,
+        "defaultValue": null,
+        "step": 0.01
+      }
+    },
+    "change_color_temperature": {
+      "format": "VALUES",
+      "values": [
+        "T2700K",
+        "T3000K",
+        "T3200K",
+        "T3500K",
+        "T4000K",
+        "T4500K",
+        "T5000K",
+        "T5500K",
+        "T6000K",
+        "T6500K"
+      ]
+    },
+    "change_saturation": {
+      "format": "RANGE",
+      "range": {
+        "min": 0.0,
+        "max": 1.0,
+        "defaultValue": null,
+        "step": 0.01
+      }
+    },
+    "check_electrical_power": {
+      "format": "VALUES",
+      "values": ["ON", "OFF"]
+    },
+    "change_hue": {
+      "format": "RANGE",
+      "range": {
+        "min": 0.0,
+        "max": 1.0,
+        "defaultValue": null,
+        "step": 0.01
+      }
+    }
+  },
+  "hasProgrammer": true,
+  "hasTimer": true,
+  "protocols": ["zigbee"],
+  "image": "5d7df749f8bb0659f50d263d.webp",
+  "tested": true
+}

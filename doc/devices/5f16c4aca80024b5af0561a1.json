@@ -1,0 +1,37 @@
+{
+  "manufacturer": "Lexman",
+  "capabilities": [
+    "check_siren_global_state",
+    "switch_siren_status",
+    "check_battery_health",
+    "check_power_supply_status",
+    "change_security_siren_mode",
+    "check_siren_global_status"
+  ],
+  "deviceId": "5f16c4aca80024b5af0561a1",
+  "possibleValues": {
+    "check_battery_health": {
+      "format": "VALUES",
+      "values": [
+        "GOOD",
+        "LOW",
+        "LOW_INTERNAL_BATTERY_OF_DEVICE",
+        "REPLACE",
+        "UNKNOWN",
+        "CRITICAL"
+      ]
+    },
+    "switch_siren_status": {
+      "format": "VALUES",
+      "values": [
+        "ON",
+        "OFF"
+      ]
+    }
+  },
+  "hasProgrammer": null,
+  "hasTimer": null,
+  "protocols": [
+    "zigbee"
+  ]
+}

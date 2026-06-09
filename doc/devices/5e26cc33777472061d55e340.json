@@ -1,0 +1,34 @@
+{
+  "manufacturer": "Lexman",
+  "capabilities": [
+    "check_motion_detector_state",
+    "check_motion_detection",
+    "check_battery_health"
+  ],
+  "deviceId": "5e26cc33777472061d55e340",
+  "possibleValues": {
+    "check_battery_health": {
+      "format": "VALUES",
+      "values": [
+        "GOOD",
+        "LOW",
+        "LOW_INTERNAL_BATTERY_OF_DEVICE",
+        "REPLACE",
+        "UNKNOWN",
+        "CRITICAL"
+      ]
+    },
+    "check_motion_detection": {
+      "format": "VALUES",
+      "values": [
+        "NO_MOTION_DETECTED",
+        "MOTION_DETECTED"
+      ]
+    }
+  },
+  "hasProgrammer": null,
+  "hasTimer": null,
+  "protocols": [
+    "zigbee"
+  ]
+}

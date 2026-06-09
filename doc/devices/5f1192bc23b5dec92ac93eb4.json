@@ -1,0 +1,41 @@
+{
+  "manufacturer": "Lexman",
+  "capabilities": [
+    "check_vibration_detector_state",
+    "check_vibration_detection",
+    "check_vibration_sensibility_level",
+    "change_vibration_sensibility_level",
+    "check_contact_sensor_state",
+    "check_battery_health",
+    "activate_vibration_detection",
+    "check_vibration_detection_activation",
+    "activate_contact_detection",
+    "check_contact_detection_activation"
+  ],
+  "deviceId": "5f1192bc23b5dec92ac93eb4",
+  "possibleValues": {
+    "check_vibration_detection": {
+      "format": "VALUES",
+      "values": [
+        "VIBRATION_DETECTED",
+        "NO_VIBRATION_DETECTED"
+      ]
+    },
+    "check_battery_health": {
+      "format": "VALUES",
+      "values": [
+        "GOOD",
+        "LOW",
+        "LOW_INTERNAL_BATTERY_OF_DEVICE",
+        "REPLACE",
+        "UNKNOWN",
+        "CRITICAL"
+      ]
+    }
+  },
+  "hasProgrammer": null,
+  "hasTimer": null,
+  "protocols": [
+    "zigbee"
+  ]
+}

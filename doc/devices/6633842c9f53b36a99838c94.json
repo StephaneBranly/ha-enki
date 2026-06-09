@@ -1,0 +1,45 @@
+{
+  "manufacturer": "Sedea",
+  "capabilities": [
+    "check_current_humidity",
+    "check_current_temperature",
+    "check_battery_health"
+  ],
+  "deviceId": "6633842c9f53b36a99838c94",
+  "possibleValues": {
+    "check_current_temperature": {
+      "format": "RANGE",
+      "range": {
+        "min": 0.0,
+        "max": 40.0,
+        "defaultValue": null,
+        "step": 1.0
+      }
+    },
+    "check_battery_health": {
+      "format": "VALUES",
+      "values": [
+        "GOOD",
+        "LOW",
+        "LOW_INTERNAL_BATTERY_OF_DEVICE",
+        "REPLACE",
+        "UNKNOWN",
+        "CRITICAL"
+      ]
+    },
+    "check_current_humidity": {
+      "format": "RANGE",
+      "range": {
+        "min": 0.0,
+        "max": 100.0,
+        "defaultValue": null,
+        "step": 1.0
+      }
+    }
+  },
+  "hasProgrammer": null,
+  "hasTimer": null,
+  "protocols": [
+    "zigbee"
+  ]
+}
