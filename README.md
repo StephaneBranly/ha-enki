@@ -13,16 +13,14 @@ The unofficial Enki intregration for Home Assistant.
 ## Known devices:
 
 <!-- start devices -->
-
-| Name          | Manufacturer | Id                         | Coverage (%) | Tested |
-| ------------- | ------------ | -------------------------- | ------------ | ------ |
-| na            | Lexman       | _5f1192bc23b5dec92ac93eb4_ | 10           | ❌     |
-| na            | Lexman       | _5e8bad4e8eff8efc7c83ba49_ | 16           | ❌     |
-| na            | Sedea        | _6633842c9f53b36a99838c94_ | 33           | ❌     |
-| na            | Lexman       | _5e26cc33777472061d55e340_ | 33           | ❌     |
-| na            | Lexman       | _5f16c4aca80024b5af0561a1_ | 16           | ❌     |
-| RGB E27 Light | Lexman       | _5d7df749f8bb0659f50d263d_ | 66           | ✅     |
-
+| Name | Image | Id | Coverage (%) | Tested |
+|---|---|---|---|---|
+|na<br/>Lexman||*5f1192bc23b5dec92ac93eb4*|![10%](https://progress-bar.xyz/10)|❌|
+|na<br/>Lexman||*5e8bad4e8eff8efc7c83ba49*|![16%](https://progress-bar.xyz/16)|❌|
+|na<br/>Sedea||*6633842c9f53b36a99838c94*|![33%](https://progress-bar.xyz/33)|❌|
+|na<br/>Lexman||*5e26cc33777472061d55e340*|![33%](https://progress-bar.xyz/33)|❌|
+|na<br/>Lexman||*5f16c4aca80024b5af0561a1*|![16%](https://progress-bar.xyz/16)|❌|
+|RGB E27 Light<br/>Lexman|<img src='./doc/devices/5d7df749f8bb0659f50d263d.webp'  width='100'/>|*5d7df749f8bb0659f50d263d*|![66%](https://progress-bar.xyz/66)|✅|
 <!-- end -->
 
 <!-- - Eglo V-link tunable white
@@ -38,18 +36,16 @@ Different device capabilities are curently being integrated to this custom compo
 <summary>Capabilities coverage</summary>
 
 <!-- start capabilities -->
-
-| Capability                  | Coverage (%) |
-| --------------------------- | ------------ |
-| change_brightness           | 100          |
-| change_color_temperature    | 100          |
-| change_hue                  | 100          |
-| change_light_state          | 100          |
-| change_saturation           | 100          |
-| check_battery_health        | 100          |
-| check_light_state           | 100          |
-| check_lighting_remote_state | 100          |
-
+| Capability | Coverage (%) |
+|---|---|
+|change_brightness|![100%](https://progress-bar.xyz/100)|
+|change_color_temperature|![100%](https://progress-bar.xyz/100)|
+|change_hue|![100%](https://progress-bar.xyz/100)|
+|change_light_state|![100%](https://progress-bar.xyz/100)|
+|change_saturation|![100%](https://progress-bar.xyz/100)|
+|check_battery_health|![100%](https://progress-bar.xyz/100)|
+|check_light_state|![100%](https://progress-bar.xyz/100)|
+|check_lighting_remote_state|![100%](https://progress-bar.xyz/100)|
 <!-- end -->
 
 </details>

@@ -1,0 +1,236 @@
+{
+  "ack_device_ota_update": {
+    "coverage": 100
+  },
+  "ack_gateway_inventory_update": {
+    "coverage": 100
+  },
+  "activate_contact_detection": {
+    "coverage": 100
+  },
+  "activate_vibration_detection": {
+    "coverage": 100
+  },
+  "ask_synchro_service_node": {
+    "coverage": 100
+  },
+  "cancel_electrical_power_switch_in": {
+    "coverage": 100
+  },
+  "change_brightness": {
+    "coverage": 100
+  },
+  "change_camera_orientation": {
+    "coverage": 100
+  },
+  "change_color_temperature": {
+    "coverage": 100
+  },
+  "change_gateway_certificate": {
+    "coverage": 100
+  },
+  "change_hue": {
+    "coverage": 100
+  },
+  "change_light_state": {
+    "coverage": 100
+  },
+  "change_saturation": {
+    "coverage": 100
+  },
+  "change_security_siren_mode": {
+    "coverage": 100
+  },
+  "change_vibration_sensibility_level": {
+    "coverage": 100
+  },
+  "check_battery_health": {
+    "coverage": 100
+  },
+  "check_battery_level": {
+    "coverage": 100
+  },
+  "check_bottom_left_button_state": {
+    "coverage": 100
+  },
+  "check_bottom_right_button_state": {
+    "coverage": 100
+  },
+  "check_bulb_state": {
+    "coverage": 100
+  },
+  "check_camera_events": {
+    "coverage": 100
+  },
+  "check_camera_last_event": {
+    "coverage": 100
+  },
+  "check_certificate_renewal_confirmation": {
+    "coverage": 100
+  },
+  "check_connection_status": {
+    "coverage": 100
+  },
+  "check_contact_detection_activation": {
+    "coverage": 100
+  },
+  "check_contact_sensor_state": {
+    "coverage": 100
+  },
+  "check_current_firmware_version": {
+    "coverage": 100
+  },
+  "check_current_humidity": {
+    "coverage": 100
+  },
+  "check_current_temperature": {
+    "coverage": 100
+  },
+  "check_electrical_consumption": {
+    "coverage": 100
+  },
+  "check_electrical_power": {
+    "coverage": 100
+  },
+  "check_first_button_from_left_state": {
+    "coverage": 100
+  },
+  "check_fourth_button_from_left_state": {
+    "coverage": 100
+  },
+  "check_gateway_certificate_renewal": {
+    "coverage": 100
+  },
+  "check_gateway_state": {
+    "coverage": 100
+  },
+  "check_light_state": {
+    "coverage": 100
+  },
+  "check_lighting_remote_state": {
+    "coverage": 100
+  },
+  "check_motion_detection": {
+    "coverage": 100
+  },
+  "check_motion_detector_state": {
+    "coverage": 100
+  },
+  "check_power_supply_status": {
+    "coverage": 100
+  },
+  "check_remote_control_state": {
+    "coverage": 100
+  },
+  "check_second_button_from_left_state": {
+    "coverage": 100
+  },
+  "check_siren_global_state": {
+    "coverage": 100
+  },
+  "check_siren_global_status": {
+    "coverage": 100
+  },
+  "check_third_button_from_left_state": {
+    "coverage": 100
+  },
+  "check_top_left_button_state": {
+    "coverage": 100
+  },
+  "check_top_right_button_state": {
+    "coverage": 100
+  },
+  "check_update_status": {
+    "coverage": 100
+  },
+  "check_vibration_detection": {
+    "coverage": 100
+  },
+  "check_vibration_detection_activation": {
+    "coverage": 100
+  },
+  "check_vibration_detector_state": {
+    "coverage": 100
+  },
+  "check_vibration_sensibility_level": {
+    "coverage": 100
+  },
+  "command_device_update_type_node_ota": {
+    "coverage": 100
+  },
+  "device_ota_updated": {
+    "coverage": 100
+  },
+  "event_device_update_type_node_ota": {
+    "coverage": 100
+  },
+  "execute_generic_ota_command": {
+    "coverage": 100
+  },
+  "gateway_inventory": {
+    "coverage": 100
+  },
+  "gateway_inventory_updated": {
+    "coverage": 100
+  },
+  "gateway_logs": {
+    "coverage": 100
+  },
+  "gateway_reboot": {
+    "coverage": 100
+  },
+  "gateway_start_diagnostic": {
+    "coverage": 100
+  },
+  "gateway_update_diagnostic": {
+    "coverage": 100
+  },
+  "next_electrical_power_switch_in": {
+    "coverage": 100
+  },
+  "node_connected": {
+    "coverage": 100
+  },
+  "node_disconnected": {
+    "coverage": 100
+  },
+  "node_reset": {
+    "coverage": 100
+  },
+  "reboot_device": {
+    "coverage": 100
+  },
+  "remove_camera_events": {
+    "coverage": 100
+  },
+  "send_gateway_inventory": {
+    "coverage": 100
+  },
+  "send_synchro_service_node": {
+    "coverage": 100
+  },
+  "send_update_device_event": {
+    "coverage": 100
+  },
+  "switch_electrical_power": {
+    "coverage": 100
+  },
+  "switch_electrical_power_in": {
+    "coverage": 100
+  },
+  "switch_siren_status": {
+    "coverage": 100
+  },
+  "total_supply_charge_consumption": {
+    "coverage": 100
+  },
+  "update_device_event": {
+    "coverage": 100
+  },
+  "update_firmware": {
+    "coverage": 100
+  },
+  "update_firmware_on_connect": {
+    "coverage": 100
+  }
+}

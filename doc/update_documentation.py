@@ -1,4 +1,6 @@
-import re, os, json
+import re
+import os
+import json
 
 # Lire le contenu du fichier
 with open("README.md", "r", encoding="utf-8") as f:
@@ -29,15 +31,16 @@ with open('./doc/capabilities.json') as c:
 supported_capabilities = '| Capability | Coverage (%) |\n|---|---|\n'
 for capabilitiy, detail in capabilities.items():
     if not (coverage:=detail.get('coverage', 0)): continue
-    supported_capabilities += f"|{capabilitiy}|{coverage}|\n"
+    supported_capabilities += f"|{capabilitiy}|![{coverage}%](https://progress-bar.xyz/{coverage})|\n"
 
-supported_devices = '| Name | Manufacturer | Id | Coverage (%) | Tested |\n|---|---|---|---|---|\n'
+supported_devices = '| Name | Image | Id | Coverage (%) | Tested |\n|---|---|---|---|---|\n'
 for device_name in os.listdir('./doc/devices'):
     if not device_name.endswith('.json'): continue
     with open(f'./doc/devices/{device_name}') as dev_file:
         device = json.load(dev_file)
-        if not (coverage := compute_coverage(device, capabilities)): continue        
-        supported_devices += f"|{device.get('name', 'na')}|{device.get('manufacturer', 'na')}|*{device.get('deviceId', 'na')}*|{coverage}|{'✅' if device.get('tested', False) else '❌'}|\n"
+        if not (coverage := compute_coverage(device, capabilities)): continue
+        img = f"<img src='./doc/devices/{device.get('image')}'  width='100'/>" if device.get('image') else ''   
+        supported_devices += f"|{device.get('name', 'na')}<br/>{device.get('manufacturer', 'na')}|{img}|*{device.get('deviceId', 'na')}*|![{coverage}%](https://progress-bar.xyz/{coverage})|{'✅' if device.get('tested', False) else '❌'}|\n"
 
 content = update_anchor(content, 'devices', supported_devices)
 content = update_anchor(content, 'capabilities', supported_capabilities)
