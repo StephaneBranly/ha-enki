@@ -4,10 +4,11 @@
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/StephaneBranly/ha-enki?color=41BDF5&style=for-the-badge)](https://github.com/StephaneBranly/ha-enki/releases/latest)
 
 The unofficial Enki intregration for Home Assistant.
+
 <img src="https://raw.githubusercontent.com/StephaneBranly/ha-enki/main/brand/icon.png">
 
 > [!NOTE]
-> This repository is based on the excellent [CyrilP/hass-enki-component](https://github.com/CyrilP/hass-enki-component) repository, which I felt
+> This repository is based on the excellent [CyrilP/hass-enki-component](https://github.com/CyrilP/hass-enki-component) repository, which did not appear to be maintained in a consistent and sustainable manner.
 
 > [!NOTE]
 > This custom component is relatively new. It does not include all Enki components and may contain bugs.
