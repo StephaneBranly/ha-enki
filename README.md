@@ -5,7 +5,7 @@
 
 The unofficial Enki intregration for Home Assistant.
 
-<img src="https://raw.githubusercontent.com/StephaneBranly/ha-enki/main/brand/icon.png">
+<img src="https://raw.githubusercontent.com/StephaneBranly/ha-enki/main/src/icon.png">
 
 > [!NOTE]
 > This repository is based on the excellent [CyrilP/hass-enki-component](https://github.com/CyrilP/hass-enki-component) repository, which did not appear to be maintained in a consistent and sustainable manner.
