@@ -7,14 +7,12 @@ from homeassistant.components.light import ColorMode, LightEntity
 from homeassistant.components.light.const import DEFAULT_MIN_KELVIN, DEFAULT_MAX_KELVIN 
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.device_registry import DeviceInfo
-from homeassistant.util.color import value_to_brightness, brightness_to_value
+from homeassistant.util.color import value_to_brightness
 
-import math
 from . import EnkiConfigEntry
 from .base import EnkiBaseEntity
 from .coordinator import EnkiCoordinator
-from .const import LOGGER, DOMAIN
+from .const import LOGGER
 
 async def async_setup_entry(
     hass: HomeAssistant,

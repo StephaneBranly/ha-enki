@@ -1,7 +1,10 @@
 import re
 import os
 import json
+from pathlib import Path
 
+# Add parent directory to path
+os.chdir(Path(__file__).parent.parent)
 # Lire le contenu du fichier
 with open("README.md", "r", encoding="utf-8") as f:
     content = f.read()
@@ -19,7 +22,9 @@ def update_anchor(current_page: str, tag: str, new_content: str) -> str:
 def compute_coverage(device: dict[str, any], capabilities: dict[str, any]) -> int:
     dcs = device.get('capabilities', [])
     coverage = 0
-    if not len(dcs): return 100
+    if not (len(dcs)):
+        return 100
+    
     for dc in dcs:
         coverage+=capabilities.get(dc,{}).get('coverage',0) 
     return int(coverage/len(dcs))
@@ -30,15 +35,19 @@ with open('./doc/capabilities.json') as c:
 
 supported_capabilities = '| Capability | Coverage (%) |\n|---|---|\n'
 for capabilitiy, detail in capabilities.items():
-    if not (coverage:=detail.get('coverage', 0)): continue
+    if not (coverage:=detail.get('coverage', 0)):
+        continue
+
     supported_capabilities += f"|{capabilitiy}|![{coverage}%](https://progress-bar.xyz/{coverage})|\n"
 
 supported_devices = '| Name | Image | Id | Coverage (%) | Tested |\n|---|---|---|---|---|\n'
 for device_name in os.listdir('./doc/devices'):
-    if not device_name.endswith('.json'): continue
+    if not device_name.endswith('.json'):
+        continue
     with open(f'./doc/devices/{device_name}') as dev_file:
         device = json.load(dev_file)
-        if not (coverage := compute_coverage(device, capabilities)): continue
+        if not (coverage := compute_coverage(device, capabilities)):
+            continue
         img = f"<img src='./doc/devices/{device.get('image')}'  width='100'/>" if device.get('image') else ''   
         supported_devices += f"|{device.get('name', 'na')}<br/>{device.get('manufacturer', 'na')}|{img}|*{device.get('deviceId', 'na')}*|![{coverage}%](https://progress-bar.xyz/{coverage})|{'✅' if device.get('tested', False) else '❌'}|\n"
 

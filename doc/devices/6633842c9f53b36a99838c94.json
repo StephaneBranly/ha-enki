@@ -1,4 +1,5 @@
 {
+  "name": "Thermomètre connecté",
   "manufacturer": "Sedea",
   "capabilities": [
     "check_current_humidity",
@@ -39,7 +40,6 @@
   },
   "hasProgrammer": null,
   "hasTimer": null,
-  "protocols": [
-    "zigbee"
-  ]
+  "protocols": ["zigbee"],
+  "image": "6633842c9f53b36a99838c94.webp"
 }

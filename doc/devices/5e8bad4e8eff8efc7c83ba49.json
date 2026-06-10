@@ -1,4 +1,5 @@
 {
+  "name": "Alarm remote control",
   "manufacturer": "Lexman",
   "capabilities": [
     "check_lighting_remote_state",
@@ -12,7 +13,6 @@
   "possibleValues": {},
   "hasProgrammer": null,
   "hasTimer": null,
-  "protocols": [
-    "zigbee"
-  ]
+  "protocols": ["zigbee"],
+  "image": "5e8bad4e8eff8efc7c83ba49.jpg"
 }

@@ -9,6 +9,7 @@ import json
 import os
 import sys
 import types
+
 from pathlib import Path
 from typing import Any
 
@@ -69,6 +70,20 @@ async def _run_live_api_check(user: str, password: str) -> None:
         device_kind = device.get("deviceType") or "unknown-deviceType"
         node_id = device.get("nodeId") or "unknown-node"
 
+        device_description = {
+            "manufacturer": device.get('manufacturerId', None),
+            "capabilities":device.get('capabilities', []),
+            "deviceId": device.get('deviceId', None),
+            "possibleValues": device.get('possibleValues', None),
+            "hasProgrammer": device.get('hasProgrammer', None),
+            "hasTimer": device.get('hasTimer', None),
+            "protocols":  device.get('protocols', None),
+        }
+        device_file = Path("./doc/devices") / f"{device.get('deviceId', None)}.json"
+        if not device_file.exists():
+            device_file.parent.mkdir(parents=True, exist_ok=True)
+            with device_file.open(mode='w', encoding='utf-8') as f:
+                f.write(json.dumps(device_description, indent=2))
         print(
             f"{index}. {name} | type={device_type} | deviceType={device_kind} | node={node_id}"
         )
@@ -81,7 +96,6 @@ async def _run_live_api_check(user: str, password: str) -> None:
         elif _is_normal_light_device(device):
             home_id = device.get("homeId")
             await _print_normal_light_details(api, home_id, node_id)
-
 
 def _is_normal_light_device(device: dict[str, Any]) -> bool:
     """Detect non-ceiling-fan lights that should print check-light-state details."""

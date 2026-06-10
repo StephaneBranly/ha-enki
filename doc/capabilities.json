@@ -45,7 +45,7 @@
     "coverage": 0
   },
   "check_battery_health": {
-    "coverage": 100
+    "coverage": 0
   },
   "check_battery_level": {
     "coverage": 0
