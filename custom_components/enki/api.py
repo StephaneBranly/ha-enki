@@ -8,6 +8,7 @@ import logging
 from dataclasses import dataclass
 from typing import Any
 import time
+import re
 
 from .const import (
     LOGGER,
@@ -19,7 +20,9 @@ from .const import (
     ENKI_REFERENTIEL_API_KEY,
     ENKI_LIGHTS_API_KEY,
     ENKI_AIRFLOW_API_KEY,
-    ENKI_POWER_API_KEY)
+    ENKI_POWER_API_KEY,
+    ENKI_TEMPERATURE_HUMIDITY_API_KEY,
+    ENKI_BATTERY_HEALTH_API_KEY)
 
 proxy = None
 
@@ -113,6 +116,23 @@ class API:
             if prop != "id":
                 device[prop] = properties[prop]
 
+    @staticmethod
+    def _parse_sensor_value(description: dict[str, Any] | None) -> float | None:
+        """Parse value from sensor description.value (e.g. '109 W' -> 109.0)."""
+        if not description or not isinstance(description, dict):
+            return None
+        value_str = description.get("value")
+        if not isinstance(value_str, str):
+            return None
+        pattern = r"[+-]?[0-9]+\.[0-9]+"
+        match = re.search(pattern, value_str)
+        if not match:
+            return None
+        try:
+            return float(match.group(0))
+        except ValueError:
+            return None
+
     async def get_items_in_section_for_home(self, home_id) -> list[dict[str, Any]]:
             """Get sections in home."""
             await self.check_connected()
@@ -130,6 +150,7 @@ class API:
                         for item in section["items"]:
                             if 'deviceId' not in item["metadata"].keys():
                                 continue
+                      
                             device = {
                                 "homeId": home_id,
                                 "deviceId": item["metadata"]["deviceId"],
@@ -144,8 +165,10 @@ class API:
                                 ] if item["metadata"].get("mainChangeCapability") is not None else [],
                                 "deviceName": item["title"]["label"],
                                 "state": item["state"],
-                                "isEnabled": item["isEnabled"]
+                                "isEnabled": item["isEnabled"],
+                                "descriptionValue": self._parse_sensor_value(item.get("description"))
                             }
+                            
                             devices.append(device)
 
                             node_info = await self.get_node(home_id, device.get("nodeId"))
@@ -196,6 +219,17 @@ class API:
             airflow_mode = await self.get_airflow_mode(device.get("homeId"), device.get("nodeId"))
             self.merge_properties(device, {"airflowMode": airflow_mode})
 
+        if 'check_current_temperature' in capabilities or 'check_current_temperature' in possible_values:
+            temperature = await self.get_temperature(device.get("homeId"), device.get("nodeId"))
+            self.merge_properties(device, {"temperatureValue": temperature})
+
+        if 'check_current_humidity' in capabilities or 'check_current_humidity' in possible_values:
+            humidity = await self.get_humidity(device.get("homeId"), device.get("nodeId"))
+            self.merge_properties(device, {"humidityValue": humidity})
+
+        if "check_battery_health" in capabilities or "check_battery_health" in possible_values:
+            battery_health = await self._check_battery_health(device.get("homeId"), device.get("nodeId"))
+            self.merge_properties(device, {"batteryHealthValue": battery_health})
         return device
 
     async def _refresh_lights_device(self, device: dict[str, Any]) -> None:
@@ -278,8 +312,7 @@ class API:
         await self.check_connected()
         
         data = (await self.get_light_details(home_id, node_id))["lastReportedValue"]
-        for parameter, value in updated_values.items():
-            data[parameter] = value
+        data.update(updated_values)
         
         async with aiohttp.ClientSession() as session, session.request(
             method="POST",
@@ -295,6 +328,30 @@ class API:
                     LOGGER.debug(resp.status)
                     LOGGER.error("Error on change_light_state. status %s, response %s", resp.status, str(response))
                     raise ValueError("bad credentials")
+
+    async def _check_temperature_humidity_value(self, home_id, node_id, endpoint):
+        """Read temperature and humidity values from one check endpoint."""
+        await self.check_connected()
+        async with aiohttp.ClientSession() as session, session.request(
+            method="GET",
+            url=f"{ENKI_URL}/api-enki-temperature-humidity-sensor-prod/v1/sensors/{node_id}/{endpoint}",
+            headers={
+                "Authorization": f"{self._token_type} {self._access_token}",
+                "homeId": home_id,
+                "X-Gateway-APIKey": ENKI_TEMPERATURE_HUMIDITY_API_KEY,
+            },
+            proxy=proxy,
+        ) as resp:
+            if resp.status == 200:
+                response = await resp.json()
+                return response.get("lastReportedValue")
+
+            response = await resp.text()
+            if resp.status == 404:
+                LOGGER.warning("Sensor endpoint not found on %s. status %s, response %s", endpoint, resp.status, str(response))
+                return None
+            LOGGER.error("Error on sensor check %s. status %s, response %s", endpoint, resp.status, str(response))
+            raise ValueError("bad credentials")
 
     async def _check_airflow_value(self, home_id, node_id, endpoint):
         """Read airflow value from one check endpoint."""
@@ -341,6 +398,39 @@ class API:
                 LOGGER.warning("Power endpoint not found. status %s, response %s", resp.status, str(response))
                 return {}
             LOGGER.error("Error on power check. status %s, response %s", resp.status, str(response))
+            raise ValueError("bad credentials")
+
+    async def _check_battery_health(self, home_id, node_id):
+        """Read battery health value from one check endpoint."""
+        await self.check_connected()
+        async with aiohttp.ClientSession() as session, session.request(
+            method="GET",
+            url=f"{ENKI_URL}/api-enki-battery-health-prod/v1/sensors/{node_id}/check-battery-health",
+            headers={
+                "Authorization": f"{self._token_type} {self._access_token}",
+                "homeId": home_id,
+                "X-Gateway-APIKey": ENKI_BATTERY_HEALTH_API_KEY,
+            },
+            proxy=proxy,
+        ) as resp:
+            if resp.status == 200:
+                response = await resp.json()
+                value = response.get("lastReportedValue")
+                LOGGER.debug("Battery health value : %s", response)
+                return {
+                    "GOOD": 80,
+                    "LOW": 30,
+                    "LOW_INTERNAL_BATTERY_OF_DEVICE": 30,
+                    "REPLACE": 1,
+                    "UNKNOWN": None,
+                    "CRITICAL": 5
+                }.get(value, None)
+
+            response = await resp.text()
+            if resp.status == 404:
+                LOGGER.warning("Sensor endpoint not found on %s. status %s, response %s", endpoint, resp.status, str(response))
+                return None
+            LOGGER.error("Error on sensor check %s. status %s, response %s", endpoint, resp.status, str(response))
             raise ValueError("bad credentials")
 
     async def switch_electrical_power(self, home_id, node_id, value):
@@ -436,6 +526,14 @@ class API:
     async def change_airflow_mode(self, home_id, node_id, value):
         """Set airflow mode."""
         await self._change_airflow_value(home_id, node_id, "change-airflow-mode", value)
+
+    async def get_temperature(self, home_id, node_id):
+        """Get temperature value."""
+        return await self._check_temperature_humidity_value(home_id, node_id, "check-current-temperature")
+
+    async def get_humidity(self, home_id, node_id):
+        """Get humidity value."""
+        return await self._check_temperature_humidity_value(home_id, node_id, "check-current-humidity")
 
 # *******************************************************
 
