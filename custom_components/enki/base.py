@@ -87,8 +87,7 @@ class EnkiBaseEntity(CoordinatorEntity):
         # ----------------------------------------------------------------------------
         device_name = self.coordinator.get_device_parameter(self.node_id, "deviceName")
         return DeviceInfo(
-            name_by_user=device_name,
-            default_name=device_name,
+            name=device_name,
             manufacturer=self.coordinator.get_device_parameter(self.node_id, "manufacturerId"),
             model=str(
                 self.coordinator.get_device_parameter(self.node_id, "modelNumber")
