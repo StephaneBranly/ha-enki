@@ -45,7 +45,7 @@ class EnkiFan(EnkiBaseEntity, FanEntity):
     _attr_speed_count: int | None = None
 
     def __init__(self, coordinator: EnkiCoordinator, device: dict[str, Any], parameter: str) -> None:
-        super().__init__(coordinator, device, parameter)
+        super().__init__(coordinator, device)
         self.parameter = "fan"
 
         self._capabilities = _capabilities_set(device)

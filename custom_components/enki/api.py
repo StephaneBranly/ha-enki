@@ -186,13 +186,14 @@ class API:
 
     async def refresh_node(self, device): 
         """Update device details"""
+
+        if not device.get("isEnabled"):
+            return device
+        
         node_info = await self.get_node(device.get("homeId"), device.get("nodeId"))
         self.merge_properties(device, node_info)
         device_info = await self.get_device(device.get("deviceId"))
         self.merge_properties(device, device_info)
-
-        if not device.get("isEnabled"):
-            return device
 
         capabilities = _capabilities_set(device)
         possible_values = _possible_values_dict(device)

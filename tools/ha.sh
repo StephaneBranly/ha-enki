@@ -1,1 +1,1 @@
-docker run --network host --name ha --rm  -v $HOME/hass-enki-component/custom_components/:/config/custom_components/ -p 8123:8123 homeassistant/home-assistant
+docker run --network host --name ha --rm  -v ./custom_components/:/config/custom_components/ -v ha-enki-test:/config -p 8123:8123 homeassistant/home-assistant

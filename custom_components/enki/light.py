@@ -50,7 +50,7 @@ class EnkiLight(EnkiBaseEntity, LightEntity):
         endpoint_id: int | None = None,
     ) -> None:
         """Initialise entity."""
-        super().__init__(coordinator, device, parameter)
+        super().__init__(coordinator, device)
         self._device = device
         self._endpoint_id = endpoint_id
         self._color_temp_values = []

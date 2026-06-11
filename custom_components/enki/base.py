@@ -45,7 +45,7 @@ class EnkiBaseEntity(CoordinatorEntity):
     _attr_has_entity_name = True
 
     def __init__(
-        self, coordinator: EnkiCoordinator, device: dict[str, Any], parameter: str
+        self, coordinator: EnkiCoordinator, device: dict[str, Any]
     ) -> None:
         """Initialise entity."""
         super().__init__(coordinator)

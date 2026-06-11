@@ -50,7 +50,7 @@ class EnkiSensor(EnkiBaseEntity, SensorEntity):
         state_class: SensorStateClass,
     ) -> None:
         """Initialise entity."""
-        super().__init__(coordinator, device, parameter)
+        super().__init__(coordinator, device)
         self.parameter = parameter
         self._key = key
         self._attr_native_unit_of_measurement = unit
