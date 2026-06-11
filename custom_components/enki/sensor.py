@@ -102,14 +102,14 @@ def _build_sensor_entities(coordinator: EnkiCoordinator, device: dict[str, Any])
             'device_class': SensorDeviceClass.TEMPERATURE,
             'state_class': SensorStateClass.MEASUREMENT,
         },
-        {
-            'capability': 'check_electrical_consumption',
-            'parameter': 'electrical_consumption',
-            'key': 'descriptionValue',
-            'unit': "Wh",
-            'device_class': SensorDeviceClass.ENERGY,
-            'state_class': SensorStateClass.MEASUREMENT,
-        },
+        # {
+        #     'capability': 'check_electrical_consumption',
+        #     'parameter': 'electrical_consumption',
+        #     'key': 'descriptionValue',
+        #     'unit': "Wh",
+        #     'device_class': SensorDeviceClass.ENERGY,
+        #     'state_class': SensorStateClass.TOTAL,
+        # },
         {
             'capability': 'check_battery_health',
             'parameter': 'battery_health',
@@ -123,7 +123,8 @@ def _build_sensor_entities(coordinator: EnkiCoordinator, device: dict[str, Any])
     sensors = []
 
     for cap in supported_sensor_capabilities:
-        if cap['capability'] not in capabilities: continue
+        if cap['capability'] not in capabilities:
+            continue
         sensors.append(
             EnkiSensor(
                 coordinator,

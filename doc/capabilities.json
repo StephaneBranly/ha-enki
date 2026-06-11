@@ -45,7 +45,7 @@
     "coverage": 0
   },
   "check_battery_health": {
-    "coverage": 0
+    "coverage": 100
   },
   "check_battery_level": {
     "coverage": 0
@@ -81,10 +81,10 @@
     "coverage": 0
   },
   "check_current_humidity": {
-    "coverage": 0
+    "coverage": 100
   },
   "check_current_temperature": {
-    "coverage": 0
+    "coverage": 100
   },
   "check_electrical_consumption": {
     "coverage": 0

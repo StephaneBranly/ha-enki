@@ -428,9 +428,9 @@ class API:
 
             response = await resp.text()
             if resp.status == 404:
-                LOGGER.warning("Sensor endpoint not found on %s. status %s, response %s", endpoint, resp.status, str(response))
+                LOGGER.warning("Sensor endpoint not found on %s. status %s, response %s", resp.status, str(response))
                 return None
-            LOGGER.error("Error on sensor check %s. status %s, response %s", endpoint, resp.status, str(response))
+            LOGGER.error("Error on sensor check %s. status %s, response %s", resp.status, str(response))
             raise ValueError("bad credentials")
 
     async def switch_electrical_power(self, home_id, node_id, value):

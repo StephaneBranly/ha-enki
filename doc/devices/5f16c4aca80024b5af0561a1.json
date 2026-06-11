@@ -23,15 +23,12 @@
     },
     "switch_siren_status": {
       "format": "VALUES",
-      "values": [
-        "ON",
-        "OFF"
-      ]
+      "values": ["ON", "OFF"]
     }
   },
   "hasProgrammer": null,
   "hasTimer": null,
-  "protocols": [
-    "zigbee"
-  ]
+  "protocols": ["zigbee"],
+  "name": "Siren",
+  "image": "5f16c4aca80024b5af0561a1.jpg"
 }

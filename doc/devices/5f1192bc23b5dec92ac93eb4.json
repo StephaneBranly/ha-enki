@@ -16,10 +16,7 @@
   "possibleValues": {
     "check_vibration_detection": {
       "format": "VALUES",
-      "values": [
-        "VIBRATION_DETECTED",
-        "NO_VIBRATION_DETECTED"
-      ]
+      "values": ["VIBRATION_DETECTED", "NO_VIBRATION_DETECTED"]
     },
     "check_battery_health": {
       "format": "VALUES",
@@ -35,7 +32,7 @@
   },
   "hasProgrammer": null,
   "hasTimer": null,
-  "protocols": [
-    "zigbee"
-  ]
+  "protocols": ["zigbee"],
+  "name": "Contact detector",
+  "image": "5f1192bc23b5dec92ac93eb4.jpg"
 }

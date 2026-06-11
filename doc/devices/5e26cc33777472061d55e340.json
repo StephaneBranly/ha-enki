@@ -20,15 +20,12 @@
     },
     "check_motion_detection": {
       "format": "VALUES",
-      "values": [
-        "NO_MOTION_DETECTED",
-        "MOTION_DETECTED"
-      ]
+      "values": ["NO_MOTION_DETECTED", "MOTION_DETECTED"]
     }
   },
   "hasProgrammer": null,
   "hasTimer": null,
-  "protocols": [
-    "zigbee"
-  ]
+  "protocols": ["zigbee"],
+  "name": "Motion detector",
+  "image": "5e26cc33777472061d55e340.jpg"
 }
