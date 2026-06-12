@@ -90,7 +90,7 @@
     "coverage": 0
   },
   "check_electrical_power": {
-    "coverage": 0
+    "coverage": 100
   },
   "check_first_button_from_left_state": {
     "coverage": 0
@@ -213,7 +213,7 @@
     "coverage": 0
   },
   "switch_electrical_power": {
-    "coverage": 0
+    "coverage": 100
   },
   "switch_electrical_power_in": {
     "coverage": 0

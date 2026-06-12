@@ -13,22 +13,16 @@
   "possibleValues": {
     "switch_electrical_power": {
       "format": "VALUES",
-      "values": [
-        "ON",
-        "OFF"
-      ]
+      "values": ["ON", "OFF"]
     },
     "check_electrical_power": {
       "format": "VALUES",
-      "values": [
-        "ON",
-        "OFF"
-      ]
+      "values": ["ON", "OFF"]
     }
   },
   "hasProgrammer": true,
   "hasTimer": true,
-  "protocols": [
-    "zigbee"
-  ]
+  "protocols": ["zigbee"],
+  "name": "Outlet 16A, 3680A",
+  "image": "5e258991b472bf9d87b8483f.webp"
 }
