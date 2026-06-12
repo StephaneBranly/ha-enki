@@ -278,7 +278,7 @@ class EnkiLight(EnkiBaseEntity, LightEntity):
 
 def _build_light_entities(coordinator: EnkiCoordinator, device: dict[str, Any]) -> list[LightEntity]:
     """Create light entities from power capability and BFF endpoint metadata."""
-    if not _has_switch_electrical_power(device):
+    if not _has_check_light_state(device):
         return []
 
     endpoint_ids = _main_change_capability_endpoint_ids(device)
@@ -296,6 +296,9 @@ def _has_switch_electrical_power(device: dict[str, Any]) -> bool:
     """Check whether the device supports switch_electrical_power capability."""
     return "switch_electrical_power" in _capabilities_set(device)
 
+def _has_check_light_state(device: dict[str, Any]) -> bool:
+    """Check whether the device supports switch_electrical_power capability."""
+    return "check_light_state" in _capabilities_set(device)
 
 def _main_change_capability_endpoint_ids(device: dict[str, Any]) -> list[int]:
     """Return BFF endpoints for mainChangeCapability=switch_electrical_power."""

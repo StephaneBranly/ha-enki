@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from custom_components.enki.light import _has_check_light_state
 from homeassistant.components.switch import (
     SwitchDeviceClass,
     SwitchEntity,
@@ -85,6 +86,8 @@ def _build_switch_entities(coordinator: EnkiCoordinator, device: dict[str, Any])
 
     for cap in supported_switch_capabilities:
         if cap['capability'] not in capabilities:
+            continue
+        if _has_check_light_state(device):
             continue
         switches.append(
             EnkiSwitch(
