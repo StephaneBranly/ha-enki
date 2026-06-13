@@ -251,8 +251,7 @@ class EnkiLight(EnkiBaseEntity, LightEntity):
         if "brightness" not in last_reported_values:
             LOGGER.debug("brightness not found in last_reported_values")
             return None
-        LOGGER.debug(f"brightness found in last_reported_values : {last_reported_values['brightness']} => {value_to_brightness(self.BRIGHTNESS_SCALE, last_reported_values['brightness'])}")
-        return value_to_brightness(self.BRIGHTNESS_SCALE, last_reported_values["brightness"])
+        return int(last_reported_values['brightness']*255/self.BRIGHTNESS_SCALE[1])
     
     @property
     def color_temp_kelvin(self) -> int | None:
@@ -275,6 +274,21 @@ class EnkiLight(EnkiBaseEntity, LightEntity):
     @property
     def supported_color_modes(self):
         return self._attr_supported_color_modes
+
+    @property
+    def color_mode(self):
+        last_reported_values = self.coordinator.get_device_parameter(self.node_id, "lastReportedValue")
+        LOGGER.debug(f'color mode {last_reported_values}')
+        color_mode = last_reported_values.get('colorMode', None)
+        if color_mode == 'hs':
+            return ColorMode.HS
+        if color_mode == 'ct':
+            return ColorMode.COLOR_TEMP
+        if "change_brightness" in capabilities:
+            return ColorMode.BRIGHTNESS
+        if "switch_electrical_power" in capabilities:
+            return = ColorMode.ONOFF
+        return ColorMode.UNKNOWN
 
 def _build_light_entities(coordinator: EnkiCoordinator, device: dict[str, Any]) -> list[LightEntity]:
     """Create light entities from power capability and BFF endpoint metadata."""
