@@ -7,7 +7,6 @@ from homeassistant.components.light import ColorMode, LightEntity
 from homeassistant.components.light.const import DEFAULT_MIN_KELVIN, DEFAULT_MAX_KELVIN 
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.util.color import value_to_brightness
 
 from . import EnkiConfigEntry
 from .base import EnkiBaseEntity
@@ -279,6 +278,7 @@ class EnkiLight(EnkiBaseEntity, LightEntity):
     def color_mode(self):
         last_reported_values = self.coordinator.get_device_parameter(self.node_id, "lastReportedValue")
         LOGGER.debug(f'color mode {last_reported_values}')
+        capabilities = _capabilities_set(self.device)
         color_mode = last_reported_values.get('colorMode', None)
         if color_mode == 'hs':
             return ColorMode.HS
