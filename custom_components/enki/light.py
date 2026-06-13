@@ -287,7 +287,7 @@ class EnkiLight(EnkiBaseEntity, LightEntity):
         if "change_brightness" in capabilities:
             return ColorMode.BRIGHTNESS
         if "switch_electrical_power" in capabilities:
-            return = ColorMode.ONOFF
+            return ColorMode.ONOFF
         return ColorMode.UNKNOWN
 
 def _build_light_entities(coordinator: EnkiCoordinator, device: dict[str, Any]) -> list[LightEntity]:
