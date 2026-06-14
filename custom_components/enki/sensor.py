@@ -16,7 +16,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from . import EnkiConfigEntry
 from .base import EnkiBaseEntity
 from .coordinator import EnkiCoordinator
-from .const import LOGGER
+from .const import ENKI_CHECK_CURRENT_HUMIDITY, ENKI_CHECK_CURRENT_TEMPERATURE, LOGGER
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -78,16 +78,16 @@ def _build_sensor_entities(coordinator: EnkiCoordinator, device: dict[str, Any])
 
     # Check https://developers.home-assistant.io/docs/core/entity/sensor/ for device class, units and state class options
     supported_sensor_capabilities = [
+        # {
+        #     'capability': 'check_power_production',
+        #     'parameter': 'power_production',
+        #     'key': 'descriptionValue',
+        #     'unit': UnitOfPower.WATT,
+        #     'device_class': SensorDeviceClass.POWER,
+        #     'state_class': SensorStateClass.MEASUREMENT,
+        # },
         {
-            'capability': 'check_power_production',
-            'parameter': 'power_production',
-            'key': 'descriptionValue',
-            'unit': UnitOfPower.WATT,
-            'device_class': SensorDeviceClass.POWER,
-            'state_class': SensorStateClass.MEASUREMENT,
-        },
-        {
-            'capability': 'check_current_humidity',
+            'capability': ENKI_CHECK_CURRENT_HUMIDITY,
             'parameter': 'humidity',
             'key': 'humidityValue',
             'unit': "%",
@@ -95,7 +95,7 @@ def _build_sensor_entities(coordinator: EnkiCoordinator, device: dict[str, Any])
             'state_class': SensorStateClass.MEASUREMENT,
         },
         {
-            'capability': 'check_current_temperature',
+            'capability': ENKI_CHECK_CURRENT_TEMPERATURE,
             'parameter': 'temperature',
             'key': 'temperatureValue',
             'unit': "°C",
@@ -110,14 +110,14 @@ def _build_sensor_entities(coordinator: EnkiCoordinator, device: dict[str, Any])
         #     'device_class': SensorDeviceClass.ENERGY,
         #     'state_class': SensorStateClass.TOTAL,
         # },
-        {
-            'capability': 'check_battery_health',
-            'parameter': 'battery_health',
-            'key': 'batteryHealthValue',
-            'unit': "%",
-            'device_class': SensorDeviceClass.BATTERY,
-            'state_class': SensorStateClass.MEASUREMENT,
-        }
+        # {
+        #     'capability': 'check_battery_health',
+        #     'parameter': 'battery_health',
+        #     'key': 'batteryHealthValue',
+        #     'unit': "%",
+        #     'device_class': SensorDeviceClass.BATTERY,
+        #     'state_class': SensorStateClass.MEASUREMENT,
+        # }
     ]
 
     sensors = []

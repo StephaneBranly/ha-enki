@@ -13,6 +13,8 @@ import types
 from pathlib import Path
 from typing import Any
 
+from custom_components.enki.const import ENKI_CHECK_LIGHT_STATE
+
 
 def _load_enki_api_class():
     """Load API class without importing Home Assistant integration package."""
@@ -114,7 +116,7 @@ def _is_normal_light_device(device: dict[str, Any]) -> bool:
 async def _print_normal_light_details(api: Any, home_id: str, node_id: str) -> None:
     """Print check-light-state for regular lights without endpoint semantics."""
     print("\n   --- check-light-state (normal light) ---")
-    details = await api.get_light_details(home_id, node_id)
+    details = await api.query_endpoint(home_id, node_id, ENKI_CHECK_LIGHT_STATE)
     if not details:
         print("   No light-state details returned")
         return

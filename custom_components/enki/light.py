@@ -11,7 +11,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from . import EnkiConfigEntry
 from .base import EnkiBaseEntity
 from .coordinator import EnkiCoordinator
-from .const import LOGGER
+from .const import ENKI_CHANGE_LIGHT_STATE, ENKI_CHECK_LIGHT_STATE, LOGGER
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -183,10 +183,12 @@ class EnkiLight(EnkiBaseEntity, LightEntity):
     async def _mixed_endpoint_workaround(self) -> None:
         """Send OFF first when needed to force a fresh ON transition for all lights."""
         if self._light_endpoints_have_mixed_power():
-            await self.coordinator.api.change_light_state(
+            await self.coordinator.api.query_endpoint(
                 self._device["homeId"],
                 self._device["nodeId"],
+                ENKI_CHANGE_LIGHT_STATE,
                 {"power": "OFF"},
+                ENKI_CHECK_LIGHT_STATE
             )
 
 
@@ -229,7 +231,7 @@ class EnkiLight(EnkiBaseEntity, LightEntity):
             self._attr_color_mode = ColorMode.HS
 
         self.update_data_power_light_endpoints("ON")
-        await self.coordinator.api.change_light_state(self._device["homeId"], self._device["nodeId"], changes)
+        await self.coordinator.api.query_endpoint(self._device["homeId"], self._device["nodeId"], ENKI_CHANGE_LIGHT_STATE, changes, ENKI_CHECK_LIGHT_STATE)
         self.coordinator.update_data(self.node_id, {"lastReportedValue": changes})
         
     async def async_turn_off(self, **kwargs: Any) -> None:
@@ -238,7 +240,7 @@ class EnkiLight(EnkiBaseEntity, LightEntity):
         # Until the API supports per-endpoint control without side-effects, use change_light_state
         # for all light entities regardless of whether they have an endpoint_id. This will turn off
         # all the lights but at least will not turn off the fan or other non-light endpoints.
-        await self.coordinator.api.change_light_state(self._device["homeId"], self._device["nodeId"], {"power": "OFF"})
+        await self.coordinator.api.query_endpoint(self._device["homeId"], self._device["nodeId"], ENKI_CHANGE_LIGHT_STATE, {"power": "OFF"}, ENKI_CHECK_LIGHT_STATE)
         self.coordinator.update_data(self.node_id, {"lastReportedValue": {"power": "OFF"}})
         self.update_data_power_light_endpoints("OFF")
 

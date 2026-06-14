@@ -11,6 +11,10 @@ import time
 import re
 
 from .const import (
+    ENKI_CAPABILITIY,
+    ENKI_CHECK_CURRENT_HUMIDITY,
+    ENKI_CHECK_CURRENT_TEMPERATURE,
+    ENKI_CHECK_LIGHT_STATE,
     LOGGER,
     ENKI_OIDC_URL,
     ENKI_URL,
@@ -18,10 +22,8 @@ from .const import (
     ENKI_BFF_API_KEY,
     ENKI_NODE_API_KEY,
     ENKI_REFERENTIEL_API_KEY,
-    ENKI_LIGHTS_API_KEY,
     ENKI_AIRFLOW_API_KEY,
     ENKI_POWER_API_KEY,
-    ENKI_TEMPERATURE_HUMIDITY_API_KEY,
     ENKI_BATTERY_HEALTH_API_KEY)
 
 proxy = None
@@ -50,7 +52,7 @@ class API:
     async def check_connected(self) -> bool:
         """Tell if token is still valid"""
         if not hasattr(self, '_access_token') or time.time()>self._tokenExpiresTime:
-             await self.connect()
+            await self.connect()
         return True
 
     async def connect(self) -> bool:
@@ -198,45 +200,50 @@ class API:
         capabilities = _capabilities_set(device)
         possible_values = _possible_values_dict(device)
 
+        # to do, revoir cette partie refresh device
+        home_id = device.get('homeId')
+        node_id = device.get('nodeId')
+
         if _supports_light_state(capabilities, possible_values):
             await self._refresh_lights_device(device)
 
         if _supports_electrical_power(capabilities, possible_values):
-            power_details = await self.get_electrical_power_details(device.get("homeId"), device.get("nodeId"))
+            power_details = await self.get_electrical_power_details(home_id, node_id)
             self.merge_properties(device, {
                 "electricalPower": power_details.get("lastReportedValue"),
                 "electricalEndpoints": power_details.get("endpoints", []),
             })
 
         if _supports_fan_speed(capabilities, possible_values):
-            fan_speed = await self.get_fan_speed(device.get("homeId"), device.get("nodeId"))
+            fan_speed = await self.get_fan_speed(home_id, node_id)
             self.merge_properties(device, {"fanSpeed": fan_speed})
 
         if _supports_fan_rotation_direction(capabilities, possible_values):
-            fan_rotation = await self.get_fan_rotation_direction(device.get("homeId"), device.get("nodeId"))
+            fan_rotation = await self.get_fan_rotation_direction(home_id, node_id)
             self.merge_properties(device, {"fanRotationDirection": fan_rotation})
 
         if _supports_airflow_mode(capabilities, possible_values):
-            airflow_mode = await self.get_airflow_mode(device.get("homeId"), device.get("nodeId"))
+            airflow_mode = await self.get_airflow_mode(home_id, node_id)
             self.merge_properties(device, {"airflowMode": airflow_mode})
 
         if 'check_current_temperature' in capabilities or 'check_current_temperature' in possible_values:
-            temperature = await self.get_temperature(device.get("homeId"), device.get("nodeId"))
-            self.merge_properties(device, {"temperatureValue": temperature})
+            temperature = await self.query_endpoint(home_id, node_id, ENKI_CHECK_CURRENT_TEMPERATURE)
+            self.merge_properties(device, {"check_current_temperature": temperature.get('lastReportedValue')})
 
         if 'check_current_humidity' in capabilities or 'check_current_humidity' in possible_values:
-            humidity = await self.get_humidity(device.get("homeId"), device.get("nodeId"))
-            self.merge_properties(device, {"humidityValue": humidity})
+            humidity = await self.query_endpoint(home_id, node_id, ENKI_CHECK_CURRENT_HUMIDITY)
+            self.merge_properties(device, {"check_current_humidity": humidity.get('lastReportedValue')})
 
         if "check_battery_health" in capabilities or "check_battery_health" in possible_values:
-            battery_health = await self._check_battery_health(device.get("homeId"), device.get("nodeId"))
+            battery_health = await self._check_battery_health(home_id, node_id)
             self.merge_properties(device, {"batteryHealthValue": battery_health})
         return device
 
     async def _refresh_lights_device(self, device: dict[str, Any]) -> None:
         """Refresh state for standard light devices."""
-        light_details = await self.get_light_details(device.get("homeId"), device.get("nodeId"))
-        self.merge_properties(device, light_details)
+        light_details = await self.query_endpoint(device.get("homeId"), device.get("nodeId"), ENKI_CHECK_LIGHT_STATE)
+        LOGGER.debug(f"light details >>>>> {light_details}")
+        self.merge_properties(device, light_details.get('lastReportedValue'))
 
     async def get_node(self, home_id, node_id):
         """Get details on a node."""
@@ -248,7 +255,6 @@ class API:
                     "X-Gateway-APIKey": ENKI_NODE_API_KEY,
                     "homeId": f"{home_id}"},
             proxy=proxy,) as resp:
-
                 if resp.status == 200:
                     response = await resp.json()
                     LOGGER.debug("get_node : " + str(response))
@@ -284,76 +290,65 @@ class API:
                         return {}
                     LOGGER.error("Error on get_device. status %s, response %s", resp.status, str(response))
                     raise ValueError("bad credentials")
+                
+    def get_api_name(self, capability: ENKI_CAPABILITIY):
+        if capability.api_name:
+            return capability.api_name
+        if capability.name is None:
+            return None
+        return capability.name.replace('_', '-')
+    
+    def get_method(self, capability: ENKI_CAPABILITIY):
+        if capability.method:
+            return capability.method
+        if capability.name.__contains__('check'):
+            return 'get'
+        if capability.name.__contains__('change'):
+            return 'post'
+        return ''
+    
+    def get_capability_full_endpoint(self, capability: ENKI_CAPABILITIY, home_id: str, node_id: str):
+        endpoint_path = capability.endpoint.path
+        endpoint_path = endpoint_path.replace('<capability>', self.get_api_name(capability))
+        endpoint_path = endpoint_path.replace('<home_id>', home_id)
+        endpoint_path = endpoint_path.replace('<node_id>', node_id)
+        return f"{ENKI_URL}{endpoint_path}"
 
-    async def get_light_details(self,home_id, node_id):
-         """Get light state"""
-         await self.check_connected()
-         async with aiohttp.ClientSession() as session, session.request(
-             method="GET",
-             url=f"{ENKI_URL}/api-enki-lighting-prod/v1/lighting/{node_id}/check-light-state",
+    async def query_endpoint(self, home_id: str, node_id: str, capability: ENKI_CAPABILITIY, data: dict | None = None, get_previous_value: ENKI_CAPABILITIY | None = None):
+        await self.check_connected()
+        endpoint_url = self.get_capability_full_endpoint(capability, home_id, node_id)
+
+        if get_previous_value is not None and data is not None:
+            new_data = (await self.query_endpoint(home_id, node_id, get_previous_value)).get("lastReportedValue", {})
+            new_data.update(data)
+            data = new_data
+
+        method = self.get_method(capability)
+        LOGGER.debug(f"{endpoint_url}, {capability}, {data}, {method}")
+        async with aiohttp.ClientSession() as session, session.request(
+             method=method,
+             url=endpoint_url,
              headers={"Authorization": f"{self._token_type} {self._access_token}",
                       "homeId": home_id,
-                      "X-Gateway-APIKey": ENKI_LIGHTS_API_KEY},
-             proxy=proxy,) as resp:
-
-                if resp.status == 200:
-                    response = await resp.json()
-                    LOGGER.debug("get_light_details : " + str(response))
+                      "X-Gateway-APIKey": capability.endpoint.x_api_key},
+             proxy=proxy,
+             json=data) as resp:
+                if resp.ok:
+                    if method == 'get':
+                        response = await resp.json()
+                    else:
+                        response = await resp.text()
                     return response
-
+                    
                 else:
                     response = await resp.text()
                     if resp.status == 404:
-                        LOGGER.warning("Light details not found on get_light_details. status %s, response %s", resp.status, str(response))
+                        # to do log
                         return {}
-                    LOGGER.error("Error on get_light_details. status %s, response %s", resp.status, str(response))
-                    raise ValueError("bad credentials")
-
-    async def change_light_state(self, home_id, node_id, updated_values: dict):
-        await self.check_connected()
-        
-        data = (await self.get_light_details(home_id, node_id))["lastReportedValue"]
-        data.update(updated_values)
-        
-        async with aiohttp.ClientSession() as session, session.request(
-            method="POST",
-            url=f"{ENKI_URL}/api-enki-lighting-prod/v1/lighting/{node_id}/change-light-state",
-            headers={"Authorization": f"{self._token_type} {self._access_token}",
-                    "homeId": home_id,
-                    "X-Gateway-APIKey": ENKI_LIGHTS_API_KEY},
-            proxy=proxy,
-            json=data) as resp:
-
-                if resp.status != 202:
-                    response = await resp.text()
-                    LOGGER.debug(resp.status)
-                    LOGGER.error("Error on change_light_state. status %s, response %s", resp.status, str(response))
-                    raise ValueError("bad credentials")
-
-    async def _check_temperature_humidity_value(self, home_id, node_id, endpoint):
-        """Read temperature and humidity values from one check endpoint."""
-        await self.check_connected()
-        async with aiohttp.ClientSession() as session, session.request(
-            method="GET",
-            url=f"{ENKI_URL}/api-enki-temperature-humidity-sensor-prod/v1/sensors/{node_id}/{endpoint}",
-            headers={
-                "Authorization": f"{self._token_type} {self._access_token}",
-                "homeId": home_id,
-                "X-Gateway-APIKey": ENKI_TEMPERATURE_HUMIDITY_API_KEY,
-            },
-            proxy=proxy,
-        ) as resp:
-            if resp.status == 200:
-                response = await resp.json()
-                return response.get("lastReportedValue")
-
-            response = await resp.text()
-            if resp.status == 404:
-                LOGGER.warning("Sensor endpoint not found on %s. status %s, response %s", endpoint, resp.status, str(response))
-                return None
-            LOGGER.error("Error on sensor check %s. status %s, response %s", endpoint, resp.status, str(response))
-            raise ValueError("bad credentials")
-
+                    # to do meilleur retour
+                    LOGGER.error(f"Error on {capability.name}. status {resp.status}, response {str(response)}")
+                    raise ValueError("bad credentials") # to do, revoir cette valeur de retour
+    
     async def _check_airflow_value(self, home_id, node_id, endpoint):
         """Read airflow value from one check endpoint."""
         await self.check_connected()
@@ -527,14 +522,6 @@ class API:
     async def change_airflow_mode(self, home_id, node_id, value):
         """Set airflow mode."""
         await self._change_airflow_value(home_id, node_id, "change-airflow-mode", value)
-
-    async def get_temperature(self, home_id, node_id):
-        """Get temperature value."""
-        return await self._check_temperature_humidity_value(home_id, node_id, "check-current-temperature")
-
-    async def get_humidity(self, home_id, node_id):
-        """Get humidity value."""
-        return await self._check_temperature_humidity_value(home_id, node_id, "check-current-humidity")
 
 # *******************************************************
 
