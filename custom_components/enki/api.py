@@ -112,6 +112,7 @@ class API:
                     raise ValueError("bad credentials")
 
     def merge_properties(self, device: dict[str, Any], properties: dict[str, Any] | None) -> None:
+        LOGGER.debug('updateing properties for device')
         if not properties:
             return
         for prop in properties:
@@ -147,7 +148,6 @@ class API:
                 devices = []
                 if resp.status == 200:
                     response = await resp.json()
-                    LOGGER.debug("get_items_in_section_for_home : " + str(response))
                     for section in response["sections"]:
                         for item in section["items"]:
                             if 'deviceId' not in item["metadata"].keys():
@@ -177,8 +177,6 @@ class API:
                             self.merge_properties(device, node_info)
 
                             await self.refresh_node(device)
-
-                            LOGGER.debug("device : " + repr(device))
                     return devices
                   
                 else:
@@ -189,11 +187,15 @@ class API:
     async def refresh_node(self, device): 
         """Update device details"""
 
+        home_id = device.get('homeId', None)
+        node_id = device.get('nodeId', None)
+        
+        node_info = await self.get_node(home_id, node_id)
+        self.merge_properties(device, node_info)
+
         if not device.get("isEnabled"):
             return device
         
-        node_info = await self.get_node(device.get("homeId"), device.get("nodeId"))
-        self.merge_properties(device, node_info)
         device_info = await self.get_device(device.get("deviceId"))
         self.merge_properties(device, device_info)
 
@@ -201,11 +203,9 @@ class API:
         possible_values = _possible_values_dict(device)
 
         # to do, revoir cette partie refresh device
-        home_id = device.get('homeId')
-        node_id = device.get('nodeId')
-
         if _supports_light_state(capabilities, possible_values):
-            await self._refresh_lights_device(device)
+            light_details = await self.query_endpoint(device.get("homeId"), device.get("nodeId"), ENKI_CHECK_LIGHT_STATE)
+            self.merge_properties(device, light_details)
 
         if _supports_electrical_power(capabilities, possible_values):
             power_details = await self.get_electrical_power_details(home_id, node_id)
@@ -239,12 +239,6 @@ class API:
             self.merge_properties(device, {"batteryHealthValue": battery_health})
         return device
 
-    async def _refresh_lights_device(self, device: dict[str, Any]) -> None:
-        """Refresh state for standard light devices."""
-        light_details = await self.query_endpoint(device.get("homeId"), device.get("nodeId"), ENKI_CHECK_LIGHT_STATE)
-        LOGGER.debug(f"light details >>>>> {light_details}")
-        self.merge_properties(device, light_details.get('lastReportedValue'))
-
     async def get_node(self, home_id, node_id):
         """Get details on a node."""
         await self.check_connected()
@@ -257,7 +251,6 @@ class API:
             proxy=proxy,) as resp:
                 if resp.status == 200:
                     response = await resp.json()
-                    LOGGER.debug("get_node : " + str(response))
                     return response
 
                 else:
@@ -280,7 +273,6 @@ class API:
 
                 if resp.status == 200:
                     response = await resp.json()
-                    LOGGER.debug("get_device : " + str(response))
                     return response
 
                 else:
