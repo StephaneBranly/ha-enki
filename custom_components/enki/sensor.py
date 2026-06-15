@@ -59,7 +59,7 @@ class EnkiSensor(EnkiBaseEntity, SensorEntity):
     @property
     def native_value(self) -> float | None:
         """Return the sensor value."""
-        value = self.coordinator.get_device_parameter(self.node_id, self._key)
+        value = self.coordinator.get_device_parameter(self.node_id, self._key).get('lastReportedValue', None)
         if value is None:
             return None
         try:
@@ -88,7 +88,6 @@ def _build_sensor_entities(coordinator: EnkiCoordinator, device: dict[str, Any])
         {
             'capability': ENKI_CHECK_CURRENT_HUMIDITY,
             'parameter': 'humidity',
-            'key': 'humidityValue',
             'unit': "%",
             'device_class': SensorDeviceClass.HUMIDITY,
             'state_class': SensorStateClass.MEASUREMENT,
@@ -96,7 +95,6 @@ def _build_sensor_entities(coordinator: EnkiCoordinator, device: dict[str, Any])
         {
             'capability': ENKI_CHECK_CURRENT_TEMPERATURE,
             'parameter': 'temperature',
-            'key': 'temperatureValue',
             'unit': "°C",
             'device_class': SensorDeviceClass.TEMPERATURE,
             'state_class': SensorStateClass.MEASUREMENT,
@@ -122,14 +120,14 @@ def _build_sensor_entities(coordinator: EnkiCoordinator, device: dict[str, Any])
     sensors = []
 
     for cap in supported_sensor_capabilities:
-        if cap['capability'] not in capabilities:
+        if cap['capability'].name not in capabilities:
             continue
         sensors.append(
             EnkiSensor(
                 coordinator,
                 device,
                 parameter=cap['parameter'],
-                key=cap['key'],
+                key=cap['capability'].name,
                 unit=cap['unit'],
                 device_class=cap['device_class'],
                 state_class=cap['state_class'],

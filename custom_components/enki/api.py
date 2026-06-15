@@ -11,10 +11,7 @@ import time
 import re
 
 from .const import (
-    ENKI_CAPABILITIY,
-    ENKI_CHECK_CURRENT_HUMIDITY,
-    ENKI_CHECK_CURRENT_TEMPERATURE,
-    ENKI_CHECK_LIGHT_STATE,
+    ENKI_CAPABILITY,
     LOGGER,
     ENKI_OIDC_URL,
     ENKI_URL,
@@ -202,11 +199,14 @@ class API:
         capabilities = _capabilities_set(device)
         possible_values = _possible_values_dict(device)
 
-        # to do, revoir cette partie refresh device
-        if _supports_light_state(capabilities, possible_values):
-            light_details = await self.query_endpoint(device.get("homeId"), device.get("nodeId"), ENKI_CHECK_LIGHT_STATE)
-            self.merge_properties(device, light_details)
+        for enki_capability in ENKI_CAPABILITY.__subclasses__():
+            if enki_capability.name in capabilities and self.get_method(enki_capability) == 'get':
+                LOGGER.debug(f"auto check : {enki_capability}")
+                values = await self.query_endpoint(device.get("homeId"), device.get("nodeId"), enki_capability)
+                self.merge_properties(device, {enki_capability.name: values})
 
+
+        # to do, revoir cette partie refresh device
         if _supports_electrical_power(capabilities, possible_values):
             power_details = await self.get_electrical_power_details(home_id, node_id)
             self.merge_properties(device, {
@@ -226,17 +226,9 @@ class API:
             airflow_mode = await self.get_airflow_mode(home_id, node_id)
             self.merge_properties(device, {"airflowMode": airflow_mode})
 
-        if 'check_current_temperature' in capabilities or 'check_current_temperature' in possible_values:
-            temperature = await self.query_endpoint(home_id, node_id, ENKI_CHECK_CURRENT_TEMPERATURE)
-            self.merge_properties(device, {"check_current_temperature": temperature.get('lastReportedValue')})
-
-        if 'check_current_humidity' in capabilities or 'check_current_humidity' in possible_values:
-            humidity = await self.query_endpoint(home_id, node_id, ENKI_CHECK_CURRENT_HUMIDITY)
-            self.merge_properties(device, {"check_current_humidity": humidity.get('lastReportedValue')})
-
-        if "check_battery_health" in capabilities or "check_battery_health" in possible_values:
-            battery_health = await self._check_battery_health(home_id, node_id)
-            self.merge_properties(device, {"batteryHealthValue": battery_health})
+        # if "check_battery_health" in capabilities or "check_battery_health" in possible_values:
+        #     battery_health = await self._check_battery_health(home_id, node_id)
+        #     self.merge_properties(device, {"batteryHealthValue": battery_health})
         return device
 
     async def get_node(self, home_id, node_id):
@@ -283,14 +275,14 @@ class API:
                     LOGGER.error("Error on get_device. status %s, response %s", resp.status, str(response))
                     raise ValueError("bad credentials")
                 
-    def get_api_name(self, capability: ENKI_CAPABILITIY):
+    def get_api_name(self, capability: ENKI_CAPABILITY):
         if capability.api_name:
             return capability.api_name
         if capability.name is None:
             return None
         return capability.name.replace('_', '-')
     
-    def get_method(self, capability: ENKI_CAPABILITIY):
+    def get_method(self, capability: ENKI_CAPABILITY):
         if capability.method:
             return capability.method
         if capability.name.__contains__('check'):
@@ -299,14 +291,14 @@ class API:
             return 'post'
         return ''
     
-    def get_capability_full_endpoint(self, capability: ENKI_CAPABILITIY, home_id: str, node_id: str):
+    def get_capability_full_endpoint(self, capability: ENKI_CAPABILITY, home_id: str, node_id: str):
         endpoint_path = capability.endpoint.path
         endpoint_path = endpoint_path.replace('<capability>', self.get_api_name(capability))
         endpoint_path = endpoint_path.replace('<home_id>', home_id)
         endpoint_path = endpoint_path.replace('<node_id>', node_id)
         return f"{ENKI_URL}{endpoint_path}"
 
-    async def query_endpoint(self, home_id: str, node_id: str, capability: ENKI_CAPABILITIY, data: dict | None = None, get_previous_value: ENKI_CAPABILITIY | None = None):
+    async def query_endpoint(self, home_id: str, node_id: str, capability: ENKI_CAPABILITY, data: dict | None = None, get_previous_value: ENKI_CAPABILITY | None = None):
         await self.check_connected()
         endpoint_url = self.get_capability_full_endpoint(capability, home_id, node_id)
 

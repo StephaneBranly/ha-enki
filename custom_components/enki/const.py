@@ -32,25 +32,25 @@ class ENKI_TEMPERATURE_HUMIDITY_ENDPOINT(ENKI_ENDPOINT):
     path = '/api-enki-temperature-humidity-sensor-prod/v1/sensors/<node_id>/<capability>'
     x_api_key = "V6mMQHQAGNNVwjhuBXlVhQNYzZOxARJ3"
 
-class ENKI_CAPABILITIY:
+class ENKI_CAPABILITY:
     name: str | None = None
     api_name: str | None = None
     method: str | None = None
     endpoint: ENKI_ENDPOINT | None = None
 
 
-class ENKI_CHECK_LIGHT_STATE(ENKI_CAPABILITIY):
+class ENKI_CHECK_LIGHT_STATE(ENKI_CAPABILITY):
     name = 'check_light_state'
     endpoint = ENKI_LIGHTS_ENDPOINT
 
-class ENKI_CHANGE_LIGHT_STATE(ENKI_CAPABILITIY):
+class ENKI_CHANGE_LIGHT_STATE(ENKI_CAPABILITY):
     name = 'change_light_state'
     endpoint = ENKI_LIGHTS_ENDPOINT
 
-class ENKI_CHECK_CURRENT_TEMPERATURE(ENKI_CAPABILITIY):
+class ENKI_CHECK_CURRENT_TEMPERATURE(ENKI_CAPABILITY):
     name = 'check_current_temperature'
     endpoint = ENKI_TEMPERATURE_HUMIDITY_ENDPOINT
 
-class ENKI_CHECK_CURRENT_HUMIDITY(ENKI_CAPABILITIY):
+class ENKI_CHECK_CURRENT_HUMIDITY(ENKI_CAPABILITY):
     name = 'check_current_humidity'
     endpoint = ENKI_TEMPERATURE_HUMIDITY_ENDPOINT
