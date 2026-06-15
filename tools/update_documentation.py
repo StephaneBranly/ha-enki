@@ -2,7 +2,6 @@ import re
 import os
 import json
 import sys
-from pathlib import Path
 
 
 # Add parent directory to path

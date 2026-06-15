@@ -13,7 +13,7 @@ from homeassistant.components.fan import (
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from custom_components.enki.const import ENKI_CHANGE_AIRFLOW_MODE, ENKI_CHANGE_FAN_ROTATION_DIRECTION, ENKI_CHANGE_FAN_SPEED, ENKI_CHECK_AIRFLOW_MODE, ENKI_CHECK_FAN_ROTATION_DIRECTION, ENKI_CHECK_FAN_SPEED
+from custom_components.enki.const import ENKI_CHANGE_AIRFLOW_MODE, ENKI_CHANGE_FAN_ROTATION_DIRECTION, ENKI_CHANGE_FAN_SPEED, ENKI_CHECK_AIRFLOW_MODE, ENKI_CHECK_FAN_ROTATION_DIRECTION, ENKI_CHECK_FAN_SPEED, ENKI_SWITCH_ELECTRICAL_POWER
 
 from . import EnkiConfigEntry
 from .base import EnkiBaseEntity
@@ -103,7 +103,7 @@ class EnkiFan(EnkiBaseEntity, FanEntity):
 
         if not self._supports_speed:
             if self._supports_power:
-                await self.coordinator.api.switch_electrical_power(self.device["homeId"], self.node_id, "ON")
+                await self.coordinator.api.query_endpoint(self.device["homeId"], self.node_id, ENKI_SWITCH_ELECTRICAL_POWER, { "value": 'ON' })
             return
 
         target_percentage = percentage if percentage is not None else 15
@@ -113,7 +113,7 @@ class EnkiFan(EnkiBaseEntity, FanEntity):
         """Turn fan off by setting speed to 0."""
         if not self._supports_speed:
             if self._supports_power:
-                await self.coordinator.api.switch_electrical_power(self.device["homeId"], self.node_id, "OFF")
+                await self.coordinator.api.query_endpoint(self.device["homeId"], self.node_id, ENKI_SWITCH_ELECTRICAL_POWER, { "value": 'OFF' })
             return
 
         await self.coordinator.api.query_endpoint(self.device["homeId"], self.node_id, ENKI_CHANGE_FAN_SPEED, { "value": 0 })

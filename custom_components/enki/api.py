@@ -18,7 +18,6 @@ from .const import (
     ENKI_OIDC_URL,
     ENKI_URL,
     ENKI_REFERENTIEL_API_KEY,
-    ENKI_POWER_API_KEY,
     ENKI_BATTERY_HEALTH_API_KEY)
 
 proxy = None
@@ -178,13 +177,6 @@ class API:
                 self.merge_properties(device, {enki_capability.name: values})
 
         # to do, revoir cette partie refresh device
-        if _supports_electrical_power(capabilities, possible_values):
-            power_details = await self.get_electrical_power_details(home_id, node_id)
-            self.merge_properties(device, {
-                "electricalPower": power_details.get("lastReportedValue"),
-                "electricalEndpoints": power_details.get("endpoints", []),
-            })
-
         # if "check_battery_health" in capabilities or "check_battery_health" in possible_values:
         #     battery_health = await self._check_battery_health(home_id, node_id)
         #     self.merge_properties(device, {"batteryHealthValue": battery_health})
@@ -231,6 +223,8 @@ class API:
         if capability.name.__contains__('check'):
             return 'get'
         if capability.name.__contains__('change'):
+            return 'post'
+        if capability.name.__contains__('switch'):
             return 'post'
         return 'get'
     
@@ -282,29 +276,6 @@ class API:
                     # to do meilleur retour
                     LOGGER.error(f"Error on {capability.name}. status {resp.status}, response {str(response)}")
                     raise ValueError("bad credentials") # to do, revoir cette valeur de retour
-    
-    async def get_electrical_power_details(self, home_id, node_id):
-        """Get electrical power state and endpoint states."""
-        await self.check_connected()
-        async with aiohttp.ClientSession() as session, session.request(
-            method="GET",
-            url=f"{ENKI_URL}/api-enki-power-prod/v1/power/{node_id}/check-electrical-power",
-            headers={
-                "Authorization": f"{self._token_type} {self._access_token}",
-                "homeId": home_id,
-                "X-Gateway-APIKey": ENKI_POWER_API_KEY,
-            },
-            proxy=proxy,
-        ) as resp:
-            if resp.status == 200:
-                return await resp.json()
-
-            response = await resp.text()
-            if resp.status == 404:
-                LOGGER.warning("Power endpoint not found. status %s, response %s", resp.status, str(response))
-                return {}
-            LOGGER.error("Error on power check. status %s, response %s", resp.status, str(response))
-            raise ValueError("bad credentials")
 
     async def _check_battery_health(self, home_id, node_id):
         """Read battery health value from one check endpoint."""
@@ -337,37 +308,6 @@ class API:
                 LOGGER.warning("Sensor endpoint not found on %s. status %s, response %s", resp.status, str(response))
                 return None
             LOGGER.error("Error on sensor check %s. status %s, response %s", resp.status, str(response))
-            raise ValueError("bad credentials")
-
-    async def switch_electrical_power(self, home_id, node_id, value):
-        """Switch electrical power globally."""
-        await self.check_connected()
-        payload = {"value": value}
-
-        LOGGER.info(
-            "Calling switch-electrical-power for node %s (home %s) payload=%s",
-            node_id,
-            home_id,
-            payload,
-        )
-        headers = {
-            "Authorization": f"{self._token_type} {self._access_token}",
-            "X-Gateway-APIKey": ENKI_POWER_API_KEY,
-        }
-        if home_id:
-            headers['homeId'] = home_id
-        async with aiohttp.ClientSession() as session, session.request(
-            method="POST",
-            url=f"{ENKI_URL}/api-enki-power-prod/v1/power/{node_id}/switch-electrical-power",
-            headers=headers,
-            proxy=proxy,
-            json=payload,
-        ) as resp:
-            if resp.status == 202:
-                return
-
-            response = await resp.text()
-            LOGGER.error("Error on power switch. status %s, response %s", resp.status, str(response))
             raise ValueError("bad credentials")
 
 # *******************************************************
@@ -404,12 +344,3 @@ def _possible_values_dict(device: dict[str, Any]) -> dict[str, Any]:
     if isinstance(possible_values, dict):
         return possible_values
     return {}
-
-def _supports_electrical_power(capabilities: set[str], possible_values: dict[str, Any]) -> bool:
-    """Tell whether electrical power check/change exists in metadata."""
-    return (
-        "switch_electrical_power" in capabilities
-        or "check_electrical_power" in capabilities
-        or "switch_electrical_power" in possible_values
-        or "check_electrical_power" in possible_values
-    )

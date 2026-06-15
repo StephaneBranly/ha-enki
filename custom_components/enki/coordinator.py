@@ -12,7 +12,7 @@ from homeassistant.core import DOMAIN, HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .api import API, APIAuthError
-from .const import DEFAULT_SCAN_INTERVAL, LOGGER
+from .const import DEFAULT_SCAN_INTERVAL, ENKI_CAPABILITY, ENKI_CHECK_ELECTRICAL_POWER, LOGGER
 
 class EnkiCoordinator(DataUpdateCoordinator):
     """My Enki coordinator."""
@@ -91,12 +91,27 @@ class EnkiCoordinator(DataUpdateCoordinator):
             # If api did not return any data, you will get TypeError.
             return None
 
-    def get_device_parameter(self, node_id: int, parameter: str) -> Any:
+    def get_device_parameter(self, node_id: str, parameter: str) -> Any:
         """Get the parameter value of one of our devices from our api data."""
         if device := self.get_node(node_id):
             return device.get(parameter)
+        
+    def get_device_capability_parameter(self, node_id: str, capability: ENKI_CAPABILITY, parameter: str | None = None, in_last_reported_value: bool = True):
+        if not (device := self.get_node(node_id)):
+            return
+        dc = device.get(capability.name, None)
+        if not dc:
+            return
+        if in_last_reported_value:
+            dc = dc.get('lastReportedValue', None)
+        if not dc:
+            return
+        if not parameter:
+            return dc
+        return dc.get(parameter, None)
+            
     
-    def update_data(self, node_id: int, updated_values: dict[str, Any]) -> None:
+    def update_data(self, node_id: str, updated_values: dict[str, Any]) -> None:
         """Update device attribute.
 
         Support nested dictionaries so we can merge dict of dict updates into
@@ -121,7 +136,7 @@ class EnkiCoordinator(DataUpdateCoordinator):
     def update_endpoint_power(self, node_id: int, endpoint_id: int, power: str) -> None:
         """Optimistically update power state for a specific electricalEndpoints entry."""
         device = self.get_node(node_id)
-        endpoints = device.get("electricalEndpoints")
+        endpoints = device.get(ENKI_CHECK_ELECTRICAL_POWER.name).get('endpoints', [])
         if isinstance(endpoints, list):
             for ep in endpoints:
                 if not isinstance(ep, dict):

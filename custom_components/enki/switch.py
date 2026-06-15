@@ -15,7 +15,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from . import EnkiConfigEntry
 from .base import EnkiBaseEntity
 from .coordinator import EnkiCoordinator
-from .const import LOGGER
+from .const import ENKI_CHECK_ELECTRICAL_POWER, ENKI_SWITCH_ELECTRICAL_POWER, LOGGER
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -52,20 +52,21 @@ class EnkiSwitch(EnkiBaseEntity, SwitchEntity):
     @property
     def is_on(self) -> bool | None:
         """Return if outlet is on."""
-        power = self.coordinator.get_device_parameter(self.node_id, "electricalPower")
+        power = self.coordinator.get_device_capability_parameter(self.node_id, ENKI_CHECK_ELECTRICAL_POWER)
         if isinstance(power, str):
             return power == "ON"
         return None
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         LOGGER.debug('turn on')
-        await self.coordinator.api.switch_electrical_power(self._device["homeId"], self._device["nodeId"], "ON")
-        self.coordinator.update_data(self.node_id, {"electricalPower": 'ON'})
+        await self.coordinator.api.query_endpoint(self.device["homeId"], self.node_id, ENKI_SWITCH_ELECTRICAL_POWER, { "value": 'ON' })
+
+        self.coordinator.update_data(self.node_id, {ENKI_CHECK_ELECTRICAL_POWER.name: {"lastReportedValue": 'ON'}})
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         LOGGER.debug('turn on')
-        await self.coordinator.api.switch_electrical_power(self._device["homeId"], self._device["nodeId"], "OFF")
-        self.coordinator.update_data(self.node_id, {"electricalPower": "OFF"})
+        await self.coordinator.api.query_endpoint(self.device["homeId"], self.node_id, ENKI_SWITCH_ELECTRICAL_POWER, { "value": 'OFF' })
+        self.coordinator.update_data(self.node_id,{ENKI_CHECK_ELECTRICAL_POWER.name: {"lastReportedValue": 'OFF'}})
 
 def _build_switch_entities(coordinator: EnkiCoordinator, device: dict[str, Any]) -> list[EnkiSwitch]:
     """Create power production sensor for inverter devices."""

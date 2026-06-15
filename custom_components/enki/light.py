@@ -11,7 +11,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from . import EnkiConfigEntry
 from .base import EnkiBaseEntity
 from .coordinator import EnkiCoordinator
-from .const import ENKI_CHANGE_LIGHT_STATE, ENKI_CHECK_LIGHT_STATE, LOGGER
+from .const import ENKI_CHANGE_LIGHT_STATE, ENKI_CHECK_ELECTRICAL_POWER, ENKI_CHECK_LIGHT_STATE, LOGGER
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -116,7 +116,7 @@ class EnkiLight(EnkiBaseEntity, LightEntity):
     def is_on(self) -> bool | None:
         """Return if the binary sensor is on."""
         if self._endpoint_id is not None:
-            endpoints = self.coordinator.get_device_parameter(self.node_id, "electricalEndpoints")
+            endpoints = self.coordinator.get_device_parameter(self.node_id, ENKI_CHECK_ELECTRICAL_POWER.name).get('endpoints', [])
             if isinstance(endpoints, list):
                 for ep in endpoints:
                     if not isinstance(ep, dict):
@@ -149,7 +149,7 @@ class EnkiLight(EnkiBaseEntity, LightEntity):
         if len(endpoint_ids) <= 1:
             return False
 
-        endpoints = self.coordinator.get_device_parameter(self.node_id, "electricalEndpoints")
+        endpoints = self.coordinator.get_device_parameter(self.node_id, ENKI_CHECK_ELECTRICAL_POWER.name).get('endpoints', [])
         if not isinstance(endpoints, list):
             return False
 
@@ -307,11 +307,6 @@ def _build_light_entities(coordinator: EnkiCoordinator, device: dict[str, Any]) 
         ]
 
     return [EnkiLight(coordinator, device, parameter="light", endpoint_id=None)]
-
-
-def _has_switch_electrical_power(device: dict[str, Any]) -> bool:
-    """Check whether the device supports switch_electrical_power capability."""
-    return "switch_electrical_power" in _capabilities_set(device)
 
 def _has_check_light_state(device: dict[str, Any]) -> bool:
     """Check whether the device supports switch_electrical_power capability."""

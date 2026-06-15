@@ -13,7 +13,6 @@ DEFAULT_SCAN_INTERVAL = 60
 ENKI_OIDC_URL = "https://keycloak-prod.iot.leroymerlin.fr/realms/enki/protocol/openid-connect/token"
 ENKI_URL = "https://enki.api.devportal.adeo.cloud"
 ENKI_REFERENTIEL_API_KEY = "3uk9rlaIUgBsz1tEPV7GQMhhGfRwPFJY"
-ENKI_POWER_API_KEY = "DZ9MSuTT7sQxJWxxkBokAGvIt57qVl9N"
 ENKI_BATTERY_HEALTH_API_KEY = "WcydJ76nQUo8AiwkV05kn3kiNyM31b3M"
 
 class ENKI_ENDPOINT:
@@ -110,3 +109,17 @@ class ENKI_CHANGE_FAN_ROTATION_DIRECTION(ENKI_CAPABILITY):
 class ENKI_CHANGE_AIRFLOW_MODE(ENKI_CAPABILITY):
     name = 'change_airflow_mode'
     endpoint = ENKI_AIRFLOW_ENDPOINT
+
+### POWER
+
+class ENKI_POWER_ENDPOINT(ENKI_ENDPOINT):
+    path = '/api-enki-power-prod/v1/power/<node_id>/<capability>'
+    x_api_key = 'DZ9MSuTT7sQxJWxxkBokAGvIt57qVl9N'
+
+class ENKI_SWITCH_ELECTRICAL_POWER(ENKI_CAPABILITY):
+    name = 'switch-electrical-power'
+    endpoint = ENKI_POWER_ENDPOINT
+
+class ENKI_CHECK_ELECTRICAL_POWER(ENKI_CAPABILITY):
+    name = 'check-electrical-power'
+    endpoint = ENKI_POWER_ENDPOINT
