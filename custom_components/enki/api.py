@@ -18,7 +18,7 @@ from .const import (
     ENKI_OIDC_URL,
     ENKI_URL,
     ENKI_REFERENTIEL_API_KEY,
-    ENKI_BATTERY_HEALTH_API_KEY)
+)
 
 proxy = None
 
@@ -168,7 +168,7 @@ class API:
         self.merge_properties(device, device_info)
 
         capabilities = _capabilities_set(device)
-        possible_values = _possible_values_dict(device)
+        # possible_values = _possible_values_dict(device)
 
         for enki_capability in ENKI_CAPABILITY.__subclasses__():
             if enki_capability.name in capabilities and self.get_method(enki_capability) == 'get':
@@ -176,10 +176,6 @@ class API:
                 values = await self.query_endpoint(device.get("homeId"), device.get("nodeId"), enki_capability)
                 self.merge_properties(device, {enki_capability.name: values})
 
-        # to do, revoir cette partie refresh device
-        # if "check_battery_health" in capabilities or "check_battery_health" in possible_values:
-        #     battery_health = await self._check_battery_health(home_id, node_id)
-        #     self.merge_properties(device, {"batteryHealthValue": battery_health})
         return device
 
     async def get_node(self, home_id, node_id):
@@ -229,7 +225,7 @@ class API:
         return 'get'
     
     def get_full_endpoint(self, capability: ENKI_CAPABILITY, home_id: str | None, node_id: str | None):
-        endpoint_path = capability.endpoint.path
+        endpoint_path = capability.path
         if capability_name := self.get_api_name(capability):
             endpoint_path = endpoint_path.replace('<capability>', capability_name)
         if home_id:
@@ -251,7 +247,7 @@ class API:
         LOGGER.debug(f"{endpoint_url}, {capability}, {data}, {method}")
         headers = {
             "Authorization": f"{self._token_type} {self._access_token}",
-            "X-Gateway-APIKey": capability.endpoint.x_api_key,
+            "X-Gateway-APIKey": capability.x_api_key,
         }
         if home_id:
             headers['homeId'] = home_id
@@ -276,39 +272,6 @@ class API:
                     # to do meilleur retour
                     LOGGER.error(f"Error on {capability.name}. status {resp.status}, response {str(response)}")
                     raise ValueError("bad credentials") # to do, revoir cette valeur de retour
-
-    async def _check_battery_health(self, home_id, node_id):
-        """Read battery health value from one check endpoint."""
-        await self.check_connected()
-        async with aiohttp.ClientSession() as session, session.request(
-            method="GET",
-            url=f"{ENKI_URL}/api-enki-battery-health-prod/v1/sensors/{node_id}/check-battery-health",
-            headers={
-                "Authorization": f"{self._token_type} {self._access_token}",
-                "homeId": home_id,
-                "X-Gateway-APIKey": ENKI_BATTERY_HEALTH_API_KEY,
-            },
-            proxy=proxy,
-        ) as resp:
-            if resp.status == 200:
-                response = await resp.json()
-                value = response.get("lastReportedValue")
-                LOGGER.debug("Battery health value : %s", response)
-                return {
-                    "GOOD": 80,
-                    "LOW": 30,
-                    "LOW_INTERNAL_BATTERY_OF_DEVICE": 30,
-                    "REPLACE": 1,
-                    "UNKNOWN": None,
-                    "CRITICAL": 5
-                }.get(value, None)
-
-            response = await resp.text()
-            if resp.status == 404:
-                LOGGER.warning("Sensor endpoint not found on %s. status %s, response %s", resp.status, str(response))
-                return None
-            LOGGER.error("Error on sensor check %s. status %s, response %s", resp.status, str(response))
-            raise ValueError("bad credentials")
 
 # *******************************************************
 
