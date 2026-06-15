@@ -20,7 +20,6 @@ async def async_setup_entry(
 ):
     """Set up the Binary Sensors."""
     coordinator: EnkiCoordinator = config_entry.runtime_data.coordinator
-    LOGGER.debug(f"coordinator {coordinator.data}")
     lights = [
         entity
         for device in coordinator.data
@@ -132,6 +131,7 @@ class EnkiLight(EnkiBaseEntity, LightEntity):
 
         # Fallback for devices without per-endpoint status shape.
         last_reported_values = self.extract_light_state()
+        import json
         if isinstance(last_reported_values, dict):
             power = last_reported_values.get("power")
             return power == "ON" if power is not None else None
@@ -192,7 +192,8 @@ class EnkiLight(EnkiBaseEntity, LightEntity):
             )
 
     def extract_light_state(self):
-        return self.coordinator.get_device_parameter(self.node_id, ENKI_CHECK_LIGHT_STATE.name).get("lastReportedValue", {})
+        state = self.coordinator.get_device_parameter(self.node_id, ENKI_CHECK_LIGHT_STATE.name).get("lastReportedValue", {})
+        return state
 
 
     async def async_turn_on(self, **kwargs: Any) -> None:
@@ -235,7 +236,7 @@ class EnkiLight(EnkiBaseEntity, LightEntity):
 
         self.update_data_power_light_endpoints("ON")
         await self.coordinator.api.query_endpoint(self._device["homeId"], self._device["nodeId"], ENKI_CHANGE_LIGHT_STATE, changes, ENKI_CHECK_LIGHT_STATE)
-        self.coordinator.update_data(self.node_id, {ENKI_CHANGE_LIGHT_STATE.name: {"lastReportedValue": changes}})
+        self.coordinator.update_data(self.node_id, {ENKI_CHECK_LIGHT_STATE.name: {"lastReportedValue": changes}})
         
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the entity off."""
@@ -244,7 +245,7 @@ class EnkiLight(EnkiBaseEntity, LightEntity):
         # for all light entities regardless of whether they have an endpoint_id. This will turn off
         # all the lights but at least will not turn off the fan or other non-light endpoints.
         await self.coordinator.api.query_endpoint(self._device["homeId"], self._device["nodeId"], ENKI_CHANGE_LIGHT_STATE, {"power": "OFF"}, ENKI_CHECK_LIGHT_STATE)
-        self.coordinator.update_data(self.node_id, {ENKI_CHANGE_LIGHT_STATE.name: {"lastReportedValue": {"power": "OFF"}}})
+        self.coordinator.update_data(self.node_id, {ENKI_CHECK_LIGHT_STATE.name: {"lastReportedValue": {"power": "OFF"}}})
         self.update_data_power_light_endpoints("OFF")
 
     @property
@@ -253,7 +254,6 @@ class EnkiLight(EnkiBaseEntity, LightEntity):
         
         last_reported_values = self.extract_light_state()
         if "brightness" not in last_reported_values:
-            LOGGER.debug("brightness not found in last_reported_values")
             return None
         return int(last_reported_values['brightness']*255/self.BRIGHTNESS_SCALE[1])
     
@@ -282,7 +282,6 @@ class EnkiLight(EnkiBaseEntity, LightEntity):
     @property
     def color_mode(self):
         last_reported_values = self.extract_light_state()
-        LOGGER.debug(f'color mode {last_reported_values}')
         capabilities = _capabilities_set(self.device)
         color_mode = last_reported_values.get('colorMode', None)
         if color_mode == 'hs':

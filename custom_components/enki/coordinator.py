@@ -114,6 +114,8 @@ class EnkiCoordinator(DataUpdateCoordinator):
                     target[key] = value
 
         _merge_dicts(device, updated_values)
+        import json
+        LOGGER.info(f'updated data >>> {json.dumps(device)}')
         self.async_set_updated_data(self.data)
 
     def update_endpoint_power(self, node_id: int, endpoint_id: int, power: str) -> None:
