@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import aiohttp
 import asyncio
-import logging
 from dataclasses import dataclass
 from typing import Any
 import time
@@ -345,13 +344,6 @@ class API:
         await self.check_connected()
         payload = {"value": value}
 
-        before_state = None
-        if LOGGER.isEnabledFor(logging.DEBUG):
-            try:
-                before_state = await self.get_electrical_power_details(home_id, node_id)
-            except Exception as err:
-                before_state = {"error": repr(err)}
-
         LOGGER.info(
             "Calling switch-electrical-power for node %s (home %s) payload=%s",
             node_id,
@@ -420,34 +412,4 @@ def _supports_electrical_power(capabilities: set[str], possible_values: dict[str
         or "check_electrical_power" in capabilities
         or "switch_electrical_power" in possible_values
         or "check_electrical_power" in possible_values
-    )
-
-
-def _supports_fan_speed(capabilities: set[str], possible_values: dict[str, Any]) -> bool:
-    """Tell whether fan speed control exists in metadata."""
-    return (
-        "change_fan_speed" in capabilities
-        or "check_fan_speed" in capabilities
-        or "change_fan_speed" in possible_values
-        or "check_fan_speed" in possible_values
-    )
-
-
-def _supports_fan_rotation_direction(capabilities: set[str], possible_values: dict[str, Any]) -> bool:
-    """Tell whether fan rotation direction exists in metadata."""
-    return (
-        "change_fan_rotation_direction" in capabilities
-        or "check_fan_rotation_direction" in capabilities
-        or "change_fan_rotation_direction" in possible_values
-        or "check_fan_rotation_direction" in possible_values
-    )
-
-
-def _supports_airflow_mode(capabilities: set[str], possible_values: dict[str, Any]) -> bool:
-    """Tell whether airflow mode exists in metadata."""
-    return (
-        "change_airflow_mode" in capabilities
-        or "check_airflow_mode" in capabilities
-        or "change_airflow_mode" in possible_values
-        or "check_airflow_mode" in possible_values
     )

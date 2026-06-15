@@ -17,14 +17,15 @@ ENKI_POWER_API_KEY = "DZ9MSuTT7sQxJWxxkBokAGvIt57qVl9N"
 ENKI_BATTERY_HEALTH_API_KEY = "WcydJ76nQUo8AiwkV05kn3kiNyM31b3M"
 
 class ENKI_ENDPOINT:
-    path: str | None = None
-    x_api_key: str | None = None
+    path: str = None
+    x_api_key: str = None
 
 class ENKI_CAPABILITY:
-    name: str | None = None
-    api_name: str | None = None
-    method: str | None = None
-    endpoint: ENKI_ENDPOINT | None = None
+    name: str = None
+    api_name: str = None
+    method: str = None
+    endpoint: ENKI_ENDPOINT = None
+    coverage: int = 100
 
 
 ### HOME

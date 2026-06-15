@@ -131,7 +131,6 @@ class EnkiLight(EnkiBaseEntity, LightEntity):
 
         # Fallback for devices without per-endpoint status shape.
         last_reported_values = self.extract_light_state()
-        import json
         if isinstance(last_reported_values, dict):
             power = last_reported_values.get("power")
             return power == "ON" if power is not None else None

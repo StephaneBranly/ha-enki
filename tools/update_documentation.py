@@ -1,10 +1,15 @@
 import re
 import os
 import json
+import sys
 from pathlib import Path
 
+
 # Add parent directory to path
-os.chdir(Path(__file__).parent.parent)
+sys.path.insert(1, os.path.join(sys.path[0], '../custom_components/enki'))
+from const import ENKI_CAPABILITY
+
+
 # Lire le contenu du fichier
 with open("README.md", "r", encoding="utf-8") as f:
     content = f.read()
@@ -19,26 +24,26 @@ def update_anchor(current_page: str, tag: str, new_content: str) -> str:
 
     return updated_page
 
-def compute_coverage(device: dict[str, any], capabilities: dict[str, any]) -> int:
+def compute_coverage(device: dict[str, any], capabilities: list[ENKI_CAPABILITY]) -> int:
     dcs = device.get('capabilities', [])
     coverage = 0
     if not (len(dcs)):
         return 100
     
     for dc in dcs:
-        coverage+=capabilities.get(dc,{}).get('coverage',0) 
+        caps = [cap for cap in capabilities if cap.name == dc]
+        if len(caps):
+            coverage+=caps[0].coverage
     return int(coverage/len(dcs))
 
-
-with open('./doc/capabilities.json') as c:
-    capabilities = json.load(c)
+capabilities = ENKI_CAPABILITY.__subclasses__()
 
 supported_capabilities = '| Capability | Coverage (%) |\n|---|---|\n'
-for capabilitiy, detail in capabilities.items():
-    if not (coverage:=detail.get('coverage', 0)):
+for capability in capabilities:
+    if not (coverage:=capability.coverage):
         continue
-
-    supported_capabilities += f"|{capabilitiy}|![{coverage}%](https://progress-bar.xyz/{coverage})|\n"
+    name = capability.name if capability.name else str(capability.__name__)
+    supported_capabilities += f"|{name}|![{coverage}%](https://progress-bar.xyz/{coverage})|\n"
 
 supported_devices = '| Name | Image | Id | Coverage (%) | Tested |\n|---|---|---|---|---|\n'
 for device_name in os.listdir('./doc/devices'):
