@@ -27,6 +27,7 @@ class EnkiCoordinator(DataUpdateCoordinator):
         self.pwd = config_entry.data[CONF_PASSWORD]
 
         # read polling interval from config entry data, falling back to default
+        # to do, change poll_interval depending on type of device (ie detectors / sensors)
         self.poll_interval = config_entry.data.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
 
         # Initialise DataUpdateCoordinator

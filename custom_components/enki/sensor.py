@@ -95,6 +95,7 @@ def _build_sensor_entities(coordinator: EnkiCoordinator, device: dict[str, Any])
             'device_class': SensorDeviceClass.TEMPERATURE,
             'state_class': SensorStateClass.MEASUREMENT,
         },
+       
         # {
         #     'capability': 'check_electrical_consumption',
         #     'parameter': 'electrical_consumption',

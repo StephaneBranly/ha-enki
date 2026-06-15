@@ -92,7 +92,6 @@ class API:
         return homes
 
     def merge_properties(self, device: dict[str, Any], properties: dict[str, Any] | None) -> None:
-        LOGGER.debug('updating properties for device')
         if not properties:
             return
         for prop in properties:
@@ -172,7 +171,6 @@ class API:
 
         for enki_capability in ENKI_CAPABILITY.__subclasses__():
             if enki_capability.name in capabilities and self.get_method(enki_capability) == 'get':
-                LOGGER.debug(f"auto check : {enki_capability}")
                 values = await self.query_endpoint(device.get("homeId"), device.get("nodeId"), enki_capability)
                 self.merge_properties(device, {enki_capability.name: values})
 
@@ -244,7 +242,7 @@ class API:
             data = new_data
 
         method = self.get_method(capability)
-        LOGGER.debug(f"{endpoint_url}, {capability}, {data}, {method}")
+
         headers = {
             "Authorization": f"{self._token_type} {self._access_token}",
             "X-Gateway-APIKey": capability.x_api_key,

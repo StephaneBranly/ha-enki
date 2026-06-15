@@ -109,11 +109,39 @@ class ENKI_SWITCH_ELECTRICAL_POWER(ENKI_CAPABILITY, ENKI_POWER_ENDPOINT):
 class ENKI_CHECK_ELECTRICAL_POWER(ENKI_CAPABILITY, ENKI_POWER_ENDPOINT):
     name = 'check_electrical_power'
 
-### SENSORS
+### BATTERY HEALTH
 
-class ENKI_SENSORS_ENDPOINT(ENKI_ENDPOINT):
+class ENKI_BATTERY_HEALTH_ENDPOINT(ENKI_ENDPOINT):
     path = "/api-enki-battery-health-prod/v1/sensors/<node_id>/<capability>"
     x_api_key = "WcydJ76nQUo8AiwkV05kn3kiNyM31b3M"
 
-class ENKI_CHECK_BATTERY_HEALTH(ENKI_CAPABILITY, ENKI_SENSORS_ENDPOINT):
+class ENKI_CHECK_BATTERY_HEALTH(ENKI_CAPABILITY, ENKI_BATTERY_HEALTH_ENDPOINT):
     name = 'check_battery_health'
+
+### PRESENCE DETECTOR
+
+class ENKI_PRESENCE_DETECTOR_ENDPOINT(ENKI_ENDPOINT):
+    path = "/api-enki-presence-detector-prod/v1/sensors/<node_id>/<capability>"
+    x_api_key = "bHEwVewJI2aNUiDX6KXt9ErzazfkarYp"
+
+class ENKI_CHECK_MOTION_DETECTION(ENKI_CAPABILITY, ENKI_PRESENCE_DETECTOR_ENDPOINT):
+    name = "check_motion_detection"
+
+class ENKI_CHECK_MOTION_DETECTOR_STATE(ENKI_CAPABILITY, ENKI_PRESENCE_DETECTOR_ENDPOINT):
+    name = "check_motion_detector_state"
+
+
+### CONTACT SENSOR
+
+class ENKI_CONTACT_SENSOR_ENDPOINT(ENKI_ENDPOINT):
+    path = "/api-enki-contact-sensor-prod/v1/sensors/<node_id>/<capability>"
+    x_api_key = "B2K2xlXnpVGEPylKq0Xn79LRuBG60w30"
+
+class ENKI_CHECK_CONTACT_SENSOR_STATE(ENKI_CAPABILITY, ENKI_CONTACT_SENSOR_ENDPOINT):
+    name = "check_contact_sensor_state"
+
+# class ENKI_CHECK_VIBRATION_DETECTION(ENKI_CAPABILITY, ENKI_CONTACT_SENSOR_ENDPOINT):
+#     name = "check_vibration_detection"
+
+# class ENKI_CHECK_VIBRATION_DETECTOR_STATE(ENKI_CAPABILITY, ENKI_CONTACT_SENSOR_ENDPOINT):
+#     name = "check_vibration_detector_state"
