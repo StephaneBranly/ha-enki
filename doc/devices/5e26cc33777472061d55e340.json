@@ -27,5 +27,6 @@
   "hasTimer": null,
   "protocols": ["zigbee"],
   "name": "Motion detector",
-  "image": "5e26cc33777472061d55e340.jpg"
+  "image": "5e26cc33777472061d55e340.jpg",
+  "tested": true
 }

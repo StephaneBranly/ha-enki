@@ -14,7 +14,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from . import EnkiConfigEntry
 from .base import EnkiBaseEntity
 from .coordinator import EnkiCoordinator
-from .const import ENKI_CHECK_CONTACT_SENSOR_STATE, ENKI_CHECK_MOTION_DETECTION, LOGGER
+from .const import ENKI_CHECK_CONTACT_SENSOR_STATE, ENKI_CHECK_MOTION_DETECTION, ENKI_CHECK_VIBRATION_DETECTION, LOGGER
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -84,12 +84,12 @@ def _build_binary_sensor_entities(coordinator: EnkiCoordinator, device: dict[str
             'device_class': BinarySensorDeviceClass.MOTION,
             'conversion_table': { 'MOTION_DETECTED': True, 'NO_MOTION_DETECTED': False }
         },
-        # {
-        #     'capability': ENKI_CHECK_VIBRATION_DETECTION,
-        #     'parameter': 'vibration_detection',
-        #     'device_class': BinarySensorDeviceClass.VIBRATION,
-        #     'conversion_table': { 'VIBRATION_DETECTED': True, 'NO_VIBRATION_DETECTED': False }
-        # },
+        {
+            'capability': ENKI_CHECK_VIBRATION_DETECTION,
+            'parameter': 'vibration_detection',
+            'device_class': BinarySensorDeviceClass.VIBRATION,
+            'conversion_table': { 'VIBRATION_DETECTED': True, 'NO_VIBRATION_DETECTED': False }
+        },
         {
             'capability': ENKI_CHECK_CONTACT_SENSOR_STATE,
             'parameter': 'contact_sensor',

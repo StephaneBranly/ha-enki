@@ -34,5 +34,6 @@
   "hasTimer": null,
   "protocols": ["zigbee"],
   "name": "Contact detector",
-  "image": "5f1192bc23b5dec92ac93eb4.jpg"
+  "image": "5f1192bc23b5dec92ac93eb4.jpg",
+  "tested": true
 }

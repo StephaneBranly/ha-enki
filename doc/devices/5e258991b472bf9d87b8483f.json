@@ -24,5 +24,6 @@
   "hasTimer": true,
   "protocols": ["zigbee"],
   "name": "Outlet 16A, 3680A",
-  "image": "5e258991b472bf9d87b8483f.webp"
+  "image": "5e258991b472bf9d87b8483f.webp",
+  "tested": true
 }

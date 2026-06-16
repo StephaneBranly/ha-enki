@@ -220,6 +220,8 @@ class API:
             return 'post'
         if capability.name.__contains__('switch'):
             return 'post'
+        if capability.name.__contains__('activate'):
+            return 'post'
         return 'get'
     
     def get_full_endpoint(self, capability: ENKI_CAPABILITY, home_id: str | None, node_id: str | None):
