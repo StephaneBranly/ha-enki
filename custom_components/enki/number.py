@@ -14,7 +14,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from . import EnkiConfigEntry
 from .base import EnkiBaseEntity
 from .coordinator import EnkiCoordinator
-from .const import ENKI_CAPABILITY, ENKI_CHANGE_VIBRATION_SENSIBILITY_LEVEL, ENKI_CHECK_BATTERY_HEALTH, ENKI_CHECK_CURRENT_HUMIDITY, ENKI_CHECK_CURRENT_TEMPERATURE, ENKI_CHECK_VIBRATION_SENSIBILITY_LEVEL, LOGGER
+from .const import ENKI_CAPABILITY, ENKI_CHANGE_VIBRATION_SENSIBILITY_LEVEL, ENKI_CHECK_VIBRATION_SENSIBILITY_LEVEL, LOGGER
 
 async def async_setup_entry(
     hass: HomeAssistant,
