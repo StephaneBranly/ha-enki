@@ -9,16 +9,23 @@ import json
 import os
 import sys
 import types
+from prettytable import PrettyTable
+
 
 from pathlib import Path
 from typing import Any
 
-from custom_components.enki.const import ENKI_CHECK_LIGHT_STATE
+sys.path.insert(1, os.path.join(sys.path[0], '../custom_components/enki'))
+sys.path.insert(1, os.path.join(sys.path[0], '../tools'))
+
+from const import ENKI_CAPABILITY
+from update_documentation import compute_coverage
 
 
 def _load_enki_api_class():
     """Load API class without importing Home Assistant integration package."""
     component_dir = Path(__file__).resolve().parents[1] / "custom_components" / "enki"
+    
     package_name = "_enki_tools_runtime"
 
     if package_name not in sys.modules:
@@ -55,22 +62,27 @@ def _load_enki_api_class():
 
 async def _run_live_api_check(user: str, password: str) -> None:
     api_cls = _load_enki_api_class()
+
     api = api_cls(user, password)
 
     connected = await api.connect()
     if connected is not True:
         raise RuntimeError("Enki API login did not return True")
-
+    print('Fetching all devices...')
     devices = await api.get_devices()
     if not isinstance(devices, list):
         raise RuntimeError("Enki API did not return a device list")
-
+    capabilities = ENKI_CAPABILITY.__subclasses__()
     print(f"\nDevices found: {len(devices)}")
+    table = PrettyTable()
+    table.field_names = ["#", "Name", "Device type", "Device ID", "Node ID", "Status", "Expected coverage (%)", "Protocols"]
+    new_devices = []
     for index, device in enumerate(devices, start=1):
         name = device.get("deviceName") or "unknown-device"
-        device_type = device.get("type") or "unknown-type"
         device_kind = device.get("deviceType") or "unknown-deviceType"
         node_id = device.get("nodeId") or "unknown-node"
+        device_id = device.get("deviceId") or "unknown-node"
+        protocols = device.get('protocols') or []
 
         device_description = {
             "manufacturer": device.get('manufacturerId', None),
@@ -80,119 +92,30 @@ async def _run_live_api_check(user: str, password: str) -> None:
             "hasProgrammer": device.get('hasProgrammer', None),
             "hasTimer": device.get('hasTimer', None),
             "protocols":  device.get('protocols', None),
+            "tested": False,
+            "image": "photo.png",
+            "name": "DEVICE_NAME"
         }
+        coverage = compute_coverage(device_description, capabilities)
         device_file = Path("./doc/devices") / f"{device.get('deviceId', None)}.json"
+        status = 'Known'
         if not device_file.exists():
             device_file.parent.mkdir(parents=True, exist_ok=True)
             with device_file.open(mode='w', encoding='utf-8') as f:
                 f.write(json.dumps(device_description, indent=2))
-        print(
-            f"{index}. {name} | type={device_type} | deviceType={device_kind} | node={node_id}"
-        )
-        print("   raw-json:")
-        print(json.dumps(device, indent=2, ensure_ascii=False, sort_keys=True))
+            new_devices.append({**device, "index": index, "name": name})
+        if len([nd for nd in new_devices if nd.get('deviceId') == device.get('deviceId', None)]):
+            status = 'NEW!'
+        
+        table.add_row([index, name, device_kind, device_id, node_id, status, coverage, ', '.join(protocols)])
+       
+    print(table)
 
-        if device_kind == "ceiling_fans":
-            home_id = device.get("homeId")
-            await _print_ceiling_fan_endpoint_details(api, home_id, node_id, device.get("deviceId"))
-        elif _is_normal_light_device(device):
-            home_id = device.get("homeId")
-            await _print_normal_light_details(api, home_id, node_id)
-
-def _is_normal_light_device(device: dict[str, Any]) -> bool:
-    """Detect non-ceiling-fan lights that should print check-light-state details."""
-    if device.get("deviceType") == "ceiling_fans":
-        return False
-
-    if device.get("type") == "lights":
-        return True
-
-    capabilities = device.get("capabilities")
-    return isinstance(capabilities, list) and (
-        "check_light_state" in capabilities or "change_light_state" in capabilities
-    )
-
-
-async def _print_normal_light_details(api: Any, home_id: str, node_id: str) -> None:
-    """Print check-light-state for regular lights without endpoint semantics."""
-    print("\n   --- check-light-state (normal light) ---")
-    details = await api.query_endpoint(home_id, node_id, ENKI_CHECK_LIGHT_STATE)
-    if not details:
-        print("   No light-state details returned")
-        return
-
-    print(json.dumps(details, indent=2, ensure_ascii=False, sort_keys=True))
-
-
-async def _print_ceiling_fan_endpoint_details(api: Any, home_id: str, node_id: str, device_id: str) -> None:
-    """Print all available endpoint info for a ceiling_fans device."""
-    import aiohttp
-
-    # Reuse the already-loaded const module to avoid homeassistant import
-    const = sys.modules["_enki_tools_runtime.const"]
-    enki_url = const.ENKI_URL
-    enki_referentiel_api_key = const.ENKI_REFERENTIEL_API_KEY
-    enki_bff_api_key = const.ENKI_BFF_API_KEY
-
-    auth_headers = {
-        "Authorization": f"{api._token_type} {api._access_token}",
-    }
-
-    async with aiohttp.ClientSession() as session:
-        # 1. referentiel-agg: device model capabilities (no per-endpoint type labels)
-        print("\n   --- referentiel-agg device (model capabilities) ---")
-        async with session.get(
-            f"{enki_url}/api-enki-referentiel-agg-prod/v1/devices/{device_id}",
-            headers={**auth_headers, "X-Gateway-APIKey": enki_referentiel_api_key},
-        ) as resp:
-            if resp.status == 200:
-                body = await resp.json()
-                print(
-                    f"   type={body.get('type')} "
-                    f"| i18n={body.get('i18n')} "
-                    f"| manufacturer={body.get('manufacturerId')}"
-                )
-                print(f"   protocols: {body.get('protocols')}")
-                print(f"   capabilities: {body.get('capabilities')}")
-                print(f"   possibleValues: {body.get('possibleValues')}")
-            else:
-                print(f"   HTTP {resp.status}: {await resp.text()}")
-
-        # 2. BFF dashboard node: which endpoints are exposed via mainChangeCapability
-        print("\n   --- BFF mainChangeCapability endpoints ---")
-        async with session.get(
-            f"{enki_url}/api-enki-mobile-bff-prod/v1/dashboard/homes/{home_id}?hasGroups=true",
-            headers={**auth_headers, "X-Gateway-APIKey": enki_bff_api_key},
-        ) as resp:
-            if resp.status == 200:
-                body = await resp.json()
-
-                def find_node(data: Any, target: str) -> Any:
-                    if isinstance(data, dict):
-                        if data.get("nodeId") == target or data.get("id") == target:
-                            return data
-                        for value in data.values():
-                            found = find_node(value, target)
-                            if found:
-                                return found
-                    elif isinstance(data, list):
-                        for item in data:
-                            found = find_node(item, target)
-                            if found:
-                                return found
-                    return None
-
-                node = find_node(body, node_id)
-                if node:
-                    cap = node.get("mainChangeCapability", {})
-                    eps = cap.get("endpoints", [])
-                    print(f"   mainChangeCapabilityId={node.get('mainChangeCapabilityId')}")
-                    print(f"   endpoints exposed by BFF: {[ep['id'] for ep in eps]}")
-                else:
-                    print(f"   Node {node_id} not found in BFF dashboard")
-            else:
-                print(f"   HTTP {resp.status}: {await resp.text()}")
-
+    if len(new_devices):
+        print("\nYou have devices that haven't been listed or tested in this library yet.")
+        print("Please submit a documentation PR to add them; you can add their names and include an image by editing the corresponding JSON files in the folder doc/devices")
+        print()
+        [print(f" - #{new_device.get('index')} > {new_device.get('deviceId', None)} ({new_device.get('name')})") for new_device in new_devices]
 
 def _run_async(coro: Any) -> None:
     """Run async code with a Windows-compatible event loop policy."""
