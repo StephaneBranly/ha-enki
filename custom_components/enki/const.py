@@ -163,3 +163,17 @@ class ENKI_CHECK_VIBRATION_SENSIBILITY_LEVEL(ENKI_CAPABILITY, ENKI_CONTACT_SENSO
 
 class ENKI_CHANGE_VIBRATION_SENSIBILITY_LEVEL(ENKI_CAPABILITY, ENKI_CONTACT_SENSOR_ENDPOINT):
     name = 'change_vibration_sensibility_level'
+
+
+### SIREN
+
+class ENKI_SIREN_ENDPOINT(ENKI_ENDPOINT):
+    path = "/api-enki-siren-prod/v1/siren/<node_id>/<capability>"
+    x_api_key = "9jDuso0Im0tTAvj6Ecf0B1HWENeOykZa"
+
+class ENKI_CHECK_SIREN_GLOBAL_STATUS(ENKI_CAPABILITY, ENKI_SIREN_ENDPOINT):
+    name = 'check_siren_global_state'
+
+class ENKI_SWITCH_SIREN_STATUS(ENKI_CAPABILITY, ENKI_SIREN_ENDPOINT):
+    name = 'switch_siren_status'
+

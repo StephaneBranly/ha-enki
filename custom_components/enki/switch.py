@@ -15,7 +15,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from . import EnkiConfigEntry
 from .base import EnkiBaseEntity
 from .coordinator import EnkiCoordinator
-from .const import ENKI_ACTIVATE_CONTACT_DETECTION, ENKI_ACTIVATE_VIBRATION_DETECTION, ENKI_CAPABILITY, ENKI_CHECK_CONTACT_DETECTION_ACTIVATION, ENKI_CHECK_ELECTRICAL_POWER, ENKI_CHECK_VIBRATION_DETECTION_ACTIVATION, ENKI_SWITCH_ELECTRICAL_POWER, LOGGER
+from .const import ENKI_ACTIVATE_CONTACT_DETECTION, ENKI_ACTIVATE_VIBRATION_DETECTION, ENKI_CAPABILITY, ENKI_CHECK_CONTACT_DETECTION_ACTIVATION, ENKI_CHECK_ELECTRICAL_POWER, ENKI_CHECK_SIREN_GLOBAL_STATUS, ENKI_CHECK_VIBRATION_DETECTION_ACTIVATION, ENKI_SWITCH_ELECTRICAL_POWER, ENKI_SWITCH_SIREN_STATUS, LOGGER
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -100,6 +100,12 @@ def _build_switch_entities(coordinator: EnkiCoordinator, device: dict[str, Any])
             'check_capability': ENKI_CHECK_CONTACT_DETECTION_ACTIVATION,
             'device_class': SwitchDeviceClass.SWITCH,
             'parameter': 'contact_detection'
+        },
+         {
+            'switch_capability': ENKI_SWITCH_SIREN_STATUS,
+            'check_capability': ENKI_CHECK_SIREN_GLOBAL_STATUS,
+            'device_class': SwitchDeviceClass.SWITCH,
+            'parameter': 'siren'
         },
     ]
 

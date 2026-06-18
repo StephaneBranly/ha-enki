@@ -15,7 +15,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from . import EnkiConfigEntry
 from .base import EnkiBaseEntity
 from .coordinator import EnkiCoordinator
-from .const import ENKI_CHECK_BATTERY_HEALTH, ENKI_CHECK_CURRENT_HUMIDITY, ENKI_CHECK_CURRENT_TEMPERATURE, LOGGER
+from .const import ENKI_CHECK_BATTERY_HEALTH, ENKI_CHECK_CURRENT_HUMIDITY, ENKI_CHECK_CURRENT_TEMPERATURE, ENKI_CHECK_POWER_SUPPLY_STATUS, LOGGER
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -95,15 +95,6 @@ def _build_sensor_entities(coordinator: EnkiCoordinator, device: dict[str, Any])
             'device_class': SensorDeviceClass.TEMPERATURE,
             'state_class': SensorStateClass.MEASUREMENT,
         },
-       
-        # {
-        #     'capability': 'check_electrical_consumption',
-        #     'parameter': 'electrical_consumption',
-        #     'key': 'descriptionValue',
-        #     'unit': "Wh",
-        #     'device_class': SensorDeviceClass.ENERGY,
-        #     'state_class': SensorStateClass.TOTAL,
-        # },
         {
             'capability': ENKI_CHECK_BATTERY_HEALTH,
             'parameter': 'battery_health',
@@ -132,9 +123,9 @@ def _build_sensor_entities(coordinator: EnkiCoordinator, device: dict[str, Any])
                 device,
                 parameter=cap['parameter'],
                 key=cap['capability'].name,
-                unit=cap['unit'],
-                device_class=cap['device_class'],
-                state_class=cap['state_class'],
+                unit=cap.get('unit', None),
+                device_class=cap.get('device_class', None),
+                state_class=cap.get('state_class', None),
                 conversion_table=cap.get('conversion_table', None)
             )
         )
