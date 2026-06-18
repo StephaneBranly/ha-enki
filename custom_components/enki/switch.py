@@ -101,7 +101,8 @@ def _build_switch_entities(coordinator: EnkiCoordinator, device: dict[str, Any])
             'device_class': SwitchDeviceClass.SWITCH,
             'parameter': 'contact_detection'
         },
-         {
+        {
+            # TO DO : use Siren Entity type for siren
             'switch_capability': ENKI_SWITCH_SIREN_STATUS,
             'check_capability': ENKI_CHECK_SIREN_GLOBAL_STATUS,
             'device_class': SwitchDeviceClass.SWITCH,
