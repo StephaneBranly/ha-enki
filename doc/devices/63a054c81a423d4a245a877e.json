@@ -1,0 +1,42 @@
+{
+  "manufacturer": "Equation",
+  "capabilities": [
+    "check_pilot_wire_state",
+    "switch_pilot_wire_mode",
+    "check_electrical_consumption",
+    "total_supply_charge_consumption"
+  ],
+  "deviceId": "63a054c81a423d4a245a877e",
+  "possibleValues": {
+    "check_pilot_wire_state": {
+      "format": "VALUES",
+      "values": [
+        "COMFORT",
+        "COMFORT_1",
+        "COMFORT_2",
+        "ECO",
+        "FROST_PROTECTION",
+        "OFF"
+      ]
+    },
+    "switch_pilot_wire_mode": {
+      "format": "VALUES",
+      "values": [
+        "COMFORT",
+        "COMFORT_1",
+        "COMFORT_2",
+        "ECO",
+        "FROST_PROTECTION",
+        "OFF"
+      ]
+    }
+  },
+  "hasProgrammer": true,
+  "hasTimer": null,
+  "protocols": [
+    "zigbee"
+  ],
+  "tested": false,
+  "image": "63a054c81a423d4a245a877e.jpg",
+  "name": "Pilot wire radiator controler"
+}

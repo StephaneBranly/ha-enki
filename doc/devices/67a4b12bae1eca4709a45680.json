@@ -1,0 +1,95 @@
+{
+  "manufacturer": "Noirot",
+  "capabilities": [
+    "check_thermostat_target_temperature",
+    "change_thermostat_target_temperature",
+    "check_thermostat_running_state",
+    "check_current_temperature",
+    "check_electrical_consumption",
+    "check_window_open_detection_mode",
+    "change_window_open_detection_mode",
+    "check_window_open_detection",
+    "check_occupancy_mode",
+    "change_occupancy_mode",
+    "check_occupancy"
+  ],
+  "deviceId": "67a4b12bae1eca4709a45680",
+  "possibleValues": {
+    "check_current_temperature": {
+      "format": "RANGE",
+      "range": {
+        "min": 0.0,
+        "max": 40.0,
+        "defaultValue": null,
+        "step": 1.0
+      }
+    },
+    "change_occupancy_mode": {
+      "format": "VALUES",
+      "values": [
+        "ENABLED",
+        "DISABLED"
+      ]
+    },
+    "check_window_open_detection_mode": {
+      "format": "VALUES",
+      "values": [
+        "ENABLED",
+        "DISABLED"
+      ]
+    },
+    "check_thermostat_running_state": {
+      "format": "VALUES",
+      "values": [
+        "HEAT",
+        "IDLE",
+        "COOL"
+      ]
+    },
+    "change_window_open_detection_mode": {
+      "format": "VALUES",
+      "values": [
+        "ENABLED",
+        "DISABLED"
+      ]
+    },
+    "check_occupancy_mode": {
+      "format": "VALUES",
+      "values": [
+        "ENABLED",
+        "DISABLED"
+      ]
+    },
+    "change_thermostat_target_temperature": {
+      "format": "RANGE",
+      "range": {
+        "min": 7.0,
+        "max": 28.0,
+        "defaultValue": null,
+        "step": 0.5
+      }
+    },
+    "check_occupancy": {
+      "format": "VALUES",
+      "values": [
+        "OCCUPIED",
+        "UNOCCUPIED"
+      ]
+    },
+    "check_window_open_detection": {
+      "format": "VALUES",
+      "values": [
+        "WINDOW_OPEN",
+        "NO_WINDOW_OPEN"
+      ]
+    }
+  },
+  "hasProgrammer": true,
+  "hasTimer": null,
+  "protocols": [
+    "zigbee"
+  ],
+  "tested": false,
+  "image": "67a4b12bae1eca4709a45680.jpg",
+  "name": "Radiator"
+}

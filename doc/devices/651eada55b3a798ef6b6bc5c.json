@@ -1,0 +1,29 @@
+{
+  "manufacturer": "Lexman",
+  "capabilities": [
+    "check_water_sensor_state",
+    "check_battery_health"
+  ],
+  "deviceId": "651eada55b3a798ef6b6bc5c",
+  "possibleValues": {
+    "check_battery_health": {
+      "format": "VALUES",
+      "values": [
+        "GOOD",
+        "LOW",
+        "LOW_INTERNAL_BATTERY_OF_DEVICE",
+        "REPLACE",
+        "UNKNOWN",
+        "CRITICAL"
+      ]
+    }
+  },
+  "hasProgrammer": null,
+  "hasTimer": null,
+  "protocols": [
+    "zigbee"
+  ],
+  "tested": false,
+  "image": "651eada55b3a798ef6b6bc5c.jpg",
+  "name": "Water leak detector"
+}

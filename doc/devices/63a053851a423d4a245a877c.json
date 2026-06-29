@@ -1,0 +1,37 @@
+{
+  "manufacturer": "Equation",
+  "capabilities": [
+    "check_electrical_power",
+    "switch_electrical_power",
+    "next_electrical_power_switch_in",
+    "switch_electrical_power_in",
+    "cancel_electrical_power_switch_in",
+    "check_electrical_consumption",
+    "total_supply_charge_consumption"
+  ],
+  "deviceId": "63a053851a423d4a245a877c",
+  "possibleValues": {
+    "switch_electrical_power": {
+      "format": "VALUES",
+      "values": [
+        "ON",
+        "OFF"
+      ]
+    },
+    "check_electrical_power": {
+      "format": "VALUES",
+      "values": [
+        "ON",
+        "OFF"
+      ]
+    }
+  },
+  "hasProgrammer": true,
+  "hasTimer": true,
+  "protocols": [
+    "zigbee"
+  ],
+  "tested": false,
+  "image": "63a053851a423d4a245a877c.png",
+  "name": "ON/OFF relay"
+}
