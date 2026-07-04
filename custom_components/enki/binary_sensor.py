@@ -14,7 +14,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from . import EnkiConfigEntry
 from .base import EnkiBaseEntity
 from .coordinator import EnkiCoordinator
-from .const import ENKI_CHECK_CONTACT_SENSOR_STATE, ENKI_CHECK_MOTION_DETECTION, ENKI_CHECK_VIBRATION_DETECTION, LOGGER
+from .const import ENKI_CHECK_CONTACT_SENSOR_STATE, ENKI_CHECK_MOTION_DETECTION, ENKI_CHECK_VIBRATION_DETECTION, ENKI_CHECK_WATER_SENSOR_STATE, LOGGER
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -95,6 +95,12 @@ def _build_binary_sensor_entities(coordinator: EnkiCoordinator, device: dict[str
             'parameter': 'contact_sensor',
             'device_class': BinarySensorDeviceClass.OPENING,
             'conversion_table': { 'OPENED': True, 'CLOSED': False }
+        },
+        {
+            'capability': ENKI_CHECK_WATER_SENSOR_STATE,
+            'parameter': 'water_leak',
+            'device_class': BinarySensorDeviceClass.MOISTURE,
+            'conversion_table': { 'WATER_DETECTED': True, 'NO_WATER_DETECTED': False }
         }
     ]
 

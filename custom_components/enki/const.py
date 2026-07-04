@@ -177,3 +177,11 @@ class ENKI_CHECK_SIREN_GLOBAL_STATUS(ENKI_CAPABILITY, ENKI_SIREN_ENDPOINT):
 class ENKI_SWITCH_SIREN_STATUS(ENKI_CAPABILITY, ENKI_SIREN_ENDPOINT):
     name = 'switch_siren_status'
 
+### WATER
+
+class ENKI_WATER_SENSOR_ENDPOINT(ENKI_ENDPOINT):
+    path = "/api-enki-water-leak-detector-prod/v1/detectors/<node_id>/<capability>"
+    x_api_key = "TZckkGN2S5wHuImS8BSdJ9dfuTfDxgHi"
+
+class ENKI_CHECK_WATER_SENSOR_STATE(ENKI_CAPABILITY, ENKI_WATER_SENSOR_ENDPOINT):
+    name = 'check_water_sensor_state'
