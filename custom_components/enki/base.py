@@ -104,6 +104,7 @@ class EnkiBaseEntity(CoordinatorEntity):
                     self.node_id,
                 )
             },
+            serial_number=self.coordinator.get_device_parameter(self.node_id, "eui64")
         )
 
     @property
