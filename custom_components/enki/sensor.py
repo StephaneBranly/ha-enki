@@ -15,7 +15,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from . import EnkiConfigEntry
 from .base import EnkiBaseEntity
 from .coordinator import EnkiCoordinator
-from .const import ENKI_CHECK_BATTERY_HEALTH, ENKI_CHECK_CURRENT_HUMIDITY, ENKI_CHECK_CURRENT_TEMPERATURE, LOGGER
+from .const import ENKI_CHECK_BATTERY_HEALTH, ENKI_CHECK_CURRENT_HUMIDITY, ENKI_CHECK_CURRENT_TEMPERATURE
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -130,5 +130,4 @@ def _build_sensor_entities(coordinator: EnkiCoordinator, device: dict[str, Any])
             )
         )
 
-    LOGGER.debug(f"created {len(sensors)} sensor entities for device {device['nodeId']}")
     return sensors

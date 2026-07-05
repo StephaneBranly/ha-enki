@@ -177,3 +177,12 @@ class ENKI_CHECK_SIREN_GLOBAL_STATUS(ENKI_CAPABILITY, ENKI_SIREN_ENDPOINT):
 class ENKI_SWITCH_SIREN_STATUS(ENKI_CAPABILITY, ENKI_SIREN_ENDPOINT):
     name = 'switch_siren_status'
 
+
+### SCENARIOS
+
+class ENKI_SCENARIO_LIST_ENDPOINT(ENKI_ENDPOINT):
+    path = "/api-enki-scenario-prod/v1/scenarios?homeId=<home_id>"
+    x_api_key = "PCnbndkIqlfXwXGhFkqSWWMn4HcWza9J"
+
+class ENKI_SCENARIO_LIST_CAPABILITY(ENKI_CAPABILITY, ENKI_SCENARIO_LIST_ENDPOINT):
+    _ = None

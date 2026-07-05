@@ -14,7 +14,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from . import EnkiConfigEntry
 from .base import EnkiBaseEntity
 from .coordinator import EnkiCoordinator
-from .const import ENKI_CAPABILITY, ENKI_CHANGE_VIBRATION_SENSIBILITY_LEVEL, ENKI_CHECK_VIBRATION_SENSIBILITY_LEVEL, LOGGER
+from .const import ENKI_CAPABILITY, ENKI_CHANGE_VIBRATION_SENSIBILITY_LEVEL, ENKI_CHECK_VIBRATION_SENSIBILITY_LEVEL
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -119,5 +119,4 @@ def _build_number_entities(coordinator: EnkiCoordinator, device: dict[str, Any])
             )
         )
 
-    LOGGER.debug(f"created {len(numbers)} number entities for device {device['nodeId']}")
     return numbers

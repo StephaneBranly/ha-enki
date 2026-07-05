@@ -15,7 +15,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from . import EnkiConfigEntry
 from .base import EnkiBaseEntity
 from .coordinator import EnkiCoordinator
-from .const import ENKI_ACTIVATE_CONTACT_DETECTION, ENKI_ACTIVATE_VIBRATION_DETECTION, ENKI_CAPABILITY, ENKI_CHECK_CONTACT_DETECTION_ACTIVATION, ENKI_CHECK_ELECTRICAL_POWER, ENKI_CHECK_SIREN_GLOBAL_STATUS, ENKI_CHECK_VIBRATION_DETECTION_ACTIVATION, ENKI_SWITCH_ELECTRICAL_POWER, ENKI_SWITCH_SIREN_STATUS, LOGGER
+from .const import ENKI_ACTIVATE_CONTACT_DETECTION, ENKI_ACTIVATE_VIBRATION_DETECTION, ENKI_CAPABILITY, ENKI_CHECK_CONTACT_DETECTION_ACTIVATION, ENKI_CHECK_ELECTRICAL_POWER, ENKI_CHECK_SIREN_GLOBAL_STATUS, ENKI_CHECK_VIBRATION_DETECTION_ACTIVATION, ENKI_SWITCH_ELECTRICAL_POWER, ENKI_SWITCH_SIREN_STATUS
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -59,19 +59,15 @@ class EnkiSwitch(EnkiBaseEntity, SwitchEntity):
     def is_on(self) -> bool | None:
         """Return if outlet is on."""
         power = self.coordinator.get_device_capability_parameter(self.node_id, self._attr_check_capability)
-        LOGGER.debug(f'>SWITCH STATE>>>> {power}')
         if isinstance(power, str):
             return power == "ON"
         return None
 
     async def async_turn_on(self, **kwargs: Any) -> None:
-        LOGGER.debug('turn on')
         await self.coordinator.api.query_endpoint(self.device["homeId"], self.node_id, self._attr_switch_capability, { "value": 'ON' })
-
         self.coordinator.update_data(self.node_id, {self._attr_check_capability.name: {"lastReportedValue": 'ON'}})
 
     async def async_turn_off(self, **kwargs: Any) -> None:
-        LOGGER.debug('turn on')
         await self.coordinator.api.query_endpoint(self.device["homeId"], self.node_id, self._attr_switch_capability, { "value": 'OFF' })
         self.coordinator.update_data(self.node_id,{self._attr_check_capability.name: {"lastReportedValue": 'OFF'}})
 
@@ -129,5 +125,4 @@ def _build_switch_entities(coordinator: EnkiCoordinator, device: dict[str, Any])
             )
         )
 
-    LOGGER.debug(f"created {len(switches)} switch entities for device {device['nodeId']}")
     return switches

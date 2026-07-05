@@ -33,15 +33,6 @@ class EnkiBaseEntity(CoordinatorEntity):
 
     coordinator: EnkiCoordinator
 
-    # ----------------------------------------------------------------------------
-    # Using attr_has_entity_name = True causes HA to name your entities with the
-    # device name and entity name.  Ie if your name property of your entity is
-    # Voltage and this entity belongs to a device, Lounge Socket, this will name
-    # your entity to be sensor.lounge_socket_voltage
-    #
-    # It is highly recommended (by me) to use this to give a good name structure
-    # to your entities.  However, totally optional.
-    # ----------------------------------------------------------------------------
     _attr_has_entity_name = True
 
     def __init__(
@@ -74,17 +65,6 @@ class EnkiBaseEntity(CoordinatorEntity):
     @property
     def device_info(self) -> DeviceInfo:
         """Return device information."""
-
-        # ----------------------------------------------------------------------------
-        # Identifiers are what group entities into the same device.
-        # If your device is created elsewhere, you can just specify the indentifiers
-        # parameter to link an entity to a device.
-        # If your device connects via another device, add via_device parameter with
-        # the indentifiers of that device.
-        #
-        # Device identifiers should be unique, so use your integration name (DOMAIN)
-        # and a device uuid, mac address or some other unique attribute.
-        # ----------------------------------------------------------------------------
         device_name = self.coordinator.get_device_parameter(self.node_id, "deviceName")
         return DeviceInfo(
             name=device_name,
@@ -114,26 +94,4 @@ class EnkiBaseEntity(CoordinatorEntity):
     @property
     def unique_id(self) -> str:
         """Return unique id."""
-
-        # ----------------------------------------------------------------------------
-        # All entities must have a unique id across your whole Home Assistant server -
-        # and that also goes for anyone using your integration who may have many other
-        # integrations loaded.
-        #
-        # Think carefully what you want this to be as changing it later will cause HA
-        # to create new entities.
-        #
-        # It is recommended to have your integration name (DOMAIN), some unique id
-        # from your device such as a UUID, MAC address etc (not IP address) and then
-        # something unique to your entity (like name - as this would be unique on a
-        # device)
-        #
-        # If in your situation you have some hub that connects to devices which then
-        # you want to create multiple sensors for each device, you would do something
-        # like.
-        #
-        # f"{DOMAIN}-{HUB_MAC_ADDRESS}-{DEVICE_UID}-{ENTITY_NAME}""
-        #
-        # This is even more important if your integration supports multiple instances.
-        # ----------------------------------------------------------------------------
         return f"{DOMAIN}-{self.coordinator.get_device_parameter(self.node_id, "nodeId")}-{self.parameter}"

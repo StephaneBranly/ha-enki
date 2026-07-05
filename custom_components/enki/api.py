@@ -4,16 +4,15 @@ from __future__ import annotations
 
 import aiohttp
 import asyncio
-from dataclasses import dataclass
 from typing import Any
 import time
-import re
 
 from .const import (
     ENKI_BFF_ITEMS,
     ENKI_CAPABILITY,
     ENKI_HOMES_LIST,
     ENKI_NODE_CAPABILITY,
+    ENKI_SCENARIO_LIST_CAPABILITY,
     LOGGER,
     ENKI_OIDC_URL,
     ENKI_URL,
@@ -21,14 +20,6 @@ from .const import (
 )
 
 proxy = None
-
-@dataclass
-class Device:
-    """API device."""
-    home_id: str
-    device_id: str #device_id represents the type of device used (Hw reference)
-    node_id: str #node_id represents the physical device (toke,)
-    device_name: str
 
 class API:
     """Class for Enki API."""
@@ -64,7 +55,6 @@ class API:
 
                     if resp.status == 200:
                         response = await resp.json()
-                        LOGGER.debug("connect : " + str(response))
                         self._access_token = response["access_token"]
                         self._refresh_token = response["refresh_token"]
                         self._token_type = response["token_type"]
@@ -98,23 +88,6 @@ class API:
             if prop != "id":
                 device[prop] = properties[prop]
 
-    @staticmethod
-    def _parse_sensor_value(description: dict[str, Any] | None) -> float | None:
-        """Parse value from sensor description.value (e.g. '109 W' -> 109.0)."""
-        if not description or not isinstance(description, dict):
-            return None
-        value_str = description.get("value")
-        if not isinstance(value_str, str):
-            return None
-        pattern = r"[+-]?[0-9]+\.[0-9]+"
-        match = re.search(pattern, value_str)
-        if not match:
-            return None
-        try:
-            return float(match.group(0))
-        except ValueError:
-            return None
-
     async def get_items_in_section_for_home(self, home_id) -> list[dict[str, Any]]:
         """Get sections in home."""
         devices = []
@@ -126,6 +99,7 @@ class API:
                     continue
 
                 device = {
+                    "type": "physicalDevice",
                     "homeId": home_id,
                     "deviceId": item["metadata"]["deviceId"],
                     "nodeId": item["metadata"]["nodeId"],
@@ -140,7 +114,6 @@ class API:
                     "deviceName": item["title"]["label"],
                     "state": item["state"],
                     "isEnabled": item["isEnabled"],
-                    "descriptionValue": self._parse_sensor_value(item.get("description"))
                 }
                 
                 devices.append(device)
@@ -151,10 +124,30 @@ class API:
                 await self.refresh_node(device)
         return devices
         
+
+    async def load_scenarios(self, home_id: str) -> list[dict[str, Any]]:
+        """Get scenarios in home."""
+        response = await self.query_endpoint(home_id, None, ENKI_SCENARIO_LIST_CAPABILITY)
+        scenarios = []
+        for item in response.get("items", []):
+            scenario = {
+                "type": "scenario",
+                "homeId": home_id,
+                "scenarioId": item.get("scenarioId"),
+                "scenarioName": item.get("label"),
+                "isEnabled": item.get("enabled"),
+            }
+            scenarios.append(scenario)
+        return scenarios
+    
     async def refresh_node(self, device): 
         """Update device details"""
 
         home_id = device.get('homeId', None)
+
+        if device.get('type', None) != 'physicalDevice':
+            return device
+        
         node_id = device.get('nodeId', None)
         
         node_info = await self.get_node(home_id, node_id)
@@ -167,7 +160,6 @@ class API:
         self.merge_properties(device, device_info)
 
         capabilities = _capabilities_set(device)
-        # possible_values = _possible_values_dict(device)
 
         for enki_capability in ENKI_CAPABILITY.__subclasses__():
             if enki_capability.name in capabilities and self.get_method(enki_capability) == 'get':
@@ -273,14 +265,13 @@ class API:
                     LOGGER.error(f"Error on {capability.name}. status {resp.status}, response {str(response)}")
                     raise ValueError("bad credentials") # to do, revoir cette valeur de retour
 
-# *******************************************************
-
     async def get_devices(self) -> list[dict[str, Any]]:
         """Get devices on api."""
         homes = await self.get_homes()
         devices = []
         for home in homes:
             devices.extend(await self.get_items_in_section_for_home(home))
+            devices.extend(await self.load_scenarios(home))
 
         return devices
 
@@ -299,11 +290,3 @@ def _capabilities_set(device: dict[str, Any]) -> set[str]:
     if isinstance(capabilities, dict):
         return set(capabilities.keys())
     return set()
-
-
-def _possible_values_dict(device: dict[str, Any]) -> dict[str, Any]:
-    """Return possibleValues metadata as a dict if available."""
-    possible_values = device.get("possibleValues")
-    if isinstance(possible_values, dict):
-        return possible_values
-    return {}

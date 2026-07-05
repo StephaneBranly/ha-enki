@@ -72,7 +72,6 @@ class EnkiCoordinator(DataUpdateCoordinator):
     def get_device(self, device_id: str) -> dict[str, Any]:
         """Get a device entity from our api data using the device_id."""
         try:
-            LOGGER.debug(f"get_device for device_id {device_id}")
             return [
                 devices for devices in self.data if devices["deviceId"] == device_id
             ][0]
@@ -130,8 +129,6 @@ class EnkiCoordinator(DataUpdateCoordinator):
                     target[key] = value
 
         _merge_dicts(device, updated_values)
-        import json
-        LOGGER.info(f'updated data >>> {json.dumps(device)}')
         self.async_set_updated_data(self.data)
 
     def update_endpoint_power(self, node_id: int, endpoint_id: int, power: str) -> None:

@@ -11,7 +11,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from . import EnkiConfigEntry
 from .base import EnkiBaseEntity
 from .coordinator import EnkiCoordinator
-from .const import ENKI_CHANGE_LIGHT_STATE, ENKI_CHECK_ELECTRICAL_POWER, ENKI_CHECK_LIGHT_STATE, LOGGER
+from .const import ENKI_CHANGE_LIGHT_STATE, ENKI_CHECK_ELECTRICAL_POWER, ENKI_CHECK_LIGHT_STATE
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -25,7 +25,6 @@ async def async_setup_entry(
         for device in coordinator.data
         for entity in _build_light_entities(coordinator, device)
     ]
-    LOGGER.debug(f"lights > {lights}")
 
     async_add_entities(lights)
 
@@ -60,8 +59,6 @@ class EnkiLight(EnkiBaseEntity, LightEntity):
         if "possibleValues" in device and "change_brightness" in device["possibleValues"]:
             min_value = device["possibleValues"]["change_brightness"]["range"]["min"]
             max_value = device["possibleValues"]["change_brightness"]["range"]["max"]
-            LOGGER.debug("brightness min : " + str(min_value))
-            LOGGER.debug("brightness max : " + str(max_value))
             self.BRIGHTNESS_SCALE = (min_value, max_value)
 
         
@@ -209,25 +206,20 @@ class EnkiLight(EnkiBaseEntity, LightEntity):
         if "brightness" in kwargs:
             ha_value = kwargs["brightness"]
             value = round(ha_value / 255, 2)
-            LOGGER.debug(f"setting brightness value to {ha_value} => {value}, scale {self.BRIGHTNESS_SCALE}")
             changes["brightness"] = value
         
         if "color_temp_kelvin" in kwargs:
             new_color_mode = 'ct'
             ha_value = kwargs["color_temp_kelvin"]
             value = self.closest_temp_value(ha_value)
-            LOGGER.debug("setting color temp to closest value : " + str(ha_value) + " => " + str(value))
             changes["colorMode"] = new_color_mode
             changes["colorTemperature"] = "T" + str(value) + "K"
             self._attr_color_mode = ColorMode.COLOR_TEMP
         elif "hs_color" in kwargs:
             new_color_mode = 'hs'
-            LOGGER.debug(f"setting hue to {kwargs['hs_color'][0]} and saturation to {kwargs['hs_color'][1]}")
             ha_hue, ha_saturation = kwargs["hs_color"]
             hue_value = round(ha_hue / 360, 2)
             saturation_value = round(ha_saturation /100, 2)
-            LOGGER.debug(f"setting hue to {ha_hue} => {hue_value}")
-            LOGGER.debug(f"setting saturation to {ha_saturation} => {saturation_value}")
             changes["colorMode"] = new_color_mode
             changes["hue"] = hue_value
             changes["saturation"] = saturation_value
@@ -300,7 +292,6 @@ def _build_light_entities(coordinator: EnkiCoordinator, device: dict[str, Any]) 
 
     endpoint_ids = _main_change_capability_endpoint_ids(device)
     if endpoint_ids:
-        LOGGER.debug(f"endpoints ids {endpoint_ids}")
         return [
             EnkiLight(coordinator, device, parameter=f"light_{chr(ord('a') + i)}", endpoint_id=endpoint_id)
             for i, endpoint_id in enumerate(endpoint_ids)
