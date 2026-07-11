@@ -20,7 +20,7 @@ The unofficial Enki intregration for Home Assistant.
 <!-- start devices -->
 | Name | Image | Id | Coverage (%) | Tested |
 |---|---|---|---|---|
-|Water leak detector<br/>Lexman|<img src='./doc/devices/651eada55b3a798ef6b6bc5c.jpg'  width='100'/>|*651eada55b3a798ef6b6bc5c*|![50%](https://progress-bar.xyz/50)|❌|
+|Water leak detector<br/>Lexman|<img src='./doc/devices/651eada55b3a798ef6b6bc5c.jpg'  width='100'/>|*651eada55b3a798ef6b6bc5c*|![100%](https://progress-bar.xyz/100)|❌|
 |Siren<br/>Lexman|<img src='./doc/devices/5f16c4aca80024b5af0561a1.jpg'  width='100'/>|*5f16c4aca80024b5af0561a1*|![50%](https://progress-bar.xyz/50)|❌|
 |Radiator<br/>Noirot|<img src='./doc/devices/67a4b12bae1eca4709a45680.jpg'  width='100'/>|*67a4b12bae1eca4709a45680*|![9%](https://progress-bar.xyz/9)|❌|
 |Outlet 16A, 3680A<br/>Lexman|<img src='./doc/devices/5e258991b472bf9d87b8483f.webp'  width='100'/>|*5e258991b472bf9d87b8483f*|![28%](https://progress-bar.xyz/28)|✅|
@@ -75,6 +75,7 @@ Different device capabilities are curently being integrated to this custom compo
 |change_vibration_sensibility_level|![100%](https://progress-bar.xyz/100)|
 |check_siren_global_state|![100%](https://progress-bar.xyz/100)|
 |switch_siren_status|![100%](https://progress-bar.xyz/100)|
+|check_water_sensor_state|![100%](https://progress-bar.xyz/100)|
 <!-- end -->
 
 </details>
