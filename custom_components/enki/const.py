@@ -50,6 +50,25 @@ class ENKI_NODE_ENDPOINT(ENKI_ENDPOINT):
 
 class ENKI_NODE_CAPABILITY(ENKI_CAPABILITY, ENKI_NODE_ENDPOINT):
     _ = None
+
+
+### SCENARIOS
+
+class ENKI_SCENARIO_LIST_ENDPOINT(ENKI_ENDPOINT):
+    path = '/api-enki-scenario-prod/v1/scenarios?homeId=<home_id>'
+    x_api_key = "PCnbndkIqlfXwXGhFkqSWWMn4HcWza9J"
+
+class ENKI_SCENARIO_LIST_CAPABILITY(ENKI_CAPABILITY, ENKI_SCENARIO_LIST_ENDPOINT):
+    _ = None
+
+class ENKI_SCENARIO_ACTIVATE_ENDPOINT(ENKI_ENDPOINT):
+    path = '/api-enki-scenario-prod/v1/scenarios/<node_id>/activate'
+    x_api_key = "PCnbndkIqlfXwXGhFkqSWWMn4HcWza9J"
+
+class ENKI_SCENARIO_ACTIVATE_CAPABILITY(ENKI_CAPABILITY, ENKI_SCENARIO_ACTIVATE_ENDPOINT):
+    method = 'POST'
+
+
 ### LIGHTS
 class ENKI_LIGHTS_ENDPOINT(ENKI_ENDPOINT):
     path = '/api-enki-lighting-prod/v1/lighting/<node_id>/<capability>'

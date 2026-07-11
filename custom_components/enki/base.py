@@ -48,7 +48,7 @@ class EnkiBaseEntity(CoordinatorEntity):
     @property
     def available(self) -> bool:
         """Return True if entity is available."""
-        return self.device["isEnabled"] & (self.device["state"] != "DEACTIVATED")
+        return self.device.get("isEnabled", False) and self.device.get("state", None) != "DEACTIVATED"
 
     @callback
     def _handle_coordinator_update(self) -> None:

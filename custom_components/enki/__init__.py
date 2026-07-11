@@ -13,7 +13,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 
 from .coordinator import EnkiCoordinator
 
-PLATFORMS: list[Platform] = [Platform.LIGHT, Platform.FAN, Platform.SENSOR, Platform.SWITCH, Platform.BINARY_SENSOR, Platform.NUMBER]
+PLATFORMS: list[Platform] = [Platform.LIGHT, Platform.FAN, Platform.SENSOR, Platform.SWITCH, Platform.BINARY_SENSOR, Platform.NUMBER, Platform.BUTTON]
 
 
 @dataclass

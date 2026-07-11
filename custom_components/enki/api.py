@@ -133,7 +133,7 @@ class API:
             scenario = {
                 "type": "scenario",
                 "homeId": home_id,
-                "scenarioId": item.get("scenarioId"),
+                "scenarioId": item.get("id"),
                 "scenarioName": item.get("label"),
                 "isEnabled": item.get("enabled"),
             }
@@ -145,6 +145,12 @@ class API:
 
         home_id = device.get('homeId', None)
 
+        if device.get('type', None) == 'scenarios':
+            LOGGER.debug("Refreshing scenarios for home %s", home_id)
+            scenarios = await self.load_scenarios(home_id)
+            self.merge_properties(device, { 'scenarios':  scenarios})
+            return device
+        
         if device.get('type', None) != 'physicalDevice':
             return device
         
@@ -258,11 +264,12 @@ class API:
                     
                 else:
                     response = await resp.text()
+                    LOGGER.error(f"Error on {capability.name}. status {resp.status}, response {str(response)}")
+
                     if resp.status == 404:
                         # to do log
                         return {}
                     # to do meilleur retour
-                    LOGGER.error(f"Error on {capability.name}. status {resp.status}, response {str(response)}")
                     raise ValueError("bad credentials") # to do, revoir cette valeur de retour
 
     async def get_devices(self) -> list[dict[str, Any]]:
@@ -271,7 +278,14 @@ class API:
         devices = []
         for home in homes:
             devices.extend(await self.get_items_in_section_for_home(home))
-            devices.extend(await self.load_scenarios(home))
+            scenarios_device = {"type": "scenarios",
+                    "homeId": home,
+                    "nodeId": 'scenarios',
+                    "deviceId": 'scenarios',
+                    "deviceName": 'scenarios',
+                    "isEnabled": True,}
+            devices.append(scenarios_device)
+            await self.refresh_node(scenarios_device)
 
         return devices
 
