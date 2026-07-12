@@ -146,7 +146,6 @@ class API:
         home_id = device.get('homeId', None)
 
         if device.get('type', None) == 'scenarios':
-            LOGGER.debug("Refreshing scenarios for home %s", home_id)
             scenarios = await self.load_scenarios(home_id)
             self.merge_properties(device, { 'scenarios':  scenarios})
             return device
@@ -282,7 +281,7 @@ class API:
                     "homeId": home,
                     "nodeId": 'scenarios',
                     "deviceId": 'scenarios',
-                    "deviceName": 'scenarios',
+                    "deviceName": 'Scenarios',
                     "isEnabled": True,}
             devices.append(scenarios_device)
             await self.refresh_node(scenarios_device)

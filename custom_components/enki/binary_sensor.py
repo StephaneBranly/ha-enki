@@ -14,7 +14,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from . import EnkiConfigEntry
 from .base import EnkiBaseEntity
 from .coordinator import EnkiCoordinator
-from .const import ENKI_CHECK_CONTACT_SENSOR_STATE, ENKI_CHECK_MOTION_DETECTION, ENKI_CHECK_VIBRATION_DETECTION, ENKI_CHECK_WATER_SENSOR_STATE, LOGGER
+from .const import ENKI_CHECK_CONTACT_SENSOR_STATE, ENKI_CHECK_MOTION_DETECTION, ENKI_CHECK_VIBRATION_DETECTION, ENKI_CHECK_WATER_SENSOR_STATE
 
 async def async_setup_entry(
     hass: HomeAssistant,

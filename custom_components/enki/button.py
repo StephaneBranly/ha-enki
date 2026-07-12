@@ -43,6 +43,7 @@ class EnkiButton(EnkiBaseEntity, ButtonEntity):
         device: dict[str, Any],
         name: str,
         scenario_id: str = None,
+        isEnabled: bool = True,
     ) -> None:
         """Initialise entity."""
         super().__init__(coordinator, device)
@@ -50,11 +51,14 @@ class EnkiButton(EnkiBaseEntity, ButtonEntity):
         self._scenario_id = scenario_id
         self._device = device
         self._attr_name = name
+        self._isEnabled = isEnabled
+    
+    @property
+    def available(self):
+        return super().available and self._isEnabled
 
     async def async_press(self) -> None:
-        LOGGER.debug("Activating scenario %s for device", self._scenario_id)
         await self.coordinator.api.query_endpoint(self._device["homeId"], self._scenario_id, ENKI_SCENARIO_ACTIVATE_CAPABILITY)
-        LOGGER.debug("end scenario")
 
 def _build_button_entities(coordinator: EnkiCoordinator, device: dict[str, Any]) -> list[EnkiButton]:
     """Create power production sensor for inverter devices."""
@@ -71,6 +75,7 @@ def _build_button_entities(coordinator: EnkiCoordinator, device: dict[str, Any])
                 device,
                 name=cap.get('scenarioName', 'Unknown'),
                 scenario_id=cap.get('scenarioId', None),
+                isEnabled=cap.get('isEnabled', True)
             )
         )
 
