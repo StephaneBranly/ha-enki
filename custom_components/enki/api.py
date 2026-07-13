@@ -168,8 +168,12 @@ class API:
 
         for enki_capability in ENKI_CAPABILITY.__subclasses__():
             if enki_capability.name in capabilities and self.get_method(enki_capability) == 'get':
-                values = await self.query_endpoint(device.get("homeId"), device.get("nodeId"), enki_capability)
-                self.merge_properties(device, {enki_capability.name: values})
+                try:
+                    values = await self.query_endpoint(device.get("homeId"), device.get("nodeId"), enki_capability)
+                    self.merge_properties(device, {enki_capability.name: values})
+                except Exception as err:
+                    LOGGER.error("Error refreshing device %s for capability %s: %s", device, enki_capability.name, repr(err))
+                    continue
 
         return device
 
