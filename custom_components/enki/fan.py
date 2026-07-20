@@ -117,7 +117,7 @@ class EnkiFan(EnkiBaseEntity, FanEntity):
             return
 
         await self.coordinator.api.query_endpoint(self.device["homeId"], self.node_id, ENKI_CHANGE_FAN_SPEED, { "value": 0 })
-        self.coordinator.update_data(self.node_id, {[ENKI_CHECK_FAN_SPEED.name]: { "lastReportedValue": 0}})
+        self.coordinator.update_data(self.node_id, {ENKI_CHECK_FAN_SPEED.name: { "lastReportedValue": 0}})
 
     async def async_set_percentage(self, percentage: int) -> None:
         """Set speed percentage."""
@@ -127,7 +127,7 @@ class EnkiFan(EnkiBaseEntity, FanEntity):
         bounded = max(0, min(100, percentage))
         speed = round((bounded / 100) * self._max_fan_speed)
         await self.coordinator.api.query_endpoint(self.device["homeId"], self.node_id, ENKI_CHANGE_FAN_SPEED, { "value": speed })
-        self.coordinator.update_data(self.node_id, {[ENKI_CHECK_FAN_SPEED.name]: { "lastReportedValue": speed}})
+        self.coordinator.update_data(self.node_id, {ENKI_CHECK_FAN_SPEED.name: { "lastReportedValue": speed}})
 
     @property
     def current_direction(self) -> str | None:
@@ -149,7 +149,7 @@ class EnkiFan(EnkiBaseEntity, FanEntity):
 
         value = "CLOCKWISE" if direction == DIRECTION_FORWARD else "COUNTERCLOCKWISE"
         await self.coordinator.api.query_endpoint(self.device["homeId"], self.node_id, ENKI_CHANGE_FAN_ROTATION_DIRECTION, { "value": value })
-        self.coordinator.update_data(self.node_id,  {[ENKI_CHECK_FAN_ROTATION_DIRECTION.name]: { "lastReportedValue": value}})
+        self.coordinator.update_data(self.node_id,  {ENKI_CHECK_FAN_ROTATION_DIRECTION.name: { "lastReportedValue": value}})
 
     @property
     def preset_mode(self) -> str | None:
@@ -171,7 +171,7 @@ class EnkiFan(EnkiBaseEntity, FanEntity):
             raise ValueError(f"Unsupported preset mode: {preset_mode}")
 
         await self.coordinator.api.query_endpoint(self.device["homeId"], self.node_id, ENKI_CHANGE_AIRFLOW_MODE, { "value": preset_mode })
-        self.coordinator.update_data(self.node_id,  {[ENKI_CHECK_AIRFLOW_MODE.name]: { "lastReportedValue": preset_mode}})
+        self.coordinator.update_data(self.node_id,  {ENKI_CHECK_AIRFLOW_MODE.name: { "lastReportedValue": preset_mode}})
 
 
 def _capabilities_set(device: dict[str, Any]) -> set[str]:

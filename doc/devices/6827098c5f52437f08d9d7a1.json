@@ -1,0 +1,83 @@
+{
+  "manufacturer": "Inspire",
+  "capabilities": [
+    "ota_inventory",
+    "execute_generic_ota_command",
+    "check_current_firmware_version",
+    "check_esdk_certificate_renewal",
+    "change_esdk_certificate",
+    "check_certificate_renewal_confirmation",
+    "check_electrical_power",
+    "switch_electrical_power",
+    "change_brightness",
+    "change_color_temperature",
+    "change_light_state",
+    "check_light_state",
+    "change_fan_rotation_direction",
+    "check_fan_rotation_direction",
+    "check_fan_speed",
+    "change_fan_speed",
+    "change_airflow_mode",
+    "check_airflow_mode"
+  ],
+  "deviceId": "6827098c5f52437f08d9d7a1",
+  "possibleValues": {
+    "switch_electrical_power": {
+      "format": "VALUES",
+      "values": ["ON", "OFF"]
+    },
+    "change_brightness": {
+      "format": "RANGE",
+      "range": {
+        "min": 0.0,
+        "max": 1.0,
+        "defaultValue": null,
+        "step": 0.01
+      }
+    },
+    "change_color_temperature": {
+      "format": "VALUES",
+      "values": ["T2750K", "T3500K", "T4000K", "T5000K", "T6500K"]
+    },
+    "change_airflow_mode": {
+      "format": "VALUES",
+      "values": ["BREEZE", "MANUAL"]
+    },
+    "check_electrical_power": {
+      "format": "VALUES",
+      "values": ["ON", "OFF"]
+    },
+    "change_fan_rotation_direction": {
+      "format": "VALUES",
+      "values": ["CLOCKWISE", "COUNTERCLOCKWISE"]
+    },
+    "change_fan_speed": {
+      "format": "RANGE",
+      "range": {
+        "min": 0.0,
+        "max": 6.0,
+        "defaultValue": 0.0,
+        "step": 1.0
+      }
+    },
+    "check_fan_speed": {
+      "format": "RANGE",
+      "range": {
+        "min": 0.0,
+        "max": 6.0,
+        "defaultValue": 0.0,
+        "step": 1.0
+      }
+    },
+    "check_airflow_mode": {
+      "format": "VALUES",
+      "values": ["BREEZE", "MANUAL"]
+    }
+  },
+  "hasProgrammer": true,
+  "hasTimer": true,
+  "protocols": ["matter"],
+  "name": "Cadix ceiling fan with light",
+  "image": "6827098c5f52437f08d9d7a1.jpg",
+  "tested": true
+}
