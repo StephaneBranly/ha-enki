@@ -196,6 +196,31 @@ class ENKI_CHECK_SIREN_GLOBAL_STATUS(ENKI_CAPABILITY, ENKI_SIREN_ENDPOINT):
 class ENKI_SWITCH_SIREN_STATUS(ENKI_CAPABILITY, ENKI_SIREN_ENDPOINT):
     name = 'switch_siren_status'
 
+### ROLLER SHUTTER (access & motorizations)
+
+# Family reverse-engineered from Enki APK 2.25.1: base path
+# /api-enki-rolling-prod/v1/shutter/<node_id>/<capability>. The legacy slug
+# api-enki-access-and-motorizations-prod maps to this same service.
+class ENKI_ROLLING_ENDPOINT(ENKI_ENDPOINT):
+    path = "/api-enki-rolling-prod/v1/shutter/<node_id>/<capability>"
+    x_api_key = "QegWuQR3zSKLlJZ2OITv94vjtSaaPkDp"
+
+# check-roller-shutter-state returns lastReportedValue as a dict:
+# {"shutterPosition": 0-100, "shutterOpening": "OPEN"|"CLOSED"|null, "shutterModeEnum": "NORMAL"|"INVERTED"}
+class ENKI_CHECK_ROLLER_SHUTTER_STATE(ENKI_CAPABILITY, ENKI_ROLLING_ENDPOINT):
+    name = 'check_roller_shutter_state'
+
+class ENKI_CHANGE_SHUTTER_POSITION(ENKI_CAPABILITY, ENKI_ROLLING_ENDPOINT):
+    name = 'change_shutter_position'
+
+# Stop takes no body; get_method() maps it to POST via the 'change' substring.
+class ENKI_STOP_CHANGE_SHUTTER_POSITION(ENKI_CAPABILITY, ENKI_ROLLING_ENDPOINT):
+    name = 'stop_change_shutter_position'
+
+class ENKI_CHANGE_ROLLER_SHUTTER_MODE(ENKI_CAPABILITY, ENKI_ROLLING_ENDPOINT):
+    name = 'change_roller_shutter_mode'
+
+
 ### WATER
 
 class ENKI_WATER_SENSOR_ENDPOINT(ENKI_ENDPOINT):
