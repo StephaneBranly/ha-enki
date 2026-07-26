@@ -32,6 +32,8 @@ The unofficial Enki intregration for Home Assistant.
 |Thermometer with display<br/>Sonoff|<img src='./doc/devices/6634999c9f53b36a99838c95.jpg'  width='100'/>|*6634999c9f53b36a99838c95*|![100%](https://progress-bar.xyz/100)|❌|
 |Radiator<br/>Noirot|<img src='./doc/devices/67a4b12bae1eca4709a45680.jpg'  width='100'/>|*67a4b12bae1eca4709a45680*|![9%](https://progress-bar.xyz/9)|❌|
 |Cadix ceiling fan with light<br/>Inspire|<img src='./doc/devices/6827098c5f52437f08d9d7a1.jpg'  width='100'/>|*6827098c5f52437f08d9d7a1*|![55%](https://progress-bar.xyz/55)|✅|
+|Radiator<br/>Noirot|<img src='./doc/devices/67a4b12bae1eca4709a45680.jpg'  width='100'/>|*67a4b12bae1eca4709a45680*|![9%](https://progress-bar.xyz/9)|❌|
+|Motion detector<br/>Lexman|<img src='./doc/devices/5e26cc33777472061d55e340.jpg'  width='100'/>|*5e26cc33777472061d55e340*|![100%](https://progress-bar.xyz/100)|✅|
 <!-- end -->
 
 <!-- - Eglo V-link tunable white
