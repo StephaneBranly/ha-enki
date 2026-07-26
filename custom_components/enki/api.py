@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import aiohttp
 import asyncio
+import json
 from typing import Any
 import time
 
@@ -256,7 +257,14 @@ class API:
              json=data) as resp:
                 if resp.ok:
                     if method == 'get':
-                        response = await resp.json()
+                        response = await resp.text()
+                        if not response.strip():
+                            return {}
+                        try:
+                            return json.loads(response)
+                        except json.JSONDecodeError:
+                            LOGGER.warning("Non-JSON response on %s. status %s, response %s", capability.name, resp.status, str(response))
+                            return {}
                     else:
                         response = await resp.text()
                     return response
