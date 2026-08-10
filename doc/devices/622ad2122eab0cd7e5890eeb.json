@@ -1,0 +1,47 @@
+{
+  "manufacturer": "Lexman",
+  "capabilities": [
+    "check_roller_shutter_state",
+    "change_shutter_position",
+    "stop_change_shutter_position",
+    "check_shutter_position",
+    "change_roller_shutter_mode",
+    "execute_preset"
+  ],
+  "deviceId": "622ad2122eab0cd7e5890eeb",
+  "possibleValues": {
+    "change_roller_shutter_mode": {
+      "format": "VALUES",
+      "values": [
+        "NORMAL",
+        "INVERTED"
+      ]
+    },
+    "check_shutter_position": {
+      "format": "RANGE",
+      "range": {
+        "min": 0.0,
+        "max": 100.0,
+        "defaultValue": null,
+        "step": 1.0
+      }
+    },
+    "change_shutter_position": {
+      "format": "RANGE",
+      "range": {
+        "min": 0.0,
+        "max": 100.0,
+        "defaultValue": null,
+        "step": 1.0
+      }
+    }
+  },
+  "hasProgrammer": true,
+  "hasTimer": null,
+  "protocols": [
+    "zigbee"
+  ],
+  "tested": true,
+  "image": "photo.png",
+  "name": "Lexman In-Wall Roller Shutter Module"
+}

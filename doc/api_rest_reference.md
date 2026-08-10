@@ -48,6 +48,12 @@
   - [GET check-electrical-power-restart-behaviour](#get-powernodeidcheck-electrical-power-restart-behaviour--check-restart-behavior)
   - [POST switch-electrical-power-restart-behaviour](#post-powernodeidswitch-electrical-power-restart-behaviour--change-restart-behavior)
   - [POST power-on-with-timer](#post-powernodeidpower-on-with-timer--power-on-with-timer)
+- [7. Roller Shutters / Motorization](#7-roller-shutters--motorization)
+  - [GET check-roller-shutter-state](#get-shutternodeidcheck-roller-shutter-state--check-roller-shutter-state)
+  - [GET check-shutter-position](#get-shutternodeidcheck-shutter-position--check-shutter-position)
+  - [POST change-shutter-position](#post-shutternodeidchange-shutter-position--change-shutter-position)
+  - [POST stop-change-shutter-position](#post-shutternodeidstop-change-shutter-position--stop-change-shutter-position)
+  - [POST change-roller-shutter-mode](#post-shutternodeidchange-roller-shutter-mode--change-roller-shutter-mode)
 - [General notes](#general-notes)
 
 ---
@@ -805,6 +811,115 @@ refresh_token=<refresh_token>
 **Response:** `204 No Content`
 
 > Turns on the device with an automatic timer.
+
+---
+
+## 7. Roller Shutters / Motorization
+
+**Base URL:** `https://enki.api.devportal.adeo.cloud/api-enki-rolling-prod/v1/shutter/`
+**Content-Type:** `application/json`
+
+> Family reverse-engineered from the Enki mobile app (APK 2.25.1). Devices of
+> `deviceType = access_and_motorizations` (e.g. Lexman in-wall roller shutter
+> module). The legacy slug `api-enki-access-and-motorizations-prod` maps to this
+> same `api-enki-rolling-prod` service.
+> Position is a `0–100` percentage where **0 = closed** and **100 = open**,
+> which matches Home Assistant's `cover` convention directly (in `NORMAL` mode).
+
+---
+
+### GET `shutter/{nodeId}/check-roller-shutter-state` — Check roller shutter state
+
+**Path params:** `nodeId`
+**Additional headers:** `homeId`
+
+**Response `200 OK`:**
+```json
+{
+  "nodeId": "node-uuid",
+  "homeId": "home-uuid",
+  "lastReportedDate": "2026-07-25T17:34:58.497Z",
+  "lastReportedValue": {
+    "shutterPosition": 100.0,
+    "shutterOpening": null,
+    "shutterModeEnum": "NORMAL"
+  }
+}
+```
+
+> **`shutterPosition`:** 0–100 (0 = closed, 100 = open).
+> **`shutterOpening`:** `"OPEN"`, `"CLOSED"`, or `null` (coarse open/closed hint).
+> **`shutterModeEnum`:** `"NORMAL"`, `"INVERTED"` (wiring direction).
+> This single endpoint provides the position and mode in one call.
+
+---
+
+### GET `shutter/{nodeId}/check-shutter-position` — Check shutter position
+
+**Path params:** `nodeId`
+**Additional headers:** `homeId`
+
+**Response `200 OK`:**
+```json
+{
+  "nodeId": "node-uuid",
+  "homeId": "home-uuid",
+  "lastReportedDate": "2026-07-25T06:25:10.546Z",
+  "lastReportedValue": 100.0
+}
+```
+
+> `lastReportedValue`: position as a `0–100` float. Redundant with the
+> `shutterPosition` field of `check-roller-shutter-state`.
+
+---
+
+### POST `shutter/{nodeId}/change-shutter-position` — Change shutter position
+
+**Path params:** `nodeId`
+**Additional headers:** `homeId`
+
+**Request body:**
+```json
+{
+  "value": 50
+}
+```
+
+> `value`: target position `0–100` (0 = fully closed, 100 = fully open).
+
+**Response:** `204 No Content`
+
+---
+
+### POST `shutter/{nodeId}/stop-change-shutter-position` — Stop shutter movement
+
+**Path params:** `nodeId`
+**Additional headers:** `homeId`
+
+**Request body:** (empty, no parameters)
+
+**Response:** `204 No Content`
+
+> Stops an in-progress movement.
+
+---
+
+### POST `shutter/{nodeId}/change-roller-shutter-mode` — Change roller shutter mode
+
+**Path params:** `nodeId`
+**Additional headers:** `homeId`
+
+**Request body:**
+```json
+{
+  "value": "NORMAL"
+}
+```
+
+> **`value` values:** `NORMAL`, `INVERTED` (wiring/direction configuration).
+
+**Response:** `204 No Content`
 
 ---
 
