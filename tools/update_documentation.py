@@ -7,6 +7,7 @@ import sys
 # Add parent directory to path
 sys.path.insert(1, os.path.join(sys.path[0], '../custom_components/enki'))
 from const import ENKI_CAPABILITY
+RAW_GITHUB_URL = "https://raw.githubusercontent.com/StephaneBranly/ha-enki/refs/heads/main"
 
 
 # Lire le contenu du fichier
@@ -55,7 +56,7 @@ if __name__ == '__main__':
             device = json.load(dev_file)
             if not (coverage := compute_coverage(device, capabilities)):
                 continue
-            img = f"<img src='./doc/devices/{device.get('image')}'  width='100'/>" if device.get('image') else ''   
+            img = f"<img src='{RAW_GITHUB_URL}/doc/devices/{device.get('image')}'  width='100'/>" if device.get('image') else ''   
             supported_devices += f"|{device.get('name', 'na')}<br/>{device.get('manufacturer', 'na')}|{img}|*{device.get('deviceId', 'na')}*|![{coverage}%](https://progress-bar.xyz/{coverage})|{'✅' if device.get('tested', False) else '❌'}|\n"
 
     content = update_anchor(content, 'devices', supported_devices)
