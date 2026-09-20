@@ -5,6 +5,7 @@ LOGGER: Logger = getLogger(__package__)
 
 # This is the internal name of the integration, it should also match the directory
 # name for the integration.
+GITHUB_REPO = "https://github.com/StephaneBranly/ha-enki"
 DOMAIN = "enki"
 NAME = "Enki"
 

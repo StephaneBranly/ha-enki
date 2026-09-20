@@ -208,3 +208,5 @@ __marimo__/
 
 # Enki diagnostic dumps (tools/enki_shutter_probe.py)
 doc/devices/probe/
+
+/custom_components/hacs
