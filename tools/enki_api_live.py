@@ -99,7 +99,7 @@ async def _run_live_api_check(user: str, password: str) -> None:
         coverage = compute_coverage(device_description, capabilities)
         device_file = Path("./doc/devices") / f"{device.get('deviceId', None)}.json"
         status = 'Known'
-        if not device_file.exists():
+        if not device_file.exists() and device['type'] == 'physicalDevice':
             device_file.parent.mkdir(parents=True, exist_ok=True)
             with device_file.open(mode='w', encoding='utf-8') as f:
                 f.write(json.dumps(device_description, indent=2))

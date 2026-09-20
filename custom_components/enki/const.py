@@ -229,3 +229,21 @@ class ENKI_WATER_SENSOR_ENDPOINT(ENKI_ENDPOINT):
 
 class ENKI_CHECK_WATER_SENSOR_STATE(ENKI_CAPABILITY, ENKI_WATER_SENSOR_ENDPOINT):
     name = 'check_water_sensor_state'
+
+
+### ALARM
+
+class ENKI_ALARM_ENDPOINT(ENKI_ENDPOINT):
+    path = "/api-enki-home-security-prod/v1/security?homeId=<home_id>"
+    x_api_key = "zhy6g1QFDd9OaeLm50eX7f5FVK9kg7Sm"
+
+class ENKI_GET_ALARM_STATUS(ENKI_CAPABILITY, ENKI_ALARM_ENDPOINT):
+    _ = None
+
+class ENKI_ALARM_CHANGE_ENDPOINT(ENKI_ALARM_ENDPOINT):
+    path = "/api-enki-home-security-prod/v1/security/<node_id>/homes/<home_id>/<capability>"
+   
+
+class ENKI_CHANGE_ALARM_HOME(ENKI_CAPABILITY, ENKI_ALARM_CHANGE_ENDPOINT):
+    method = 'PATCH'
+    name = 'currentMode'
