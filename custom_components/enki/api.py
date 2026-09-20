@@ -9,6 +9,7 @@ from typing import Any
 import time
 
 from .const import (
+    ENKI_GET_ALARM_STATUS,
     ENKI_BFF_ITEMS,
     ENKI_CAPABILITY,
     ENKI_HOMES_LIST,
@@ -96,32 +97,41 @@ class API:
            
         for section in response["sections"]:
             for item in section["items"]:
-                if 'deviceId' not in item["metadata"].keys():
+                if 'deviceId' in item["metadata"].keys():
+                    ### PHYSICAL DEVICE
+                    device = {
+                        "type": "physicalDevice",
+                        "homeId": home_id,
+                        "deviceId": item["metadata"]["deviceId"],
+                        "nodeId": item["metadata"]["nodeId"],
+                        "deviceType": item["metadata"].get("deviceType"),
+                        "mainChangeCapabilityId": item["metadata"].get("mainChangeCapabilityId"),
+                        "mainCheckCapabilityId": item["metadata"].get("mainCheckCapabilityId"),
+                        "mainChangeCapabilityEndpoints": [
+                            endpoint.get("id")
+                            for endpoint in item["metadata"].get("mainChangeCapability", {}).get("endpoints", [])
+                            if endpoint.get("id") is not None
+                        ] if item["metadata"].get("mainChangeCapability") is not None else [],
+                        "deviceName": item["title"]["label"],
+                        "state": item["state"],
+                        "isEnabled": item["isEnabled"],
+                    }
+                    node_info = await self.get_node(home_id, device.get("nodeId"))
+                    self.merge_properties(device, node_info)
+                elif item['template'] == 'SECURITY':
+                    device = {
+                        "type": "security",
+                        "homeId": home_id,
+                        "deviceId": None,
+                        "nodeId": item["metadata"]["securityId"],
+                        "deviceName": 'Security',
+                        "state": item["state"],
+                        "isEnabled": item["isEnabled"],
+                    }
+                else:
                     continue
 
-                device = {
-                    "type": "physicalDevice",
-                    "homeId": home_id,
-                    "deviceId": item["metadata"]["deviceId"],
-                    "nodeId": item["metadata"]["nodeId"],
-                    "deviceType": item["metadata"].get("deviceType"),
-                    "mainChangeCapabilityId": item["metadata"].get("mainChangeCapabilityId"),
-                    "mainCheckCapabilityId": item["metadata"].get("mainCheckCapabilityId"),
-                    "mainChangeCapabilityEndpoints": [
-                        endpoint.get("id")
-                        for endpoint in item["metadata"].get("mainChangeCapability", {}).get("endpoints", [])
-                        if endpoint.get("id") is not None
-                    ] if item["metadata"].get("mainChangeCapability") is not None else [],
-                    "deviceName": item["title"]["label"],
-                    "state": item["state"],
-                    "isEnabled": item["isEnabled"],
-                }
-                
                 devices.append(device)
-
-                node_info = await self.get_node(home_id, device.get("nodeId"))
-                self.merge_properties(device, node_info)
-
                 await self.refresh_node(device)
         return devices
         
@@ -150,9 +160,11 @@ class API:
             scenarios = await self.load_scenarios(home_id)
             self.merge_properties(device, { 'scenarios':  scenarios})
             return device
-        
-        # if device.get('type', None) != 'physicalDevice':
-        #     return device
+
+        if device.get('type', None) == 'security':
+            values = await self.query_endpoint(device.get("homeId"), device.get("nodeId"), ENKI_GET_ALARM_STATUS)
+            self.merge_properties(device, {ENKI_GET_ALARM_STATUS.name: values})
+            return device
         
         node_id = device.get('nodeId', None)
         
@@ -169,8 +181,12 @@ class API:
 
         for enki_capability in ENKI_CAPABILITY.__subclasses__():
             if enki_capability.name in capabilities and self.get_method(enki_capability) == 'get':
-                values = await self.query_endpoint(device.get("homeId"), device.get("nodeId"), enki_capability)
-                self.merge_properties(device, {enki_capability.name: values})
+                try:
+                    values = await self.query_endpoint(device.get("homeId"), device.get("nodeId"), enki_capability)
+                    self.merge_properties(device, {enki_capability.name: values})
+                except Exception as err:
+                    LOGGER.error("Error refreshing device %s for capability %s: %s", device, enki_capability.name, repr(err))
+                    continue
 
         return device
 
