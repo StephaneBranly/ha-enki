@@ -83,6 +83,8 @@ Different device capabilities are curently being integrated to this custom compo
 |stop_change_shutter_position|![100%](https://progress-bar.xyz/100)|
 |change_roller_shutter_mode|![100%](https://progress-bar.xyz/100)|
 |check_water_sensor_state|![100%](https://progress-bar.xyz/100)|
+|ENKI_GET_ALARM_STATUS|![100%](https://progress-bar.xyz/100)|
+|currentMode|![100%](https://progress-bar.xyz/100)|
 <!-- end -->
 
 </details>
