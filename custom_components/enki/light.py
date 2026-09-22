@@ -8,6 +8,8 @@ from homeassistant.components.light.const import DEFAULT_MIN_KELVIN, DEFAULT_MAX
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
+from custom_components.enki.utils import _capabilities_set
+
 from . import EnkiConfigEntry
 from .base import EnkiBaseEntity
 from .coordinator import EnkiCoordinator
@@ -323,13 +325,3 @@ def _main_change_capability_endpoint_ids(device: dict[str, Any]) -> list[int]:
                 endpoint_ids.add(endpoint_id)
 
     return sorted(endpoint_ids)
-
-
-def _capabilities_set(device: dict[str, Any]) -> set[str]:
-    """Return a safe capability set from device metadata."""
-    capabilities = device.get("capabilities")
-    if isinstance(capabilities, list):
-        return {capability for capability in capabilities if isinstance(capability, str)}
-    if isinstance(capabilities, dict):
-        return set(capabilities.keys())
-    return set()

@@ -18,6 +18,7 @@ from custom_components.enki.const import (
     ENKI_CHECK_ROLLER_SHUTTER_STATE,
     ENKI_STOP_CHANGE_SHUTTER_POSITION,
 )
+from custom_components.enki.utils import _capabilities_set
 
 from . import EnkiConfigEntry
 from .base import EnkiBaseEntity
@@ -126,17 +127,6 @@ class EnkiCover(EnkiBaseEntity, CoverEntity):
             self.node_id,
             {ENKI_CHECK_ROLLER_SHUTTER_STATE.name: {"lastReportedValue": {"shutterPosition": clamped}}},
         )
-
-
-def _capabilities_set(device: dict[str, Any]) -> set[str]:
-    """Return capabilities as a normalized string set."""
-    capabilities = device.get("capabilities")
-    if isinstance(capabilities, list):
-        return {capability for capability in capabilities if isinstance(capability, str)}
-    if isinstance(capabilities, dict):
-        return set(capabilities.keys())
-    return set()
-
 
 def _is_cover_device(device: dict[str, Any]) -> bool:
     """Detect roller shutter devices from capabilities metadata."""

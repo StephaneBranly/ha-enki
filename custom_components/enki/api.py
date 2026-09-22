@@ -8,6 +8,8 @@ import json
 from typing import Any
 import time
 
+from custom_components.enki.utils import _capabilities_set
+
 from .const import (
     ENKI_GET_ALARM_STATUS,
     ENKI_BFF_ITEMS,
@@ -141,12 +143,12 @@ class API:
         response = await self.query_endpoint(home_id, None, ENKI_SCENARIO_LIST_CAPABILITY)
         scenarios = []
         for item in response.get("items", []):
+            LOGGER.debug("Loading scenario for home %s: %s", home_id, item)
             scenario = {
                 "type": "scenario",
                 "homeId": home_id,
-                "scenarioId": item.get("id"),
-                "scenarioName": item.get("label"),
                 "isEnabled": item.get("enabled"),
+                "properties": item
             }
             scenarios.append(scenario)
         return scenarios
@@ -317,13 +319,3 @@ class APIAuthError(Exception):
 
 class APIConnectionError(Exception):
     """Exception class for connection error."""
-
-
-def _capabilities_set(device: dict[str, Any]) -> set[str]:
-    """Return capabilities as a normalized string set."""
-    capabilities = device.get("capabilities")
-    if isinstance(capabilities, list):
-        return {capability for capability in capabilities if isinstance(capability, str)}
-    if isinstance(capabilities, dict):
-        return set(capabilities.keys())
-    return set()

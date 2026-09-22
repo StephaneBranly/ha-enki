@@ -67,14 +67,15 @@ def _build_button_entities(coordinator: EnkiCoordinator, device: dict[str, Any])
         return []
 
     buttons = []
-    LOGGER.debug("Building button entities for device: %s", device)
     for cap in device.get('scenarios', []):
+        LOGGER.debug("Creating button entity for scenario: %s", cap)
+        properties = cap.get('properties', {})
         buttons.append(
             EnkiButton(
                 coordinator,
                 device,
-                name=cap.get('scenarioName', 'Unknown'),
-                scenario_id=cap.get('scenarioId', None),
+                name=properties.get('label', 'Unknown'),
+                scenario_id=properties.get('id', None),
                 isEnabled=cap.get('isEnabled', True)
             )
         )

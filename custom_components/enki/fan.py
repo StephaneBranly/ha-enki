@@ -14,6 +14,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from custom_components.enki.const import ENKI_CHANGE_AIRFLOW_MODE, ENKI_CHANGE_FAN_ROTATION_DIRECTION, ENKI_CHANGE_FAN_SPEED, ENKI_CHECK_AIRFLOW_MODE, ENKI_CHECK_FAN_ROTATION_DIRECTION, ENKI_CHECK_FAN_SPEED, ENKI_SWITCH_ELECTRICAL_POWER
+from custom_components.enki.utils import _capabilities_set
 
 from . import EnkiConfigEntry
 from .base import EnkiBaseEntity
@@ -172,17 +173,6 @@ class EnkiFan(EnkiBaseEntity, FanEntity):
 
         await self.coordinator.api.query_endpoint(self.device["homeId"], self.node_id, ENKI_CHANGE_AIRFLOW_MODE, { "value": preset_mode })
         self.coordinator.update_data(self.node_id,  {ENKI_CHECK_AIRFLOW_MODE.name: { "lastReportedValue": preset_mode}})
-
-
-def _capabilities_set(device: dict[str, Any]) -> set[str]:
-    """Return capabilities as a normalized string set."""
-    capabilities = device.get("capabilities")
-    if isinstance(capabilities, list):
-        return {capability for capability in capabilities if isinstance(capability, str)}
-    if isinstance(capabilities, dict):
-        return set(capabilities.keys())
-    return set()
-
 
 def _possible_values_dict(device: dict[str, Any]) -> dict[str, Any]:
     """Return possibleValues metadata as a dict if available."""
