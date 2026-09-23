@@ -1,4 +1,5 @@
 """Integration 101 Template integration using DataUpdateCoordinator."""
+from collections.abc import Callable
 from datetime import timedelta
 from typing import Any
 
@@ -8,7 +9,8 @@ from homeassistant.const import (
     CONF_SCAN_INTERVAL,
     CONF_USERNAME,
 )
-from homeassistant.core import DOMAIN, HomeAssistant
+from homeassistant.core import DOMAIN, HomeAssistant, callback
+from homeassistant.helpers.event import async_track_time_interval
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .api import API, APIAuthError
@@ -27,8 +29,9 @@ class EnkiCoordinator(DataUpdateCoordinator):
         self.pwd = config_entry.data[CONF_PASSWORD]
 
         # read polling interval from config entry data, falling back to default
-        # to do, change poll_interval depending on type of device (ie detectors / sensors)
-        self.poll_interval = config_entry.data.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
+        self.poll_interval = int(config_entry.data.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL))
+        self._device_update_intervals: dict[str, int] = {}
+        self._device_refresh_unsub: dict[str, Callable[[], None]] = {}
 
         # Initialise DataUpdateCoordinator
         super().__init__(
@@ -45,6 +48,43 @@ class EnkiCoordinator(DataUpdateCoordinator):
         # Initialise your api here
         self.api = API(user=self.user, pwd=self.pwd)
 
+    def get_device_update_interval(self, node_id: str) -> int:
+        """Return the refresh interval configured for a given device."""
+        if device := self.get_node(node_id):
+            return int(device.get("update_interval", self.poll_interval))
+        return self.poll_interval
+
+    def set_device_update_interval(self, node_id: str, seconds: float) -> None:
+        """Update the refresh interval for a specific device and reschedule it."""
+        interval = max(1, int(seconds))
+        device = self.get_node(node_id)
+        if isinstance(device, dict):
+            device["update_interval"] = interval
+        self._device_update_intervals[node_id] = interval
+        self._reschedule_device_update(node_id, interval)
+
+    @callback
+    def _reschedule_device_update(self, node_id: str, interval: int) -> None:
+        """Restart the scheduled refresh for a device with a new cadence."""
+        if node_id in self._device_refresh_unsub:
+            self._device_refresh_unsub.pop(node_id)()
+
+        self._device_refresh_unsub[node_id] = async_track_time_interval(
+            self.hass,
+            self._async_refresh_device,
+            timedelta(seconds=interval),
+        )
+
+        if self._device_update_intervals:
+            self.update_interval = timedelta(
+                seconds=min(self._device_update_intervals.values(), default=self.poll_interval)
+            )
+
+    @callback
+    def _async_refresh_device(self, _now: Any) -> None:
+        """Trigger a refresh when a device-specific interval is reached."""
+        self.hass.async_create_task(self.async_request_refresh())
+
     async def async_update_data(self):
         """Fetch data from API endpoint.
 
@@ -59,6 +99,25 @@ class EnkiCoordinator(DataUpdateCoordinator):
         except Exception as err:
             # This will show entities as unavailable by raising UpdateFailed exception
             raise UpdateFailed(f"Error communicating with API: {err}") from err
+
+        for device in devices:
+            node_id = device.get("nodeId")
+            if not node_id:
+                continue
+
+            current_interval = self._device_update_intervals.get(node_id)
+            api_interval = device.get("update_interval")
+
+            if current_interval is None and api_interval is not None:
+                interval = int(api_interval)
+            elif current_interval is not None:
+                interval = current_interval
+            else:
+                interval = self.poll_interval
+
+            self._device_update_intervals[node_id] = interval
+            device["update_interval"] = interval
+            self._reschedule_device_update(node_id, interval)
 
         # What is returned here is stored in self.data by the DataUpdateCoordinator
         return devices
