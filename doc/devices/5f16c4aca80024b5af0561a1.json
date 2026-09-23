@@ -30,5 +30,6 @@
   "hasTimer": null,
   "protocols": ["zigbee"],
   "name": "Siren",
-  "image": "5f16c4aca80024b5af0561a1.jpg"
+  "image": "5f16c4aca80024b5af0561a1.jpg",
+  "tested": true
 }
