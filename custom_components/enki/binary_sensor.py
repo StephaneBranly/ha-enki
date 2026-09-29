@@ -22,10 +22,9 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ):
     """Set up binary_sensor entities."""
-    coordinator: EnkiCoordinator = config_entry.runtime_data.coordinator
-
     binary_sensors = [
         entity
+        for coordinator in config_entry.runtime_data.coordinators.values()
         for device in coordinator.data
         for entity in _build_binary_sensor_entities(coordinator, device)
     ]

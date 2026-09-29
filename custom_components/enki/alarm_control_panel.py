@@ -26,10 +26,9 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up Enki alarm panels."""
-    coordinator: EnkiCoordinator = config_entry.runtime_data.coordinator
-
     alarm_control_panels = [
             entity
+            for coordinator in config_entry.runtime_data.coordinators.values()
             for device in coordinator.data
             for entity in _build_alarm_control_panel_entities(coordinator, device)
         ]

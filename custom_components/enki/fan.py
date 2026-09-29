@@ -28,10 +28,9 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ):
     """Set up fan entities."""
-    coordinator: EnkiCoordinator = config_entry.runtime_data.coordinator
-
     fans = [
         EnkiFan(coordinator, device, "state")
+        for coordinator in config_entry.runtime_data.coordinators.values()
         for device in coordinator.data
         if _is_fan_device(device)
     ]

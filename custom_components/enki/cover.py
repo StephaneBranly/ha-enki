@@ -30,10 +30,9 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ):
     """Set up cover entities."""
-    coordinator: EnkiCoordinator = config_entry.runtime_data.coordinator
-
     covers = [
         EnkiCover(coordinator, device)
+        for coordinator in config_entry.runtime_data.coordinators.values()
         for device in coordinator.data
         if _is_cover_device(device)
     ]

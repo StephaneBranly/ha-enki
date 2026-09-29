@@ -8,6 +8,7 @@ from homeassistant.components.number import (
     NumberDeviceClass,
     NumberEntity,
 )
+from homeassistant.helpers.entity import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
@@ -22,10 +23,9 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ):
     """Set up number entities."""
-    coordinator: EnkiCoordinator = config_entry.runtime_data.coordinator
-
     numbers = [
         entity
+        for coordinator in config_entry.runtime_data.coordinators.values()
         for device in coordinator.data
         for entity in _build_number_entities(coordinator, device)
     ]
@@ -83,6 +83,9 @@ class EnkiDeviceUpdateIntervalNumber(EnkiBaseEntity, NumberEntity):
     """Expose a per-device update interval as a number entity."""
 
     _attr_has_entity_name = True
+    _attr_device_class = NumberDeviceClass.DURATION
+    _attr_icon = "mdi:timer-outline"
+    _attr_entity_category = EntityCategory.CONFIG
 
     def __init__(self, coordinator: EnkiCoordinator, device: dict[str, Any]) -> None:
         """Initialise the device update interval entity."""

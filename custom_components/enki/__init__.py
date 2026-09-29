@@ -5,12 +5,14 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import Platform
+from homeassistant.const import CONF_PASSWORD, CONF_SCAN_INTERVAL, CONF_USERNAME, Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.device_registry import DeviceEntry
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+from homeassistant.helpers.storage import Store
 
+from .api import API
+from .const import DEFAULT_SCAN_INTERVAL, DOMAIN, LOGGER
 from .coordinator import EnkiCoordinator
 
 PLATFORMS: list[Platform] = [Platform.LIGHT, Platform.FAN, Platform.SENSOR, Platform.SWITCH, Platform.BINARY_SENSOR, Platform.NUMBER, Platform.BUTTON, Platform.COVER, Platform.SELECT, Platform.ALARM_CONTROL_PANEL]
@@ -20,7 +22,7 @@ PLATFORMS: list[Platform] = [Platform.LIGHT, Platform.FAN, Platform.SENSOR, Plat
 class RuntimeData:
     """Class to hold your data."""
 
-    coordinator: DataUpdateCoordinator
+    coordinators: dict[str, EnkiCoordinator]
 
 
 EnkiConfigEntry = ConfigEntry[RuntimeData]
@@ -29,18 +31,58 @@ EnkiConfigEntry = ConfigEntry[RuntimeData]
 async def async_setup_entry(hass: HomeAssistant, config_entry: EnkiConfigEntry) -> bool:
     """Set up Enki Integration from a config entry."""
 
-    # Initialise the coordinator that manages data updates from your api.
-    # This is defined in coordinator.py
-    coordinator = EnkiCoordinator(hass, config_entry)
+    api = API(
+        user=config_entry.data[CONF_USERNAME],
+        pwd=config_entry.data[CONF_PASSWORD],
+    )
+    try:
+        devices = await api.get_devices()
+    except Exception as err:
+        raise ConfigEntryNotReady("Unable to fetch Enki devices") from err
 
-    # Perform an initial data load from api.
-    # async_config_entry_first_refresh() is special in that it does not log errors if it fails
-    await coordinator.async_config_entry_first_refresh()
+    poll_interval = int(config_entry.data.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL))
+    interval_store = Store(
+        hass,
+        1,
+        f"{DOMAIN}_{config_entry.entry_id}_device_update_intervals",
+    )
+    stored_intervals = await interval_store.async_load()
+    interval_overrides: dict[str, int] = {}
+    if isinstance(stored_intervals, dict):
+        for node_id, seconds in stored_intervals.items():
+            try:
+                interval_overrides[node_id] = max(1, int(seconds))
+            except (TypeError, ValueError):
+                continue
 
-    # Test to see if api initialised correctly, else raise ConfigNotReady to make HA retry setup
-    # TODO: Change this to match how your api will know if connected or successful update
-    if not await coordinator.api.check_connected():
-        raise ConfigEntryNotReady
+    coordinators: dict[str, EnkiCoordinator] = {}
+    for device in devices:
+        node_id = device.get("nodeId")
+        if not node_id or node_id in coordinators:
+            continue
+
+        try:
+            interval = interval_overrides.get(
+                node_id,
+                max(1, int(device.get("update_interval", poll_interval))), #to do, default poll_interval different in function of device type (inverter, battery, etc.)
+            )
+        except (TypeError, ValueError):
+            interval = poll_interval
+        finally:
+            LOGGER.debug("Setting update interval for device %s to %d seconds", node_id, interval)
+        device["update_interval"] = interval
+        coordinator = EnkiCoordinator(
+            hass,
+            config_entry,
+            api,
+            device,
+            interval,
+            interval_overrides,
+            interval_store,
+        )
+        coordinator.async_set_updated_data([device])
+        config_entry.async_on_unload(coordinator.shutdown)
+        coordinators[node_id] = coordinator
 
     # Initialise a listener for config flow options changes.
     # This will be removed automatically if the integraiton is unloaded.
@@ -53,7 +95,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: EnkiConfigEntry) 
 
     # Add the coordinator and update listener to config runtime data to make
     # accessible throughout your integration
-    config_entry.runtime_data = RuntimeData(coordinator)
+    config_entry.runtime_data = RuntimeData(coordinators)
 
     # Setup platforms (based on the list of entity types in PLATFORMS defined above)
     # This calls the async_setup method in each of your entity type files.
