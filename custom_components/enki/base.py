@@ -43,7 +43,7 @@ class EnkiBaseEntity(CoordinatorEntity):
         self.device = device
         self.node_id = device["nodeId"]
         self.device_id = device["deviceId"]
-        self.parameter = self.coordinator.get_device_parameter(self.node_id, "deviceName")
+        self.parameter = self.coordinator.get_device_parameter("deviceName")
 
     @property
     def available(self) -> bool:
@@ -54,29 +54,29 @@ class EnkiBaseEntity(CoordinatorEntity):
     def _handle_coordinator_update(self) -> None:
         """Update sensor with latest data from coordinator."""
         # This method is called by your DataUpdateCoordinator when a successful update runs.
-        self.device = self.coordinator.get_node(self.node_id)
+        self.device = self.coordinator.get_device()
         _LOGGER.debug(
             "Updating device: %s, %s",
             self.node_id,
-            self.coordinator.get_device_parameter(self.node_id, "deviceName"),
+            self.coordinator.get_device_parameter("deviceName"),
         )
         self.async_write_ha_state()
 
     @property
     def device_info(self) -> DeviceInfo:
         """Return device information."""
-        device_name = self.coordinator.get_device_parameter(self.node_id, "deviceName")
+        device_name = self.coordinator.get_device_parameter("deviceName")
         return DeviceInfo(
             name=device_name,
-            manufacturer=self.coordinator.get_device_parameter(self.node_id, "manufacturerId"),
+            manufacturer=self.coordinator.get_device_parameter("manufacturerId"),
             model=str(
-                self.coordinator.get_device_parameter(self.node_id, "modelNumber")
+                self.coordinator.get_device_parameter("modelNumber")
             )
             .replace("_", " ")
             .title(),
-            model_id=str(self.coordinator.get_device_parameter(self.node_id, "deviceId")),
+            model_id=str(self.coordinator.get_device_parameter("deviceId")),
             sw_version=self.coordinator.get_device_parameter(
-                self.node_id, "version"
+                "version"
             ),
             identifiers={
                 (
@@ -84,7 +84,7 @@ class EnkiBaseEntity(CoordinatorEntity):
                     self.node_id,
                 )
             },
-            serial_number=self.coordinator.get_device_parameter(self.node_id, "eui64")
+            serial_number=self.coordinator.get_device_parameter("eui64")
         )
 
     @property
@@ -95,4 +95,4 @@ class EnkiBaseEntity(CoordinatorEntity):
     @property
     def unique_id(self) -> str:
         """Return unique id."""
-        return f"{DOMAIN}-{self.coordinator.get_device_parameter(self.node_id, "nodeId")}-{self.parameter}"
+        return f"{DOMAIN}-{self.coordinator.get_device_parameter("nodeId")}-{self.parameter}"

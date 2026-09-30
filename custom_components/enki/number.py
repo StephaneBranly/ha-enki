@@ -64,7 +64,7 @@ class EnkiNumber(EnkiBaseEntity, NumberEntity):
     @property
     def native_value(self) -> float | None:
         """Return the number value."""
-        value = self.coordinator.get_device_parameter(self.node_id, self._attr_check_capability.name).get('lastReportedValue', None)
+        value = self.coordinator.get_device_parameter(self._attr_check_capability.name).get('lastReportedValue', None)
 
         if value is None:
             return None

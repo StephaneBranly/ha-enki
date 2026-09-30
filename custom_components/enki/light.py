@@ -113,7 +113,7 @@ class EnkiLight(EnkiBaseEntity, LightEntity):
     def is_on(self) -> bool | None:
         """Return if the binary sensor is on."""
         if self._endpoint_id is not None:
-            endpoints = self.coordinator.get_device_parameter(self.node_id, ENKI_CHECK_ELECTRICAL_POWER.name).get('endpoints', [])
+            endpoints = self.coordinator.get_device_parameter(ENKI_CHECK_ELECTRICAL_POWER.name).get('endpoints', [])
             if isinstance(endpoints, list):
                 for ep in endpoints:
                     if not isinstance(ep, dict):
@@ -146,7 +146,7 @@ class EnkiLight(EnkiBaseEntity, LightEntity):
         if len(endpoint_ids) <= 1:
             return False
 
-        endpoints = self.coordinator.get_device_parameter(self.node_id, ENKI_CHECK_ELECTRICAL_POWER.name).get('endpoints', [])
+        endpoints = self.coordinator.get_device_parameter(ENKI_CHECK_ELECTRICAL_POWER.name).get('endpoints', [])
         if not isinstance(endpoints, list):
             return False
 
@@ -188,7 +188,7 @@ class EnkiLight(EnkiBaseEntity, LightEntity):
             )
 
     def extract_light_state(self):
-        state = self.coordinator.get_device_parameter(self.node_id, ENKI_CHECK_LIGHT_STATE.name).get("lastReportedValue", {})
+        state = self.coordinator.get_device_parameter(ENKI_CHECK_LIGHT_STATE.name).get("lastReportedValue", {})
         return state
 
 

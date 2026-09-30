@@ -93,7 +93,7 @@ class EnkiCoordinator(DataUpdateCoordinator):
         so entities can quickly look up their data.
         """
         try:
-            await self.api.refresh_node(self.device)
+            self.device = await self.api.refresh_node(self.device)
             LOGGER.debug("Refreshed device from API: %s", self.node_id)
         except APIAuthError as err:
             LOGGER.error(err)
@@ -103,7 +103,7 @@ class EnkiCoordinator(DataUpdateCoordinator):
             raise UpdateFailed(f"Error communicating with API: {err}") from err
 
         self.device["update_interval"] = self.poll_interval
-        return [self.device]
+        return self.device
 
     # ----------------------------------------------------------------------------
     # Here we add some custom functions on our data coordinator to be called
@@ -111,37 +111,15 @@ class EnkiCoordinator(DataUpdateCoordinator):
     #
     # These will be specific to your api or yo may not need them at all
     # ----------------------------------------------------------------------------
-    def get_device(self, device_id: str) -> dict[str, Any]:
-        """Get a device entity from our api data using the device_id."""
-        try:
-            return [
-                devices for devices in self.data if devices["deviceId"] == device_id
-            ][0]
-        except (TypeError, IndexError):
-            # In this case if the device id does not exist you will get an IndexError.
-            # If api did not return any data, you will get TypeError.
-            return None
+    def get_device(self) -> dict[str, Any]:
+        return self.device
         
-    def get_node(self, node_id: str) -> dict[str, Any]:
-        """Get a device entity from our api data using the node_id."""
-        try:
-            return [
-                devices for devices in self.data if devices["nodeId"] == node_id
-            ][0]
-        except (TypeError, IndexError):
-            # In this case if the device id does not exist you will get an IndexError.
-            # If api did not return any data, you will get TypeError.
-            return None
-
-    def get_device_parameter(self, node_id: str, parameter: str) -> Any:
+    def get_device_parameter(self, parameter: str) -> Any:
         """Get the parameter value of one of our devices from our api data."""
-        if device := self.get_node(node_id):
-            return device.get(parameter)
+        return self.device.get(parameter)
         
-    def get_device_capability_parameter(self, node_id: str, capability: ENKI_CAPABILITY, parameter: str | None = None, in_last_reported_value: bool = True):
-        if not (device := self.get_node(node_id)):
-            return
-        dc = device.get(capability.name, None)
+    def get_device_capability_parameter(self, capability: ENKI_CAPABILITY, parameter: str | None = None, in_last_reported_value: bool = True):
+        dc = self.device.get(capability.name, None)
         if not dc:
             return
         if in_last_reported_value:
@@ -159,7 +137,7 @@ class EnkiCoordinator(DataUpdateCoordinator):
         Support nested dictionaries so we can merge dict of dict updates into
         the existing device data.
         """
-        device = self.get_node(node_id)
+        device = self.get_device()
         if not isinstance(device, dict):
             return
 
@@ -171,11 +149,12 @@ class EnkiCoordinator(DataUpdateCoordinator):
                     target[key] = value
 
         _merge_dicts(device, updated_values)
-        self.async_set_updated_data(self.data)
+        LOGGER.debug("Updated device data for node_id: %s, updated_values: %s", device, self.data)
+        self.async_set_updated_data(device)
 
     def update_endpoint_power(self, node_id: int, endpoint_id: int, power: str) -> None:
         """Optimistically update power state for a specific electricalEndpoints entry."""
-        device = self.get_node(node_id)
+        device = self.get_device()
         endpoints = device.get(ENKI_CHECK_ELECTRICAL_POWER.name).get('endpoints', [])
         if isinstance(endpoints, list):
             for ep in endpoints:
@@ -184,4 +163,4 @@ class EnkiCoordinator(DataUpdateCoordinator):
                 if ep.get("id") == endpoint_id:
                     ep["lastReportedValue"] = power
                     break
-        self.async_set_updated_data(self.data)
+        self.async_set_updated_data(device)

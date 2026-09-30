@@ -67,7 +67,7 @@ class EnkiCover(EnkiBaseEntity, CoverEntity):
     def _shutter_field(self, field: str) -> Any:
         """Read a field from check_roller_shutter_state.lastReportedValue."""
         return self.coordinator.get_device_capability_parameter(
-            self.node_id, ENKI_CHECK_ROLLER_SHUTTER_STATE, field
+            ENKI_CHECK_ROLLER_SHUTTER_STATE, field
         )
 
     @property

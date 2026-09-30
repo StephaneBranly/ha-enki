@@ -57,7 +57,7 @@ class EnkiSwitch(EnkiBaseEntity, SwitchEntity):
     @property
     def is_on(self) -> bool | None:
         """Return if outlet is on."""
-        power = self.coordinator.get_device_capability_parameter(self.node_id, self._attr_check_capability)
+        power = self.coordinator.get_device_capability_parameter(self._attr_check_capability)
         if isinstance(power, str):
             return power == "ON"
         return None

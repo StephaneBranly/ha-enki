@@ -53,7 +53,7 @@ class EnkiRollerShutterModeSelect(EnkiBaseEntity, SelectEntity):
     def current_option(self) -> str | None:
         """Return current wiring mode."""
         mode = self.coordinator.get_device_capability_parameter(
-            self.node_id, ENKI_CHECK_ROLLER_SHUTTER_STATE, "shutterModeEnum"
+            ENKI_CHECK_ROLLER_SHUTTER_STATE, "shutterModeEnum"
         )
         if isinstance(mode, str) and mode in self._attr_options:
             return mode

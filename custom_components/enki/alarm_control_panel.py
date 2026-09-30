@@ -52,8 +52,8 @@ class EnkiAlarmControlPanel(
     @property
     def alarm_state(self) -> AlarmControlPanelState | None:
         """Return current alarm state."""
-        threatLevel = self.coordinator.get_device_parameter(self.node_id, ENKI_GET_ALARM_STATUS.name).get('threatLevel')
-        currentMode = self.coordinator.get_device_parameter(self.node_id, ENKI_GET_ALARM_STATUS.name).get('currentMode')
+        threatLevel = self.coordinator.get_device_parameter(ENKI_GET_ALARM_STATUS.name).get('threatLevel')
+        currentMode = self.coordinator.get_device_parameter(ENKI_GET_ALARM_STATUS.name).get('currentMode')
 
         if threatLevel == 'DANGER' and currentMode != 'DISABLED':
             return AlarmControlPanelState.TRIGGERED
