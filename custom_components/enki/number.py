@@ -76,7 +76,7 @@ class EnkiNumber(EnkiBaseEntity, NumberEntity):
     async def async_set_native_value(self, value: float) -> None:
         """Update the current value."""
         await self.coordinator.api.query_endpoint(self.device["homeId"], self.node_id, self._attr_switch_capability, { "value": str(int(value)) })
-        self.coordinator.update_data(self.node_id,{self._attr_check_capability.name: {"lastReportedValue": str(value)}})
+        self.coordinator.update_data({self._attr_check_capability.name: {"lastReportedValue": str(value)}})
 
 
 class EnkiDeviceUpdateIntervalNumber(EnkiBaseEntity, NumberEntity):
@@ -99,12 +99,12 @@ class EnkiDeviceUpdateIntervalNumber(EnkiBaseEntity, NumberEntity):
     @property
     def native_value(self) -> float:
         """Return the current update interval for the device."""
-        return float(self.coordinator.get_device_update_interval(self.node_id))
+        return float(self.coordinator.get_device_update_interval())
 
     async def async_set_native_value(self, value: float) -> None:
         """Save the new device polling interval."""
         interval = int(value)
-        self.coordinator.set_device_update_interval(self.node_id, interval)
+        self.coordinator.set_device_update_interval(interval)
         self.device["update_interval"] = interval
         self.async_write_ha_state()
 

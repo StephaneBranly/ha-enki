@@ -64,11 +64,11 @@ class EnkiSwitch(EnkiBaseEntity, SwitchEntity):
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         await self.coordinator.api.query_endpoint(self.device["homeId"], self.node_id, self._attr_switch_capability, { "value": 'ON' })
-        self.coordinator.update_data(self.node_id, {self._attr_check_capability.name: {"lastReportedValue": 'ON'}})
+        self.coordinator.update_data({self._attr_check_capability.name: {"lastReportedValue": 'ON'}})
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         await self.coordinator.api.query_endpoint(self.device["homeId"], self.node_id, self._attr_switch_capability, { "value": 'OFF' })
-        self.coordinator.update_data(self.node_id,{self._attr_check_capability.name: {"lastReportedValue": 'OFF'}})
+        self.coordinator.update_data({self._attr_check_capability.name: {"lastReportedValue": 'OFF'}})
 
 def _build_switch_entities(coordinator: EnkiCoordinator, device: dict[str, Any]) -> list[EnkiSwitch]:
     """Create power production sensor for inverter devices."""

@@ -174,7 +174,7 @@ class EnkiLight(EnkiBaseEntity, LightEntity):
     def update_data_power_light_endpoints(self, power: str) -> None:
         """Apply optimistic power to known light endpoints in coordinator cache."""
         for endpoint_id in self._light_endpoint_ids():
-            self.coordinator.update_endpoint_power(self.node_id, endpoint_id, power)
+            self.coordinator.update_endpoint_power( endpoint_id, power)
 
     async def _mixed_endpoint_workaround(self) -> None:
         """Send OFF first when needed to force a fresh ON transition for all lights."""
@@ -227,7 +227,7 @@ class EnkiLight(EnkiBaseEntity, LightEntity):
 
         self.update_data_power_light_endpoints("ON")
         await self.coordinator.api.query_endpoint(self._device["homeId"], self._device["nodeId"], ENKI_CHANGE_LIGHT_STATE, changes, ENKI_CHECK_LIGHT_STATE)
-        self.coordinator.update_data(self.node_id, {ENKI_CHECK_LIGHT_STATE.name: {"lastReportedValue": changes}})
+        self.coordinator.update_data({ENKI_CHECK_LIGHT_STATE.name: {"lastReportedValue": changes}})
         
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn the entity off."""
@@ -236,7 +236,7 @@ class EnkiLight(EnkiBaseEntity, LightEntity):
         # for all light entities regardless of whether they have an endpoint_id. This will turn off
         # all the lights but at least will not turn off the fan or other non-light endpoints.
         await self.coordinator.api.query_endpoint(self._device["homeId"], self._device["nodeId"], ENKI_CHANGE_LIGHT_STATE, {"power": "OFF"}, ENKI_CHECK_LIGHT_STATE)
-        self.coordinator.update_data(self.node_id, {ENKI_CHECK_LIGHT_STATE.name: {"lastReportedValue": {"power": "OFF"}}})
+        self.coordinator.update_data({ENKI_CHECK_LIGHT_STATE.name: {"lastReportedValue": {"power": "OFF"}}})
         self.update_data_power_light_endpoints("OFF")
 
     @property

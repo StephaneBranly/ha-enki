@@ -122,7 +122,6 @@ class EnkiCover(EnkiBaseEntity, CoverEntity):
             {"value": clamped},
         )
         self.coordinator.update_data(
-            self.node_id,
             {ENKI_CHECK_ROLLER_SHUTTER_STATE.name: {"lastReportedValue": {"shutterPosition": clamped}}},
         )
 

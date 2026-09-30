@@ -14,8 +14,6 @@ from .const import ENKI_CAPABILITY, ENKI_CHECK_ELECTRICAL_POWER, LOGGER
 class EnkiCoordinator(DataUpdateCoordinator):
     """Coordinate refreshes for one Enki device."""
 
-    data: list[dict[str, Any]]
-
     def __init__(
         self,
         hass: HomeAssistant,
@@ -23,7 +21,7 @@ class EnkiCoordinator(DataUpdateCoordinator):
         api: API,
         device: dict[str, Any],
         interval: int,
-        interval_overrides: dict[str, int],
+        interval_overrides: int,
         interval_store: Store,
     ) -> None:
         """Initialize a coordinator dedicated to one device."""
@@ -48,15 +46,15 @@ class EnkiCoordinator(DataUpdateCoordinator):
         """Save user-configured device intervals to Home Assistant storage."""
         await self._device_interval_store.async_save(self._device_interval_overrides)
 
-    def get_device_update_interval(self, node_id: str) -> int:
+    def get_device_update_interval(self) -> int:
         """Return the refresh interval configured for a given device."""
         return int(self.device.get("update_interval", self.poll_interval))
 
-    def set_device_update_interval(self, node_id: str, seconds: float) -> None:
+    def set_device_update_interval(self, seconds: float) -> None:
         """Update the refresh interval for a specific device and reschedule it."""
         interval = max(1, int(seconds))
         self.device["update_interval"] = interval
-        self._device_interval_overrides[node_id] = interval
+        self._device_interval_overrides = interval
         self.poll_interval = interval
         self._reschedule_device_update(interval)
         self.hass.async_create_task(self._async_save_device_update_intervals())
@@ -131,7 +129,7 @@ class EnkiCoordinator(DataUpdateCoordinator):
         return dc.get(parameter, None)
             
     
-    def update_data(self, node_id: str, updated_values: dict[str, Any]) -> None:
+    def update_data(self, updated_values: dict[str, Any]) -> None:
         """Update device attribute.
 
         Support nested dictionaries so we can merge dict of dict updates into
@@ -152,10 +150,9 @@ class EnkiCoordinator(DataUpdateCoordinator):
         LOGGER.debug("Updated device data for node_id: %s, updated_values: %s", device, self.data)
         self.async_set_updated_data(device)
 
-    def update_endpoint_power(self, node_id: int, endpoint_id: int, power: str) -> None:
+    def update_endpoint_power(self, endpoint_id: int, power: str) -> None:
         """Optimistically update power state for a specific electricalEndpoints entry."""
-        device = self.get_device()
-        endpoints = device.get(ENKI_CHECK_ELECTRICAL_POWER.name).get('endpoints', [])
+        endpoints = self.device.get(ENKI_CHECK_ELECTRICAL_POWER.name).get('endpoints', [])
         if isinstance(endpoints, list):
             for ep in endpoints:
                 if not isinstance(ep, dict):
@@ -163,4 +160,4 @@ class EnkiCoordinator(DataUpdateCoordinator):
                 if ep.get("id") == endpoint_id:
                     ep["lastReportedValue"] = power
                     break
-        self.async_set_updated_data(device)
+        self.async_set_updated_data(self.device)
