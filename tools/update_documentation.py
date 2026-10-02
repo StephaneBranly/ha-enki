@@ -69,12 +69,13 @@ if __name__ == '__main__':
 
         tested = "✅ Tested" if device.get("tested", False) else "❌ Not tested"
 
+        url = f'{RAW_GITHUB_URL}/doc/devices/{device_name}'
         cell = f"""
-    <td align="center" width="{100//NCOLS}%">
+    <td align="center" width="{100//NCOLS}%"><a href="{url}" target="_blank">
     {img}<br>
     <b>{device.get('name', 'na')}</b><br>
     {device.get('manufacturer', 'na')}<br>
-    {tested}
+    {tested}</a>
     </td>
     """
 

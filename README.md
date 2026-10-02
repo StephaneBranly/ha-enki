@@ -45,81 +45,81 @@ Control lights, fans, switches, covers, sensors, security devices, scenarios, an
 <!-- start devices -->
 <table>
 <tr>
-<td align="center" width="25%">
+<td align="center" width="25%"><a href="https://raw.githubusercontent.com/StephaneBranly/ha-enki/refs/heads/main/doc/devices/5f1192bc23b5dec92ac93eb4.json" target="_blank">
     <img src='https://raw.githubusercontent.com/StephaneBranly/ha-enki/refs/heads/main/doc/devices/5f1192bc23b5dec92ac93eb4.jpg' width='120' height='120'><br>
     <b>Contact detector</b><br>
     Lexman<br>
-    ✅ Tested
+    ✅ Tested</a>
     </td>
-<td align="center" width="25%">
+<td align="center" width="25%"><a href="https://raw.githubusercontent.com/StephaneBranly/ha-enki/refs/heads/main/doc/devices/6633842c9f53b36a99838c94.json" target="_blank">
     <img src='https://raw.githubusercontent.com/StephaneBranly/ha-enki/refs/heads/main/doc/devices/6633842c9f53b36a99838c94.webp' width='120' height='120'><br>
     <b>Connected thermometer</b><br>
     Sedea<br>
-    ✅ Tested
+    ✅ Tested</a>
     </td>
-<td align="center" width="25%">
+<td align="center" width="25%"><a href="https://raw.githubusercontent.com/StephaneBranly/ha-enki/refs/heads/main/doc/devices/67a4b12bae1eca4709a45680.json" target="_blank">
     <img src='https://raw.githubusercontent.com/StephaneBranly/ha-enki/refs/heads/main/doc/devices/67a4b12bae1eca4709a45680.jpg' width='120' height='120'><br>
     <b>Radiator</b><br>
     Noirot<br>
-    ❌ Not tested
+    ❌ Not tested</a>
     </td>
-<td align="center" width="25%">
+<td align="center" width="25%"><a href="https://raw.githubusercontent.com/StephaneBranly/ha-enki/refs/heads/main/doc/devices/5e26cc33777472061d55e340.json" target="_blank">
     <img src='https://raw.githubusercontent.com/StephaneBranly/ha-enki/refs/heads/main/doc/devices/5e26cc33777472061d55e340.jpg' width='120' height='120'><br>
     <b>Motion detector</b><br>
     Lexman<br>
-    ✅ Tested
+    ✅ Tested</a>
     </td>
 </tr>
 <tr>
-<td align="center" width="25%">
+<td align="center" width="25%"><a href="https://raw.githubusercontent.com/StephaneBranly/ha-enki/refs/heads/main/doc/devices/5f16c4aca80024b5af0561a1.json" target="_blank">
     <img src='https://raw.githubusercontent.com/StephaneBranly/ha-enki/refs/heads/main/doc/devices/5f16c4aca80024b5af0561a1.jpg' width='120' height='120'><br>
     <b>Siren</b><br>
     Lexman<br>
-    ✅ Tested
+    ✅ Tested</a>
     </td>
-<td align="center" width="25%">
+<td align="center" width="25%"><a href="https://raw.githubusercontent.com/StephaneBranly/ha-enki/refs/heads/main/doc/devices/5d7df749f8bb0659f50d263d.json" target="_blank">
     <img src='https://raw.githubusercontent.com/StephaneBranly/ha-enki/refs/heads/main/doc/devices/5d7df749f8bb0659f50d263d.webp' width='120' height='120'><br>
     <b>RGB E27 Light</b><br>
     Lexman<br>
-    ✅ Tested
+    ✅ Tested</a>
     </td>
-<td align="center" width="25%">
+<td align="center" width="25%"><a href="https://raw.githubusercontent.com/StephaneBranly/ha-enki/refs/heads/main/doc/devices/6634999c9f53b36a99838c95.json" target="_blank">
     <img src='https://raw.githubusercontent.com/StephaneBranly/ha-enki/refs/heads/main/doc/devices/6634999c9f53b36a99838c95.jpg' width='120' height='120'><br>
     <b>Thermometer with display</b><br>
     Sonoff<br>
-    ❌ Not tested
+    ❌ Not tested</a>
     </td>
-<td align="center" width="25%">
+<td align="center" width="25%"><a href="https://raw.githubusercontent.com/StephaneBranly/ha-enki/refs/heads/main/doc/devices/63a053851a423d4a245a877c.json" target="_blank">
     <img src='https://raw.githubusercontent.com/StephaneBranly/ha-enki/refs/heads/main/doc/devices/63a053851a423d4a245a877c.png' width='120' height='120'><br>
     <b>ON/OFF relay</b><br>
     Equation<br>
-    ❌ Not tested
+    ❌ Not tested</a>
     </td>
 </tr>
 <tr>
-<td align="center" width="25%">
+<td align="center" width="25%"><a href="https://raw.githubusercontent.com/StephaneBranly/ha-enki/refs/heads/main/doc/devices/622ad2122eab0cd7e5890eeb.json" target="_blank">
     <img src='https://raw.githubusercontent.com/StephaneBranly/ha-enki/refs/heads/main/doc/devices/photo.png' width='120' height='120'><br>
     <b>Lexman In-Wall Roller Shutter Module</b><br>
     Lexman<br>
-    ✅ Tested
+    ✅ Tested</a>
     </td>
-<td align="center" width="25%">
+<td align="center" width="25%"><a href="https://raw.githubusercontent.com/StephaneBranly/ha-enki/refs/heads/main/doc/devices/651eada55b3a798ef6b6bc5c.json" target="_blank">
     <img src='https://raw.githubusercontent.com/StephaneBranly/ha-enki/refs/heads/main/doc/devices/651eada55b3a798ef6b6bc5c.jpg' width='120' height='120'><br>
     <b>Water leak detector</b><br>
     Lexman<br>
-    ❌ Not tested
+    ❌ Not tested</a>
     </td>
-<td align="center" width="25%">
+<td align="center" width="25%"><a href="https://raw.githubusercontent.com/StephaneBranly/ha-enki/refs/heads/main/doc/devices/5e258991b472bf9d87b8483f.json" target="_blank">
     <img src='https://raw.githubusercontent.com/StephaneBranly/ha-enki/refs/heads/main/doc/devices/5e258991b472bf9d87b8483f.webp' width='120' height='120'><br>
     <b>Outlet 16A, 3680A</b><br>
     Lexman<br>
-    ✅ Tested
+    ✅ Tested</a>
     </td>
-<td align="center" width="25%">
+<td align="center" width="25%"><a href="https://raw.githubusercontent.com/StephaneBranly/ha-enki/refs/heads/main/doc/devices/6827098c5f52437f08d9d7a1.json" target="_blank">
     <img src='https://raw.githubusercontent.com/StephaneBranly/ha-enki/refs/heads/main/doc/devices/6827098c5f52437f08d9d7a1.webp' width='120' height='120'><br>
     <b>Cadix ceiling fan with light</b><br>
     Inspire<br>
-    ✅ Tested
+    ✅ Tested</a>
     </td>
 </tr>
 </table><!-- end -->
