@@ -23,31 +23,18 @@
     },
     "switch_siren_status": {
       "format": "VALUES",
-      "values": [
-        "ON",
-        "OFF"
-      ]
+      "values": ["ON", "OFF"]
     }
   },
   "hasProgrammer": null,
   "hasTimer": null,
-  "protocols": [
-    "zigbee"
-  ],
+  "protocols": ["zigbee"],
   "name": "Siren",
   "image": "5f16c4aca80024b5af0561a1.jpg",
   "manufacturerId": "Lexman",
   "deviceType": "alarms_and_sirens",
-  "countries": [
-    "FR",
-    "ES",
-    "IT",
-    "PT",
-    "PL"
-  ],
-  "services": [
-    "NOTIFICATION"
-  ],
+  "countries": ["FR", "ES", "IT", "PT", "PL"],
+  "services": ["NOTIFICATION"],
   "worksWithGateways": [
     "5846853636f8f13d913069a2",
     "5fe1a6f6b3a48a44ed86125a",
@@ -67,9 +54,6 @@
     "3276008041667",
     "3276008041674"
   ],
-  "apis": [
-    "enki-001",
-    "enki-connect-001",
-    "essentielb-001"
-  ]
+  "apis": ["enki-001", "enki-connect-001", "essentielb-001"],
+  "tested": true
 }
