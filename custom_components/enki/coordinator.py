@@ -147,7 +147,6 @@ class EnkiCoordinator(DataUpdateCoordinator):
                     target[key] = value
 
         _merge_dicts(device, updated_values)
-        LOGGER.debug("Updated device data for node_id: %s, updated_values: %s", device, self.data)
         self.async_set_updated_data(device)
 
     def update_endpoint_power(self, endpoint_id: int, power: str) -> None:

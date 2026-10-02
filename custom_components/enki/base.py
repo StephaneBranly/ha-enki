@@ -10,7 +10,6 @@ and what additional properties and methods you need to add for each entity type.
 
 """
 
-import logging
 from typing import Any
 
 from homeassistant.core import callback
@@ -19,9 +18,6 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN
 from .coordinator import EnkiCoordinator
-
-_LOGGER = logging.getLogger(__name__)
-
 
 class EnkiBaseEntity(CoordinatorEntity):
     """Base Entity Class.
@@ -55,11 +51,6 @@ class EnkiBaseEntity(CoordinatorEntity):
         """Update sensor with latest data from coordinator."""
         # This method is called by your DataUpdateCoordinator when a successful update runs.
         self.device = self.coordinator.get_device()
-        _LOGGER.debug(
-            "Updating device: %s, %s",
-            self.node_id,
-            self.coordinator.get_device_parameter("deviceName"),
-        )
         self.async_write_ha_state()
 
     @property
