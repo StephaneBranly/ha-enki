@@ -1,0 +1,53 @@
+{
+  "title": "Enki",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to Enki",
+        "description": "Connect Home Assistant to your Enki account to automatically discover and control your compatible devices.\n\nSupported categories include lights, covers, fans, sensors, security devices, scenarios and more.\n\nUse the same credentials as the Enki mobile application.",
+        "data": {
+          "username": "Email address",
+          "password": "Password"
+        }
+      },
+      "polling": {
+        "title": "Polling settings",
+        "description": "Choose how often Home Assistant should refresh data from Enki.\n\nLower values provide faster state updates but generate more requests to Enki cloud services.\n\nRecommended values:\n• 30 seconds: security-focused installations\n• 60 seconds: general usage\n• 300 seconds: monitoring-oriented deployments\n\nYou can also configure the refresh interval for each device after it is discovered.",
+        "data": {
+          "scan_interval": "Refresh interval (seconds)"
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigure Enki",
+        "description": "Update your Enki account credentials and integration settings.\n\nHome Assistant will verify the new credentials before saving them.",
+        "data": {
+          "username": "Email address",
+          "password": "Password",
+          "scan_interval": "Refresh interval (seconds)"
+        }
+      }
+    },
+
+    "error": {
+      "cannot_connect": "Unable to connect to Enki services. Please check your Internet connection and try again.",
+      "invalid_auth": "Authentication failed. Please verify your email address and password.",
+      "unknown": "An unexpected error occurred. Check the Home Assistant logs for more details."
+    },
+
+    "abort": {
+      "already_configured": "This Enki account is already configured."
+    }
+  },
+
+  "options": {
+    "step": {
+      "init": {
+        "title": "Enki options",
+        "description": "Configure how the integration communicates with Enki services.",
+        "data": {
+          "scan_interval": "Refresh interval (seconds)"
+        }
+      }
+    }
+  }
+}

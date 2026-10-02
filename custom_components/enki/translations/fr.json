@@ -1,0 +1,53 @@
+{
+  "title": "Enki",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connexion à Enki",
+        "description": "Connectez Home Assistant à votre compte Enki afin de découvrir et contrôler automatiquement vos appareils compatibles.\n\nLes catégories prises en charge incluent notamment les éclairages, volets, ventilateurs, capteurs, équipements de sécurité, scénarios et bien plus encore.\n\nUtilisez les mêmes identifiants que ceux de l'application mobile Enki.",
+        "data": {
+          "username": "Adresse e-mail",
+          "password": "Mot de passe"
+        }
+      },
+      "polling": {
+        "title": "Paramètres de rafraîchissement",
+        "description": "Choisissez la fréquence à laquelle Home Assistant doit synchroniser les données provenant d'Enki.\n\nDes valeurs plus faibles permettent une mise à jour plus rapide des états mais génèrent davantage de requêtes vers les services cloud Enki.\n\nValeurs recommandées :\n• 30 secondes : installations orientées sécurité\n• 60 secondes : utilisation générale\n• 300 secondes : supervision et monitoring\n\nVous pourrez également configurer l'intervalle de rafraîchissement de chaque appareil après sa découverte.",
+        "data": {
+          "scan_interval": "Intervalle de rafraîchissement (secondes)"
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigurer Enki",
+        "description": "Mettez à jour les identifiants de votre compte Enki ainsi que les paramètres de l'intégration.\n\nHome Assistant vérifiera les nouveaux identifiants avant de les enregistrer.",
+        "data": {
+          "username": "Adresse e-mail",
+          "password": "Mot de passe",
+          "scan_interval": "Intervalle de rafraîchissement (secondes)"
+        }
+      }
+    },
+
+    "error": {
+      "cannot_connect": "Impossible de se connecter aux services Enki. Vérifiez votre connexion Internet puis réessayez.",
+      "invalid_auth": "Échec de l'authentification. Veuillez vérifier votre adresse e-mail et votre mot de passe.",
+      "unknown": "Une erreur inattendue s'est produite. Consultez les journaux de Home Assistant pour plus de détails."
+    },
+
+    "abort": {
+      "already_configured": "Ce compte Enki est déjà configuré."
+    }
+  },
+
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options Enki",
+        "description": "Configurez la manière dont l'intégration communique avec les services Enki.",
+        "data": {
+          "scan_interval": "Intervalle de rafraîchissement (secondes)"
+        }
+      }
+    }
+  }
+}

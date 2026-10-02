@@ -66,14 +66,22 @@ class EnkiBaseEntity(CoordinatorEntity):
     def device_info(self) -> DeviceInfo:
         """Return device information."""
         device_name = self.coordinator.get_device_parameter(self.node_id, "deviceName")
+        model = self.coordinator.get_device_parameter(self.node_id, "modelNumber")
+        manufacturer = self.coordinator.get_device_parameter(self.node_id, "manufacturerId")
+        if not model:
+            model = self.coordinator.get_device_parameter(self.node_id, "i18n")
+            if model:
+                model = model.replace(f"{manufacturer.lower()}_", "")
+                model = model.replace('tr_device_', '')
+                model = model.replace('_label', '')
+                model = model.replace("_", " ")
+                model = model.title()
+            else:
+                model = 'Unknown'
         return DeviceInfo(
             name=device_name,
-            manufacturer=self.coordinator.get_device_parameter(self.node_id, "manufacturerId"),
-            model=str(
-                self.coordinator.get_device_parameter(self.node_id, "modelNumber")
-            )
-            .replace("_", " ")
-            .title(),
+            manufacturer=manufacturer,
+            model=model,
             model_id=str(self.coordinator.get_device_parameter(self.node_id, "deviceId")),
             sw_version=self.coordinator.get_device_parameter(
                 self.node_id, "version"
@@ -84,7 +92,8 @@ class EnkiBaseEntity(CoordinatorEntity):
                     self.node_id,
                 )
             },
-            serial_number=self.coordinator.get_device_parameter(self.node_id, "eui64")
+            serial_number=self.coordinator.get_device_parameter(self.node_id, "eui64"),
+            # via_device=(DOMAIN, self.coordinator.get_device_parameter(self.node_id, "parentId"),),
         )
 
     @property

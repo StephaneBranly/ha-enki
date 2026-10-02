@@ -123,6 +123,7 @@ class API:
                         "type": "security",
                         "homeId": home_id,
                         "deviceId": None,
+                        "modelNumber": "Enki Security",
                         "nodeId": item["metadata"]["securityId"],
                         "deviceName": 'Security',
                         "state": item["state"],
@@ -305,6 +306,7 @@ class API:
                     "homeId": home,
                     "nodeId": 'scenarios',
                     "deviceId": 'scenarios',
+                    "modelNumber": "Enki Scenarios",
                     "deviceName": 'Scenarios',
                     "isEnabled": True,}
             devices.append(scenarios_device)
