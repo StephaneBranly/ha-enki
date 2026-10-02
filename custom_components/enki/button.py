@@ -62,7 +62,7 @@ class EnkiButton(EnkiBaseEntity, ButtonEntity):
 
 def _build_button_entities(coordinator: EnkiCoordinator, device: dict[str, Any]) -> list[EnkiButton]:
     """Create power production sensor for inverter devices."""
-    type = device.get("type")
+    type = device.get("integrationType")
     if type != 'scenarios':
         return []
 

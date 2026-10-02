@@ -100,7 +100,7 @@ class API:
                 if 'deviceId' in item["metadata"].keys():
                     ### PHYSICAL DEVICE
                     device = {
-                        "type": "physicalDevice",
+                        "integrationType": "physicalDevice",
                         "homeId": home_id,
                         "deviceId": item["metadata"]["deviceId"],
                         "nodeId": item["metadata"]["nodeId"],
@@ -120,7 +120,7 @@ class API:
                     self.merge_properties(device, node_info)
                 elif item['template'] == 'SECURITY':
                     device = {
-                        "type": "security",
+                        "integrationType": "security",
                         "homeId": home_id,
                         "deviceId": None,
                         "nodeId": item["metadata"]["securityId"],
@@ -142,7 +142,7 @@ class API:
         scenarios = []
         for item in response.get("items", []):
             scenario = {
-                "type": "scenario",
+                "integrationType": "scenario",
                 "homeId": home_id,
                 "scenarioId": item.get("id"),
                 "scenarioName": item.get("label"),
@@ -156,12 +156,12 @@ class API:
 
         home_id = device.get('homeId', None)
 
-        if device.get('type', None) == 'scenarios':
+        if device.get('integrationType', None) == 'scenarios':
             scenarios = await self.load_scenarios(home_id)
             self.merge_properties(device, { 'scenarios':  scenarios})
             return device
 
-        if device.get('type', None) == 'security':
+        if device.get('integrationType', None) == 'security':
             values = await self.query_endpoint(device.get("homeId"), device.get("nodeId"), ENKI_GET_ALARM_STATUS)
             self.merge_properties(device, {ENKI_GET_ALARM_STATUS.name: values})
             return device
@@ -301,7 +301,7 @@ class API:
         devices = []
         for home in homes:
             devices.extend(await self.get_items_in_section_for_home(home))
-            scenarios_device = {"type": "scenarios",
+            scenarios_device = {"integrationType": "scenarios",
                     "homeId": home,
                     "nodeId": 'scenarios',
                     "deviceId": 'scenarios',

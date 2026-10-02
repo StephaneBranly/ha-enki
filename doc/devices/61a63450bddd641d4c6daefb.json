@@ -22,5 +22,27 @@
   "hasTimer": null,
   "protocols": [
     "lexman_camera"
+  ],
+  "manufacturerId": "Lexman",
+  "deviceType": "cameras",
+  "countries": [
+    "FR",
+    "ES",
+    "IT",
+    "PT",
+    "PL",
+    "RO"
+  ],
+  "services": [
+    "NOTIFICATION"
+  ],
+  "searchTags": [],
+  "i18n": "tr_device_lexman_camera_indoor_label",
+  "eans": [
+    "3276007384956",
+    "3276007780598"
+  ],
+  "apis": [
+    "chacon-001"
   ]
 }

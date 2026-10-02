@@ -13,10 +13,14 @@
     "check_light_state"
   ],
   "deviceId": "5d7df749f8bb0659f50d263d",
+  "deviceType": "lights",
   "possibleValues": {
     "switch_electrical_power": {
       "format": "VALUES",
-      "values": ["ON", "OFF"]
+      "values": [
+        "ON",
+        "OFF"
+      ]
     },
     "change_brightness": {
       "format": "RANGE",
@@ -53,7 +57,10 @@
     },
     "check_electrical_power": {
       "format": "VALUES",
-      "values": ["ON", "OFF"]
+      "values": [
+        "ON",
+        "OFF"
+      ]
     },
     "change_hue": {
       "format": "RANGE",
@@ -67,7 +74,33 @@
   },
   "hasProgrammer": true,
   "hasTimer": true,
-  "protocols": ["zigbee"],
+  "protocols": [
+    "zigbee"
+  ],
   "image": "5d7df749f8bb0659f50d263d.webp",
-  "tested": true
+  "tested": true,
+  "manufacturerId": "Lexman",
+  "countries": [
+    "FR"
+  ],
+  "services": [],
+  "worksWithGateways": [
+    "5846853636f8f13d913069a2",
+    "5fe1a6f6b3a48a44ed86125a",
+    "6086e0984bdc1e2702bfe577"
+  ],
+  "searchTags": [],
+  "i18n": "tr_device_lexman_connected_light_label",
+  "eans": [
+    "3276007068962",
+    "3276007068979",
+    "3276007068986",
+    "3276007069013",
+    "3276007069013"
+  ],
+  "apis": [
+    "enki-001",
+    "enki-connect-001",
+    "essentielb-001"
+  ]
 }

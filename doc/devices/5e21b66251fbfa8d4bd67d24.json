@@ -13,5 +13,44 @@
   "hasTimer": null,
   "protocols": [
     "zigbee"
+  ],
+  "manufacturerId": "Lexman",
+  "deviceType": "remote_controls_and_switches",
+  "countries": [
+    "FR",
+    "ES",
+    "IT",
+    "PT",
+    "PL"
+  ],
+  "worksWithGateways": [
+    "5846853636f8f13d913069a2",
+    "5fe1a6f6b3a48a44ed86125a",
+    "6086e0984bdc1e2702bfe577"
+  ],
+  "searchTags": [],
+  "i18n": "tr_device_lexman_keyfob_remote_control_label",
+  "eans": [
+    "3276007060805",
+    "3276007538441",
+    "3276007538441",
+    "3276007060850",
+    "3276007060850",
+    "3276007538458",
+    "3276007761603",
+    "3276007761603",
+    "3276007065732",
+    "3276007065732",
+    "3276007065732",
+    "3276007060836",
+    "3276007060836",
+    "3276008041681",
+    "3276008041674",
+    "3276008041674"
+  ],
+  "apis": [
+    "enki-001",
+    "enki-connect-001",
+    "essentielb-001"
   ]
 }

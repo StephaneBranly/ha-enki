@@ -16,7 +16,10 @@
   "possibleValues": {
     "check_vibration_detection": {
       "format": "VALUES",
-      "values": ["VIBRATION_DETECTED", "NO_VIBRATION_DETECTED"]
+      "values": [
+        "VIBRATION_DETECTED",
+        "NO_VIBRATION_DETECTED"
+      ]
     },
     "check_battery_health": {
       "format": "VALUES",
@@ -32,8 +35,60 @@
   },
   "hasProgrammer": null,
   "hasTimer": null,
-  "protocols": ["zigbee"],
+  "protocols": [
+    "zigbee"
+  ],
   "name": "Contact detector",
   "image": "5f1192bc23b5dec92ac93eb4.jpg",
-  "tested": true
+  "tested": true,
+  "manufacturerId": "Lexman",
+  "deviceType": "sensors",
+  "countries": [
+    "FR",
+    "ES",
+    "IT",
+    "PT",
+    "PL"
+  ],
+  "services": [
+    "NOTIFICATION"
+  ],
+  "worksWithGateways": [
+    "5846853636f8f13d913069a2",
+    "5fe1a6f6b3a48a44ed86125a",
+    "6086e0984bdc1e2702bfe577"
+  ],
+  "searchTags": [
+    "tr_searchtag_door_label",
+    "tr_searchtag_window_label"
+  ],
+  "i18n": "tr_device_lexman_door_window_sensor_with_vibration_label",
+  "eans": [
+    "3276007060782",
+    "3276007538441",
+    "3276007538441",
+    "3276007060850",
+    "3276007060850",
+    "3276007538458",
+    "3276007761603",
+    "3276007761603",
+    "3276007761603",
+    "3276007060836",
+    "3276007065725",
+    "3276007065725",
+    "3276007065725",
+    "3276008041667",
+    "3276008041674",
+    "3276008041674",
+    "3276008041674",
+    "3276008041698",
+    "3276008041704",
+    "3276008041704",
+    "3276008041704"
+  ],
+  "apis": [
+    "enki-001",
+    "enki-connect-001",
+    "essentielb-001"
+  ]
 }
