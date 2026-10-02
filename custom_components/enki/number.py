@@ -92,7 +92,7 @@ class EnkiDeviceUpdateIntervalNumber(EnkiBaseEntity, NumberEntity):
         super().__init__(coordinator, device)
         self.parameter = "update_interval"
         self._attr_native_unit_of_measurement = "s"
-        self._attr_native_min_value = 1
+        self._attr_native_min_value = 10
         self._attr_native_max_value = 3600
         self._attr_native_step = 1
 

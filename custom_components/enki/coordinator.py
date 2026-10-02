@@ -52,7 +52,7 @@ class EnkiCoordinator(DataUpdateCoordinator):
 
     def set_device_update_interval(self, seconds: float) -> None:
         """Update the refresh interval for a specific device and reschedule it."""
-        interval = max(1, int(seconds))
+        interval = max(10, int(seconds))
         self.device["update_interval"] = interval
         self._device_interval_overrides = interval
         self.poll_interval = interval
