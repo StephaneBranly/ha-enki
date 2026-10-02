@@ -30,7 +30,8 @@
     "send_update_device_event",
     "check_gateway_certificate_renewal",
     "change_gateway_certificate",
-    "check_certificate_renewal_confirmation"
+    "check_certificate_renewal_confirmation",
+    "set_timezone"
   ],
   "deviceId": "5fe1a6f6b3a48a44ed86125a",
   "possibleValues": {},
@@ -38,5 +39,35 @@
   "hasTimer": null,
   "protocols": [
     "alljoyn"
+  ],
+  "manufacturerId": "Enki",
+  "deviceType": "gateways",
+  "countries": [
+    "FR",
+    "ES",
+    "IT",
+    "PT",
+    "PL"
+  ],
+  "services": [
+    "NOTIFICATION"
+  ],
+  "searchTags": [],
+  "i18n": "tr_device_enki_box_lite_label",
+  "eans": [
+    "3276007271706",
+    "3276007366532",
+    "3276007538458",
+    "3335355317358",
+    "3700313925881",
+    "3276007388534",
+    "3276007761603",
+    "3335355317051",
+    "3335355317150",
+    "3276007753431",
+    "3276007753455"
+  ],
+  "apis": [
+    "enki-connect-001"
   ]
 }

@@ -25,10 +25,9 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ):
     """Set up select entities."""
-    coordinator: EnkiCoordinator = config_entry.runtime_data.coordinator
-
     selects = [
         EnkiRollerShutterModeSelect(coordinator, device)
+        for coordinator in config_entry.runtime_data.coordinators.values()
         for device in coordinator.data
         if _supports_shutter_mode(device)
     ]
@@ -54,7 +53,7 @@ class EnkiRollerShutterModeSelect(EnkiBaseEntity, SelectEntity):
     def current_option(self) -> str | None:
         """Return current wiring mode."""
         mode = self.coordinator.get_device_capability_parameter(
-            self.node_id, ENKI_CHECK_ROLLER_SHUTTER_STATE, "shutterModeEnum"
+            ENKI_CHECK_ROLLER_SHUTTER_STATE, "shutterModeEnum"
         )
         if isinstance(mode, str) and mode in self._attr_options:
             return mode
@@ -71,7 +70,6 @@ class EnkiRollerShutterModeSelect(EnkiBaseEntity, SelectEntity):
             {"value": option},
         )
         self.coordinator.update_data(
-            self.node_id,
             {ENKI_CHECK_ROLLER_SHUTTER_STATE.name: {"lastReportedValue": {"shutterModeEnum": option}}},
         )
 

@@ -30,10 +30,9 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ):
     """Set up cover entities."""
-    coordinator: EnkiCoordinator = config_entry.runtime_data.coordinator
-
     covers = [
         EnkiCover(coordinator, device)
+        for coordinator in config_entry.runtime_data.coordinators.values()
         for device in coordinator.data
         if _is_cover_device(device)
     ]
@@ -68,7 +67,7 @@ class EnkiCover(EnkiBaseEntity, CoverEntity):
     def _shutter_field(self, field: str) -> Any:
         """Read a field from check_roller_shutter_state.lastReportedValue."""
         return self.coordinator.get_device_capability_parameter(
-            self.node_id, ENKI_CHECK_ROLLER_SHUTTER_STATE, field
+            ENKI_CHECK_ROLLER_SHUTTER_STATE, field
         )
 
     @property
@@ -123,7 +122,6 @@ class EnkiCover(EnkiBaseEntity, CoverEntity):
             {"value": clamped},
         )
         self.coordinator.update_data(
-            self.node_id,
             {ENKI_CHECK_ROLLER_SHUTTER_STATE.name: {"lastReportedValue": {"shutterPosition": clamped}}},
         )
 

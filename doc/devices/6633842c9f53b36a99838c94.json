@@ -40,7 +40,39 @@
   },
   "hasProgrammer": null,
   "hasTimer": null,
-  "protocols": ["zigbee"],
+  "protocols": [
+    "zigbee"
+  ],
   "image": "6633842c9f53b36a99838c94.webp",
-  "tested": true
+  "tested": true,
+  "manufacturerId": "Sedea",
+  "deviceType": "sensors",
+  "countries": [
+    "FR"
+  ],
+  "services": [
+    "NOTIFICATION",
+    "RATING_TRIGGER"
+  ],
+  "worksWithGateways": [
+    "5846853636f8f13d913069a2",
+    "5fe1a6f6b3a48a44ed86125a",
+    "6086e0984bdc1e2702bfe577"
+  ],
+  "searchTags": [
+    "tr_searchtag_humidity_label",
+    "tr_searchtag_temperature_label",
+    "tr_searchtag_probe_label",
+    "tr_searchtag_sensor_label"
+  ],
+  "i18n": "tr_device_sedea_temperature_humidity_sensor_label",
+  "eans": [
+    "3335355317303",
+    "3335355317358"
+  ],
+  "apis": [
+    "enki-001",
+    "enki-connect-001",
+    "essentielb-001"
+  ]
 }

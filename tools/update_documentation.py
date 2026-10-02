@@ -48,17 +48,53 @@ if __name__ == '__main__':
         name = capability.name if capability.name else str(capability.__name__)
         supported_capabilities += f"|{name}|![{coverage}%](https://progress-bar.xyz/{coverage})|\n"
 
-    supported_devices = '| Name | Image | Id | Coverage (%) | Tested |\n|---|---|---|---|---|\n'
-    for device_name in os.listdir('./doc/devices'):
-        if not device_name.endswith('.json'):
-            continue
-        with open(f'./doc/devices/{device_name}') as dev_file:
-            device = json.load(dev_file)
-            if not (coverage := compute_coverage(device, capabilities)):
-                continue
-            img = f"<img src='{RAW_GITHUB_URL}/doc/devices/{device.get('image')}'  width='100'/>" if device.get('image') else ''   
-            supported_devices += f"|{device.get('name', 'na')}<br/>{device.get('manufacturer', 'na')}|{img}|*{device.get('deviceId', 'na')}*|![{coverage}%](https://progress-bar.xyz/{coverage})|{'✅' if device.get('tested', False) else '❌'}|\n"
+    devices_cells = []
+    NCOLS = 4
 
+    for device_name in os.listdir("./doc/devices"):
+        if not device_name.endswith(".json"):
+            continue
+
+        with open(f"./doc/devices/{device_name}") as dev_file:
+            device = json.load(dev_file)
+
+        if not (coverage := compute_coverage(device, capabilities)):
+            continue
+
+        img = (
+            f"<img src='{RAW_GITHUB_URL}/doc/devices/{device.get('image', '')}' width='120' height='120'>"
+            if device.get("image")
+            else ""
+        )
+
+        tested = "✅ Tested" if device.get("tested", False) else "❌ Not tested"
+
+        url = f'{RAW_GITHUB_URL}/doc/devices/{device_name}'
+        cell = f"""
+    <td align="center" width="{100//NCOLS}%"><a href="{url}" target="_blank">
+    {img}<br>
+    <b>{device.get('name', 'na')}</b><br>
+    {device.get('manufacturer', 'na')}<br>
+    {tested}</a>
+    </td>
+    """
+
+        devices_cells.append(cell.strip())
+
+    supported_devices = "<table>\n"
+
+    for i in range(0, len(devices_cells), NCOLS):
+        supported_devices += "<tr>\n"
+
+        row = devices_cells[i:i+NCOLS]
+
+        while len(row) < NCOLS:
+            row.append(f"""<td width="{100//NCOLS}%"></td>""")
+
+        supported_devices += "\n".join(row)
+        supported_devices += "\n</tr>\n"
+
+    supported_devices += "</table>"
     content = update_anchor(content, 'devices', supported_devices)
     content = update_anchor(content, 'capabilities', supported_capabilities)
 

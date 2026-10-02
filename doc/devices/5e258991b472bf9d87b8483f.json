@@ -13,17 +13,51 @@
   "possibleValues": {
     "switch_electrical_power": {
       "format": "VALUES",
-      "values": ["ON", "OFF"]
+      "values": [
+        "ON",
+        "OFF"
+      ]
     },
     "check_electrical_power": {
       "format": "VALUES",
-      "values": ["ON", "OFF"]
+      "values": [
+        "ON",
+        "OFF"
+      ]
     }
   },
   "hasProgrammer": true,
   "hasTimer": true,
-  "protocols": ["zigbee"],
+  "protocols": [
+    "zigbee"
+  ],
   "name": "Outlet 16A, 3680A",
   "image": "5e258991b472bf9d87b8483f.webp",
-  "tested": true
+  "tested": true,
+  "manufacturerId": "Lexman",
+  "deviceType": "outlets",
+  "countries": [
+    "FR",
+    "PL"
+  ],
+  "services": [
+    "RATING_TRIGGER",
+    "ALEXA",
+    "GOOGLE_HOME"
+  ],
+  "worksWithGateways": [
+    "5846853636f8f13d913069a2",
+    "5fe1a6f6b3a48a44ed86125a",
+    "6086e0984bdc1e2702bfe577"
+  ],
+  "searchTags": [],
+  "i18n": "tr_device_lexman_smart_plug_16A_label",
+  "eans": [
+    "3276007060935"
+  ],
+  "apis": [
+    "enki-001",
+    "enki-connect-001",
+    "essentielb-001"
+  ]
 }

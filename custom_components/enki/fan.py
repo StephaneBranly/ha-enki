@@ -28,10 +28,9 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ):
     """Set up fan entities."""
-    coordinator: EnkiCoordinator = config_entry.runtime_data.coordinator
-
     fans = [
         EnkiFan(coordinator, device, "state")
+        for coordinator in config_entry.runtime_data.coordinators.values()
         for device in coordinator.data
         if _is_fan_device(device)
     ]
@@ -74,7 +73,7 @@ class EnkiFan(EnkiBaseEntity, FanEntity):
         if not self._supports_speed:
             return None
 
-        speed = self.coordinator.get_device_parameter(self.node_id, ENKI_CHECK_FAN_SPEED.name).get("lastReportedValue", None)
+        speed = self.coordinator.get_device_parameter(ENKI_CHECK_FAN_SPEED.name).get("lastReportedValue", None)
         if speed is None:
             return None
         speed_value = max(0, min(self._max_fan_speed, int(speed)))
@@ -84,14 +83,14 @@ class EnkiFan(EnkiBaseEntity, FanEntity):
     def is_on(self) -> bool | None:
         """Return if fan is on."""
         if not self._supports_speed:
-            last_reported = self.coordinator.get_device_parameter(self.node_id, "lastReportedValue")
+            last_reported = self.coordinator.get_device_parameter("lastReportedValue")
             if isinstance(last_reported, dict):
                 power = last_reported.get("power")
                 if isinstance(power, str):
                     return power == "ON"
             return None
 
-        speed = self.coordinator.get_device_parameter(self.node_id, ENKI_CHECK_FAN_SPEED.name).get("lastReportedValue", None)
+        speed = self.coordinator.get_device_parameter(ENKI_CHECK_FAN_SPEED.name).get("lastReportedValue", None)
         return speed is not None and int(speed) > 0
 
     async def async_turn_on(
@@ -117,7 +116,7 @@ class EnkiFan(EnkiBaseEntity, FanEntity):
             return
 
         await self.coordinator.api.query_endpoint(self.device["homeId"], self.node_id, ENKI_CHANGE_FAN_SPEED, { "value": 0 })
-        self.coordinator.update_data(self.node_id, {ENKI_CHECK_FAN_SPEED.name: { "lastReportedValue": 0}})
+        self.coordinator.update_data({ENKI_CHECK_FAN_SPEED.name: { "lastReportedValue": 0}})
 
     async def async_set_percentage(self, percentage: int) -> None:
         """Set speed percentage."""
@@ -127,7 +126,7 @@ class EnkiFan(EnkiBaseEntity, FanEntity):
         bounded = max(0, min(100, percentage))
         speed = round((bounded / 100) * self._max_fan_speed)
         await self.coordinator.api.query_endpoint(self.device["homeId"], self.node_id, ENKI_CHANGE_FAN_SPEED, { "value": speed })
-        self.coordinator.update_data(self.node_id, {ENKI_CHECK_FAN_SPEED.name: { "lastReportedValue": speed}})
+        self.coordinator.update_data({ENKI_CHECK_FAN_SPEED.name: { "lastReportedValue": speed}})
 
     @property
     def current_direction(self) -> str | None:
@@ -135,7 +134,7 @@ class EnkiFan(EnkiBaseEntity, FanEntity):
         if not self._supports_direction:
             return None
 
-        value = self.coordinator.get_device_parameter(self.node_id, ENKI_CHECK_FAN_ROTATION_DIRECTION.name).get("lastReportedValue", None)
+        value = self.coordinator.get_device_parameter(ENKI_CHECK_FAN_ROTATION_DIRECTION.name).get("lastReportedValue", None)
         if value == "COUNTERCLOCKWISE":
             return DIRECTION_REVERSE
         if value == "CLOCKWISE":
@@ -149,7 +148,7 @@ class EnkiFan(EnkiBaseEntity, FanEntity):
 
         value = "CLOCKWISE" if direction == DIRECTION_FORWARD else "COUNTERCLOCKWISE"
         await self.coordinator.api.query_endpoint(self.device["homeId"], self.node_id, ENKI_CHANGE_FAN_ROTATION_DIRECTION, { "value": value })
-        self.coordinator.update_data(self.node_id,  {ENKI_CHECK_FAN_ROTATION_DIRECTION.name: { "lastReportedValue": value}})
+        self.coordinator.update_data({ENKI_CHECK_FAN_ROTATION_DIRECTION.name: { "lastReportedValue": value}})
 
     @property
     def preset_mode(self) -> str | None:
@@ -157,7 +156,7 @@ class EnkiFan(EnkiBaseEntity, FanEntity):
         if not self._supports_preset_mode:
             return None
 
-        value = self.coordinator.get_device_parameter(self.node_id, ENKI_CHECK_AIRFLOW_MODE.name).get("lastReportedValue", None)
+        value = self.coordinator.get_device_parameter(ENKI_CHECK_AIRFLOW_MODE.name).get("lastReportedValue", None)
         if value in self._attr_preset_modes:
             return value
         return None
@@ -171,7 +170,7 @@ class EnkiFan(EnkiBaseEntity, FanEntity):
             raise ValueError(f"Unsupported preset mode: {preset_mode}")
 
         await self.coordinator.api.query_endpoint(self.device["homeId"], self.node_id, ENKI_CHANGE_AIRFLOW_MODE, { "value": preset_mode })
-        self.coordinator.update_data(self.node_id,  {ENKI_CHECK_AIRFLOW_MODE.name: { "lastReportedValue": preset_mode}})
+        self.coordinator.update_data({ENKI_CHECK_AIRFLOW_MODE.name: { "lastReportedValue": preset_mode}})
 
 
 def _capabilities_set(device: dict[str, Any]) -> set[str]:

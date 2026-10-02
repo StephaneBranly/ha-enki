@@ -26,10 +26,9 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up Enki alarm panels."""
-    coordinator: EnkiCoordinator = config_entry.runtime_data.coordinator
-
     alarm_control_panels = [
             entity
+            for coordinator in config_entry.runtime_data.coordinators.values()
             for device in coordinator.data
             for entity in _build_alarm_control_panel_entities(coordinator, device)
         ]
@@ -53,8 +52,8 @@ class EnkiAlarmControlPanel(
     @property
     def alarm_state(self) -> AlarmControlPanelState | None:
         """Return current alarm state."""
-        threatLevel = self.coordinator.get_device_parameter(self.node_id, ENKI_GET_ALARM_STATUS.name).get('threatLevel')
-        currentMode = self.coordinator.get_device_parameter(self.node_id, ENKI_GET_ALARM_STATUS.name).get('currentMode')
+        threatLevel = self.coordinator.get_device_parameter(ENKI_GET_ALARM_STATUS.name).get('threatLevel')
+        currentMode = self.coordinator.get_device_parameter(ENKI_GET_ALARM_STATUS.name).get('currentMode')
 
         if threatLevel == 'DANGER' and currentMode != 'DISABLED':
             return AlarmControlPanelState.TRIGGERED

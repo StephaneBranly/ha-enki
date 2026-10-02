@@ -10,7 +10,6 @@ and what additional properties and methods you need to add for each entity type.
 
 """
 
-import logging
 from typing import Any
 
 from homeassistant.core import callback
@@ -19,9 +18,6 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN
 from .coordinator import EnkiCoordinator
-
-_LOGGER = logging.getLogger(__name__)
-
 
 class EnkiBaseEntity(CoordinatorEntity):
     """Base Entity Class.
@@ -43,7 +39,7 @@ class EnkiBaseEntity(CoordinatorEntity):
         self.device = device
         self.node_id = device["nodeId"]
         self.device_id = device["deviceId"]
-        self.parameter = self.coordinator.get_device_parameter(self.node_id, "deviceName")
+        self.parameter = self.coordinator.get_device_parameter("deviceName")
 
     @property
     def available(self) -> bool:
@@ -54,22 +50,17 @@ class EnkiBaseEntity(CoordinatorEntity):
     def _handle_coordinator_update(self) -> None:
         """Update sensor with latest data from coordinator."""
         # This method is called by your DataUpdateCoordinator when a successful update runs.
-        self.device = self.coordinator.get_node(self.node_id)
-        _LOGGER.debug(
-            "Updating device: %s, %s",
-            self.node_id,
-            self.coordinator.get_device_parameter(self.node_id, "deviceName"),
-        )
+        self.device = self.coordinator.get_device()
         self.async_write_ha_state()
 
     @property
     def device_info(self) -> DeviceInfo:
         """Return device information."""
-        device_name = self.coordinator.get_device_parameter(self.node_id, "deviceName")
-        model = self.coordinator.get_device_parameter(self.node_id, "modelNumber")
-        manufacturer = self.coordinator.get_device_parameter(self.node_id, "manufacturerId")
+        device_name = self.coordinator.get_device_parameter("deviceName")
+        model = self.coordinator.get_device_parameter("modelNumber")
+        manufacturer = self.coordinator.get_device_parameter("manufacturerId")
         if not model:
-            model = self.coordinator.get_device_parameter(self.node_id, "i18n")
+            model = self.coordinator.get_device_parameter("i18n")
             if model:
                 model = model.replace(f"{manufacturer.lower()}_", "")
                 model = model.replace('tr_device_', '')
@@ -82,9 +73,9 @@ class EnkiBaseEntity(CoordinatorEntity):
             name=device_name,
             manufacturer=manufacturer,
             model=model,
-            model_id=str(self.coordinator.get_device_parameter(self.node_id, "deviceId")),
+            model_id=str(self.coordinator.get_device_parameter("deviceId")),
             sw_version=self.coordinator.get_device_parameter(
-                self.node_id, "version"
+                "version"
             ),
             identifiers={
                 (
@@ -92,8 +83,8 @@ class EnkiBaseEntity(CoordinatorEntity):
                     self.node_id,
                 )
             },
-            serial_number=self.coordinator.get_device_parameter(self.node_id, "eui64"),
-            via_device=(DOMAIN, self.coordinator.get_device_parameter(self.node_id, "parentId"),),
+            serial_number=self.coordinator.get_device_parameter("eui64"),
+            via_device=(DOMAIN, self.coordinator.get_device_parameter("parentId"),),
         )
 
     @property
@@ -104,4 +95,4 @@ class EnkiBaseEntity(CoordinatorEntity):
     @property
     def unique_id(self) -> str:
         """Return unique id."""
-        return f"{DOMAIN}-{self.coordinator.get_device_parameter(self.node_id, "nodeId")}-{self.parameter}"
+        return f"{DOMAIN}-{self.coordinator.get_device_parameter("nodeId")}-{self.parameter}"

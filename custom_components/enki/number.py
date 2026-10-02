@@ -8,8 +8,10 @@ from homeassistant.components.number import (
     NumberDeviceClass,
     NumberEntity,
 )
+from homeassistant.helpers.entity import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.entity import EntityCategory
 
 from . import EnkiConfigEntry
 from .base import EnkiBaseEntity
@@ -22,10 +24,9 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ):
     """Set up number entities."""
-    coordinator: EnkiCoordinator = config_entry.runtime_data.coordinator
-
     numbers = [
         entity
+        for coordinator in config_entry.runtime_data.coordinators.values()
         for device in coordinator.data
         for entity in _build_number_entities(coordinator, device)
     ]
@@ -49,6 +50,7 @@ class EnkiNumber(EnkiBaseEntity, NumberEntity):
         native_min_value: float,
         native_max_value: float,
         native_step: float,
+        category: EntityCategory | None = None
     ) -> None:
         """Initialise entity."""
         super().__init__(coordinator, device)
@@ -60,32 +62,66 @@ class EnkiNumber(EnkiBaseEntity, NumberEntity):
         self.native_max_value = native_max_value
         self.native_min_value = native_min_value
         self.native_step = native_step
+        self._attr_entity_category = category
 
     @property
     def native_value(self) -> float | None:
         """Return the number value."""
-        value = self.coordinator.get_device_parameter(self.node_id, self._attr_check_capability.name).get('lastReportedValue', None)
-      
+        value = self.coordinator.get_device_parameter(self._attr_check_capability.name).get('lastReportedValue', None)
+
         if value is None:
             return None
         try:
             return float(value)
         except (ValueError, TypeError):
             return None
-        
+
     async def async_set_native_value(self, value: float) -> None:
         """Update the current value."""
         await self.coordinator.api.query_endpoint(self.device["homeId"], self.node_id, self._attr_switch_capability, { "value": str(int(value)) })
-        self.coordinator.update_data(self.node_id,{self._attr_check_capability.name: {"lastReportedValue": str(value)}})
+        self.coordinator.update_data({self._attr_check_capability.name: {"lastReportedValue": str(value)}})
+
+
+class EnkiDeviceUpdateIntervalNumber(EnkiBaseEntity, NumberEntity):
+    """Expose a per-device update interval as a number entity."""
+
+    _attr_has_entity_name = True
+    _attr_device_class = NumberDeviceClass.DURATION
+    _attr_icon = "mdi:timer-outline"
+    _attr_entity_category = EntityCategory.CONFIG
+
+    def __init__(self, coordinator: EnkiCoordinator, device: dict[str, Any]) -> None:
+        """Initialise the device update interval entity."""
+        super().__init__(coordinator, device)
+        self.parameter = "update_interval"
+        self._attr_native_unit_of_measurement = "s"
+        self._attr_native_min_value = 10
+        self._attr_native_max_value = 3600
+        self._attr_native_step = 1
+
+    @property
+    def native_value(self) -> float:
+        """Return the current update interval for the device."""
+        return float(self.coordinator.get_device_update_interval())
+
+    async def async_set_native_value(self, value: float) -> None:
+        """Save the new device polling interval."""
+        interval = int(value)
+        self.coordinator.set_device_update_interval(interval)
+        self.device["update_interval"] = interval
+        self.async_write_ha_state()
 
 
 
-def _build_number_entities(coordinator: EnkiCoordinator, device: dict[str, Any]) -> list[EnkiNumber]:
-    """Create power production number for inverter devices."""
+def _build_number_entities(coordinator: EnkiCoordinator, device: dict[str, Any]) -> list[EnkiNumber | EnkiDeviceUpdateIntervalNumber]:
+    """Create all number entities for a device."""
+    numbers: list[EnkiNumber | EnkiDeviceUpdateIntervalNumber] = [
+        EnkiDeviceUpdateIntervalNumber(coordinator, device)
+    ]
+
     capabilities = device.get("capabilities")
     if not isinstance(capabilities, list):
-        return []
-
+        return numbers
 
     # Check https://developers.home-assistant.io/docs/core/entity/number/ for device class, units and state class options
     supported_number_capabilities = [
@@ -95,11 +131,10 @@ def _build_number_entities(coordinator: EnkiCoordinator, device: dict[str, Any])
             'parameter': 'vibration_sensibility_level',
             'max_value': 5,
             'min_value': 1,
-            'step': 1
+            'step': 1,
+            'category': EntityCategory.CONFIG
         },
     ]
-
-    numbers = []
 
     for cap in supported_number_capabilities:
         if cap['check_capability'].name not in capabilities:
@@ -116,6 +151,7 @@ def _build_number_entities(coordinator: EnkiCoordinator, device: dict[str, Any])
                 native_max_value=cap.get('max_value', None),
                 native_min_value=cap.get('min_value', None),
                 native_step=cap.get('step', None),
+                category=cap.get('category', None)
             )
         )
 

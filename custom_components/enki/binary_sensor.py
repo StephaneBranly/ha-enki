@@ -22,10 +22,9 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ):
     """Set up binary_sensor entities."""
-    coordinator: EnkiCoordinator = config_entry.runtime_data.coordinator
-
     binary_sensors = [
         entity
+        for coordinator in config_entry.runtime_data.coordinators.values()
         for device in coordinator.data
         for entity in _build_binary_sensor_entities(coordinator, device)
     ]
@@ -56,7 +55,7 @@ class EnkiBinarySensor(EnkiBaseEntity, BinarySensorEntity):
     @property
     def is_on(self) -> float | None:
         """Return the binary_sensor value."""
-        getv = self.coordinator.get_device_parameter(self.node_id, self._key)
+        getv = self.coordinator.get_device_parameter(self._key)
         value = getv.get('lastReportedValue', None)
         if self._attr_conversion_table:
             value = self._attr_conversion_table.get(value, None)

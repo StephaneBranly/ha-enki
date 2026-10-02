@@ -78,6 +78,7 @@ async def _run_live_api_check(user: str, password: str) -> None:
     table.field_names = ["#", "Name", "Device type", "Device ID", "Node ID", "Status", "Expected coverage (%)", "Protocols"]
     new_devices = []
     for index, device in enumerate(devices, start=1):
+        print(json.dumps(device, indent=2))
         name = device.get("deviceName") or "unknown-device"
         device_kind = device.get("deviceType") or "unknown-deviceType"
         node_id = device.get("nodeId") or "unknown-node"
@@ -85,25 +86,31 @@ async def _run_live_api_check(user: str, password: str) -> None:
         protocols = device.get('protocols') or []
 
         device_description = {
-            "manufacturer": device.get('manufacturerId', None),
-            "capabilities":device.get('capabilities', []),
-            "deviceId": device.get('deviceId', None),
-            "possibleValues": device.get('possibleValues', None),
-            "hasProgrammer": device.get('hasProgrammer', None),
-            "hasTimer": device.get('hasTimer', None),
-            "protocols":  device.get('protocols', None),
             "tested": False,
             "image": "photo.png",
-            "name": "DEVICE_NAME"
+            "name": "DEVICE_NAME",
         }
+        keys_to_keep = ["manufacturerId", "capabilities", "deviceId", "deviceType", "possibleValues", "hasProgrammer", "hasTimer", "protocols", "countries", "services", "worksWithGateways", "searchTags", "i18n", "eans", "apis"]
+        for key in keys_to_keep:
+            if key in device:
+                device_description[key] = device[key]
         coverage = compute_coverage(device_description, capabilities)
         device_file = Path("./doc/devices") / f"{device.get('deviceId', None)}.json"
         status = 'Known'
-        if not device_file.exists() and device['type'] == 'physicalDevice':
+
+        if not device_file.exists() and device['integrationType'] == 'physicalDevice':
             device_file.parent.mkdir(parents=True, exist_ok=True)
             with device_file.open(mode='w', encoding='utf-8') as f:
                 f.write(json.dumps(device_description, indent=2))
             new_devices.append({**device, "index": index, "name": name})
+        elif device['integrationType'] == 'physicalDevice':
+            with device_file.open(mode='r', encoding='utf-8') as f:
+                existing_device_description = json.load(f)
+            for key in keys_to_keep:
+                if key in device:
+                    existing_device_description[key] = device[key]
+            with device_file.open(mode='w', encoding='utf-8') as f:
+                f.write(json.dumps(existing_device_description, indent=2))
         if len([nd for nd in new_devices if nd.get('deviceId') == device.get('deviceId', None)]):
             status = 'NEW!'
         
