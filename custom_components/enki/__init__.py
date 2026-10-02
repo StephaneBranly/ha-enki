@@ -26,42 +26,127 @@ class RuntimeData:
 EnkiConfigEntry = ConfigEntry[RuntimeData]
 
 
-async def async_setup_entry(hass: HomeAssistant, config_entry: EnkiConfigEntry) -> bool:
-    """Set up Enki Integration from a config entry."""
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.helpers import device_registry as dr
 
-    # Initialise the coordinator that manages data updates from your api.
-    # This is defined in coordinator.py
-    coordinator = EnkiCoordinator(hass, config_entry)
+from .const import DOMAIN, LOGGER
+from .coordinator import EnkiCoordinator
 
-    # Perform an initial data load from api.
-    # async_config_entry_first_refresh() is special in that it does not log errors if it fails
+async def _create_gateways(
+    hass: HomeAssistant,
+    config_entry: ConfigEntry,
+    coordinator: EnkiCoordinator,
+) -> None:
+    """Create Enki gateway devices."""
+
+    device_registry = dr.async_get(hass)
+
+    for device in coordinator.data:
+        if device.get("deviceType") != "gateways":
+            continue
+
+        gateway_id = device.get("nodeId")
+        
+        if not gateway_id:
+            continue
+        model = device.get(
+                "modelNumber",
+                "Enki",
+            )
+        manufacturer = device.get(
+                "manufacturerId",
+                "Enki",
+            )
+        if not model:
+            model = device.get(
+                "i18n",
+                "Enki",
+            )
+            if model:
+                model = model.replace(f"{manufacturer.lower()}_", "")
+                model = model.replace('tr_device_', '')
+                model = model.replace('_label', '')
+                model = model.replace("_", " ")
+                model = model.title()
+            else:
+                model = 'Unknown'
+        device_registry.async_get_or_create(
+            config_entry_id=config_entry.entry_id,
+            identifiers={(DOMAIN, gateway_id)},
+            manufacturer=manufacturer,
+            name=device.get(
+                "deviceName",
+                "Enki Connect Box",
+            ),
+            model=model,
+            sw_version=device.get("version"),
+            serial_number=device.get(
+                "serialNumber"
+            ),
+        )
+
+        LOGGER.debug(
+            "Created gateway device %s",
+            gateway_id,
+        )
+
+
+async def async_setup_entry(
+    hass: HomeAssistant,
+    config_entry: EnkiConfigEntry,
+) -> bool:
+    """Set up Enki from a config entry."""
+
+    LOGGER.info(
+        "Setting up Enki integration for %s",
+        config_entry.title,
+    )
+
+    coordinator = EnkiCoordinator(
+        hass,
+        config_entry,
+    )
+
     await coordinator.async_config_entry_first_refresh()
 
-    # Test to see if api initialised correctly, else raise ConfigNotReady to make HA retry setup
-    # TODO: Change this to match how your api will know if connected or successful update
     if not await coordinator.api.check_connected():
         raise ConfigEntryNotReady
 
-    # Initialise a listener for config flow options changes.
-    # This will be removed automatically if the integraiton is unloaded.
-    # See config_flow for defining an options setting that shows up as configure
-    # on the integration.
-    # If you do not want any config flow options, no need to have listener.
     config_entry.async_on_unload(
-        config_entry.add_update_listener(_async_update_listener)
+        config_entry.add_update_listener(
+            _async_update_listener
+        )
     )
 
-    # Add the coordinator and update listener to config runtime data to make
-    # accessible throughout your integration
-    config_entry.runtime_data = RuntimeData(coordinator)
+    config_entry.runtime_data = RuntimeData(
+        coordinator
+    )
 
-    # Setup platforms (based on the list of entity types in PLATFORMS defined above)
-    # This calls the async_setup method in each of your entity type files.
-    await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
+    #
+    # Create Enki gateways before entities
+    #
+    await _create_gateways(
+        hass,
+        config_entry,
+        coordinator,
+    )
 
-    # Return true to denote a successful setup.
+    #
+    # Setup entity platforms
+    #
+    await hass.config_entries.async_forward_entry_setups(
+        config_entry,
+        PLATFORMS,
+    )
+
+    LOGGER.info(
+        "Enki integration loaded successfully. "
+        "%s devices discovered.",
+        len(coordinator.data),
+    )
+
     return True
-
 
 async def _async_update_listener(hass: HomeAssistant, config_entry):
     """Handle config options update."""
