@@ -10,6 +10,7 @@ from homeassistant.components.number import (
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.entity import EntityCategory
 
 from . import EnkiConfigEntry
 from .base import EnkiBaseEntity
@@ -49,6 +50,7 @@ class EnkiNumber(EnkiBaseEntity, NumberEntity):
         native_min_value: float,
         native_max_value: float,
         native_step: float,
+        category: EntityCategory | None = None
     ) -> None:
         """Initialise entity."""
         super().__init__(coordinator, device)
@@ -60,6 +62,7 @@ class EnkiNumber(EnkiBaseEntity, NumberEntity):
         self.native_max_value = native_max_value
         self.native_min_value = native_min_value
         self.native_step = native_step
+        self._attr_entity_category = category
 
     @property
     def native_value(self) -> float | None:
@@ -95,7 +98,8 @@ def _build_number_entities(coordinator: EnkiCoordinator, device: dict[str, Any])
             'parameter': 'vibration_sensibility_level',
             'max_value': 5,
             'min_value': 1,
-            'step': 1
+            'step': 1,
+            'category': EntityCategory.CONFIG
         },
     ]
 
@@ -116,6 +120,7 @@ def _build_number_entities(coordinator: EnkiCoordinator, device: dict[str, Any])
                 native_max_value=cap.get('max_value', None),
                 native_min_value=cap.get('min_value', None),
                 native_step=cap.get('step', None),
+                category=cap.get('category', None)
             )
         )
 

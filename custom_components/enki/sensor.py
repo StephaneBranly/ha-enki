@@ -11,6 +11,7 @@ from homeassistant.components.sensor import (
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.entity import EntityCategory
 
 from . import EnkiConfigEntry
 from .base import EnkiBaseEntity
@@ -47,7 +48,8 @@ class EnkiSensor(EnkiBaseEntity, SensorEntity):
         unit: str,
         device_class: SensorDeviceClass,
         state_class: SensorStateClass,
-        conversion_table: dict | None
+        conversion_table: dict | None,
+        category: EntityCategory | None = None
     ) -> None:
         """Initialise entity."""
         super().__init__(coordinator, device)
@@ -57,6 +59,7 @@ class EnkiSensor(EnkiBaseEntity, SensorEntity):
         self._attr_device_class = device_class
         self._attr_state_class = state_class
         self._attr_conversion_table = conversion_table
+        self._attr_entity_category = category
 
     @property
     def native_value(self) -> float | None:
@@ -109,6 +112,7 @@ def _build_sensor_entities(coordinator: EnkiCoordinator, device: dict[str, Any])
             'unit': "%",
             'device_class': SensorDeviceClass.BATTERY,
             'state_class': SensorStateClass.MEASUREMENT,
+            'category': EntityCategory.DIAGNOSTIC
         }
     ]
 
@@ -126,7 +130,8 @@ def _build_sensor_entities(coordinator: EnkiCoordinator, device: dict[str, Any])
                 unit=cap.get('unit', None),
                 device_class=cap.get('device_class', None),
                 state_class=cap.get('state_class', None),
-                conversion_table=cap.get('conversion_table', None)
+                conversion_table=cap.get('conversion_table', None),
+                category=cap.get('category', None)
             )
         )
 

@@ -11,6 +11,7 @@ from homeassistant.components.switch import (
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.helpers.entity import EntityCategory
 
 from . import EnkiConfigEntry
 from .base import EnkiBaseEntity
@@ -45,7 +46,8 @@ class EnkiSwitch(EnkiBaseEntity, SwitchEntity):
         parameter: str,
         device_class: SwitchDeviceClass,
         switch_capability: ENKI_CAPABILITY,
-        check_capability: ENKI_CAPABILITY
+        check_capability: ENKI_CAPABILITY,
+        category: EntityCategory | None = None
     ) -> None:
         """Initialise entity."""
         super().__init__(coordinator, device)
@@ -54,6 +56,7 @@ class EnkiSwitch(EnkiBaseEntity, SwitchEntity):
         self._attr_device_class = device_class
         self._attr_switch_capability = switch_capability
         self._attr_check_capability = check_capability
+        self._attr_entity_category = category
 
     @property
     def is_on(self) -> bool | None:
@@ -89,13 +92,15 @@ def _build_switch_entities(coordinator: EnkiCoordinator, device: dict[str, Any])
             'switch_capability': ENKI_ACTIVATE_VIBRATION_DETECTION,
             'check_capability': ENKI_CHECK_VIBRATION_DETECTION_ACTIVATION,
             'device_class': SwitchDeviceClass.SWITCH,
-            'parameter': 'vibration_detection'
+            'parameter': 'vibration_detection',
+            'category': EntityCategory.CONFIG
         },
         {
             'switch_capability': ENKI_ACTIVATE_CONTACT_DETECTION,
             'check_capability': ENKI_CHECK_CONTACT_DETECTION_ACTIVATION,
             'device_class': SwitchDeviceClass.SWITCH,
-            'parameter': 'contact_detection'
+            'parameter': 'contact_detection',
+            'category': EntityCategory.CONFIG
         },
         {
             # TO DO : use Siren Entity type for siren
@@ -122,6 +127,7 @@ def _build_switch_entities(coordinator: EnkiCoordinator, device: dict[str, Any])
                 device_class=cap['device_class'],
                 switch_capability=cap.get('switch_capability'),
                 check_capability=cap.get('check_capability'),
+                category=cap.get('category', None)
             )
         )
 
