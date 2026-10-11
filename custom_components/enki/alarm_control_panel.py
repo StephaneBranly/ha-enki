@@ -104,7 +104,7 @@ def _build_alarm_control_panel_entities(coordinator: EnkiCoordinator, device: di
 
     alarm_control_panels = []
 
-    if device.get("type") != 'security':
+    if device.get("integrationType") != 'security':
         return []
     
     alarm_control_panels.append(
